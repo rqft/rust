@@ -8,7 +8,7 @@
     "npm": "*"
   },
   "scripts": {
-    "pub": "tsc; git commit -a -m ok; git push; npm version patch; npm publish --access public"
+    "pub": "tsc && git commit -a -m ok && git push && npm version patch && npm publish --access public"
   },
   "keywords": [],
   "author": "mina",
