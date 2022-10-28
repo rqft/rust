@@ -1,0 +1,33 @@
+{
+  "name": "@rqft/rust",
+  "version": "1.0.0",
+  "description": "hi",
+  "main": "dist/index.js",
+  "engines": {
+    "node": "14.15.1",
+    "npm": "*"
+  },
+  "scripts": {
+    "pub": "tsc; git commit -a -m ok; git push; npm version patch; npm publish --access public"
+  },
+  "keywords": [],
+  "author": "mina",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^14.18.13",
+    "@types/node-fetch": "^2.5.8",
+    "@typescript-eslint/eslint-plugin": "^5.26.0",
+    "@typescript-eslint/parser": "^5.26.0",
+    "@types/eslint": "^8.4.7",
+    "eslint": "^8.16.0",
+    "prettier": "^2.5.1",
+    "nodemon": "^2.0.16"
+  },
+  "dependencies": {
+    "typescript": "^4.4.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rqft/rust"
+  }
+}
