@@ -1,8 +1,9 @@
+import { staticify } from '../tools';
 import type { Option } from './option';
 import { None, Some } from './option';
 import type { FnMap, FnOnce } from './traits';
 
-export class Vec<T> {
+class Vec<T> {
   private readonly alloc: Array<Option<T>> = [];
   public static new<T>(): Vec<T> {
     return new this<T>();
@@ -99,7 +100,7 @@ export class Vec<T> {
       throw this.oob(index);
     }
 
-    this.alloc.splice(index, 0, Some(element));
+    this.alloc.splice(index, 0, Some.new(element));
     return this;
   }
 
@@ -126,9 +127,9 @@ export class Vec<T> {
 
   public push(element: T): this {
     if (this.hasTrail()) {
-      this.alloc[this.alloc.indexOf(None)] = Some(element);
+      this.alloc[this.alloc.indexOf(None)] = Some.new(element);
     } else {
-      this.alloc.push(Some(element));
+      this.alloc.push(Some.new(element));
     }
 
     return this;
@@ -147,7 +148,7 @@ export class Vec<T> {
 
   public append(other: Vec<T>): this {
     while (other.len()) {
-      this.push((other.pop() || None).unwrap());
+      this.push(other.pop().unwrap());
     }
 
     return this;
@@ -269,7 +270,7 @@ export class Vec<T> {
 
   public fill(value: T): this {
     for (let i = 0; i < this.capacity(); i++) {
-      this.alloc[i] = Some(value);
+      this.alloc[i] = Some.new(value);
     }
 
     return this;
@@ -277,7 +278,7 @@ export class Vec<T> {
 
   public fillWith(f: FnOnce<T>): this {
     for (let i = 0; i < this.capacity(); i++) {
-      this.alloc[i] = Some(f());
+      this.alloc[i] = Some.new(f());
     }
 
     return this;
@@ -444,3 +445,5 @@ export class Vec<T> {
     return p;
   }
 }
+
+export const vec = staticify(Vec);

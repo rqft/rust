@@ -1,16 +1,20 @@
+import { staticify } from '../tools';
 import type { Option } from './option';
 import { None, Some } from './option';
 import type { Result } from './result';
 import { Err, Ok } from './result';
-import type { iter } from './traits';
-import { cmp } from './traits';
-export class Iter<T> {
-  constructor(private iterable: Iterable<T>) {
+import { Ordering } from './traits';
+class Iter<T> {
+  constructor(private iterable: Iterable<T> = []) {
     this.iterator = this.iterable[Symbol.iterator]();
   }
 
   private iterator: Iterator<T, unknown, undefined>;
   private picker = 0;
+
+  public static new<T>(iterable: Iterable<T> = []): Iter<T> {
+    return new this(iterable);
+  }
 
   public next(): Option<T> {
     this.picker++;
@@ -254,8 +258,11 @@ export class Iter<T> {
     return Array.from(this);
   }
 
-  public partition(p: (value: Option<T>) => boolean): iter.Partition<Iter<T>> {
-    const out: iter.Partition<Array<T>> = { true: [], false: [] };
+  public partition(p: (value: Option<T>) => boolean): {
+    true: Iter<T>;
+    false: Iter<T>;
+  } {
+    const out: { true: Array<T>; false: Array<T> } = { true: [], false: [] };
 
     for (const value of this) {
       if (p(value)) {
@@ -337,14 +344,14 @@ export class Iter<T> {
   }
 
   public maxBy(
-    o: (value: Option<T>, against: Option<T>) => cmp.Ordering
+    o: (value: Option<T>, against: Option<T>) => Ordering
   ): Option<T> {
     let max: Option<T> = None;
 
     for (const value of this) {
       const z = o(value, max);
 
-      if (z === cmp.Ordering.Greater) {
+      if (z === Ordering.More) {
         max = value;
       }
     }
@@ -357,14 +364,14 @@ export class Iter<T> {
   }
 
   public minBy(
-    o: (value: Option<T>, against: Option<T>) => cmp.Ordering
+    o: (value: Option<T>, against: Option<T>) => Ordering
   ): Option<T> {
     let min: Option<T> = None;
 
     for (const value of this) {
       const z = o(value, min);
 
-      if (z === cmp.Ordering.Less) {
+      if (z === Ordering.Less) {
         min = value;
       }
     }
@@ -451,3 +458,6 @@ export class Iter<T> {
     );
   }
 }
+
+export const iter = staticify(Iter);
+iter<1>();

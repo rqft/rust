@@ -1,3 +1,4 @@
+import { staticify } from '../tools';
 import type { FnConsume, FnMap, FnOnce } from './traits';
 interface OptionImpl<T> {
   /** Returns `true` if the option is a `Some` value. */
@@ -187,7 +188,7 @@ class SomeImpl<T> implements OptionImpl<T> {
   public replace(value: T): SomeImpl<T> {
     const temp = this.unwrap();
     this.value = value;
-    return Some(temp);
+    return Some.new(temp);
   }
 
   public contains(value: T): boolean {
@@ -198,7 +199,7 @@ class SomeImpl<T> implements OptionImpl<T> {
     if (other.isNone()) {
       return None;
     }
-    return Some([this.unwrap(), other.unwrap()] as [T, U]);
+    return Some.new([this.unwrap(), other.unwrap()] as [T, U]);
   }
 
   public zipWith<U, R>(other: Option<U>, f: (T: T, U: U) => R): Option<R> {
@@ -206,12 +207,16 @@ class SomeImpl<T> implements OptionImpl<T> {
       return None;
     }
 
-    return Some(f(this.unwrap(), other.unwrap()));
+    return Some.new(f(this.unwrap(), other.unwrap()));
   }
 
   public inspect(f: FnConsume<T>): this {
     f(this.unwrap());
     return this;
+  }
+
+  public static new<T>(value: T): SomeImpl<T> {
+    return new this(value);
   }
 }
 
@@ -347,8 +352,5 @@ class NoneImpl implements OptionImpl<never> {
 
 export type Option<T> = NoneImpl | SomeImpl<T>;
 
-export function Some<T>(value: T): SomeImpl<T> {
-  return new SomeImpl(value);
-}
-
 export const None = new NoneImpl();
+export const Some = staticify(SomeImpl);

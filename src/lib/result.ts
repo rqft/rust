@@ -1,3 +1,4 @@
+import { staticify } from '../tools';
 import type { Option } from './option';
 import { None, Some } from './option';
 import type { FnConsume, FnMap } from './traits';
@@ -379,7 +380,9 @@ interface ResultCheck {
   assert_err<E>(value: Result<unknown, E>): asserts value is OkImpl<E>;
 }
 
-export const Result: ResultCheck & typeof Rs = Object.assign(
+export const Ok = staticify(OkImpl);
+export const Err = staticify(ErrImpl);
+export const result: ResultCheck & typeof Rs = Object.assign(
   {
     ok: Ok,
     err: Err,
@@ -400,11 +403,3 @@ export const Result: ResultCheck & typeof Rs = Object.assign(
   } as ResultCheck,
   Rs
 ) as ResultCheck & typeof Rs;
-
-export function Ok<T>(value: T): OkImpl<T> {
-  return new OkImpl(value);
-}
-
-export function Err<E>(error: E): ErrImpl<E> {
-  return new ErrImpl(error);
-}
