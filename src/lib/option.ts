@@ -77,7 +77,7 @@ interface OptionImpl<T> {
   inspect(f: FnConsume<T>): this;
 }
 
-class SomeImpl<T> implements OptionImpl<T> {
+export class SomeImpl<T> implements OptionImpl<T> {
   constructor(private value: T) {}
 
   public isSome(): true {
@@ -220,7 +220,7 @@ class SomeImpl<T> implements OptionImpl<T> {
   }
 }
 
-class NoneImpl implements OptionImpl<never> {
+export class NoneImpl implements OptionImpl<never> {
   constructor() {
     void 0;
   }

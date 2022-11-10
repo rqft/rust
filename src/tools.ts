@@ -25,38 +25,38 @@ export type Staticify<T extends FnConstructor> = Get<T, 'new'> &
   } & { static: T };
 
 export function staticify<T extends FnConstructor>(value: T): Staticify<T> {
-  return Object.assign(
-    // slap on a way to not use `new`
-    (...args: Array<any>) => {
-      return new value(args);
-    },
-    new Proxy(value, {
-      get(target, p): any {
-        // literally 'static'
-        if (p === 'static') {
-          return target;
-        }
+  return new Proxy(value, {
+    get(target, p): any {
+      // literally 'static'
+      if (p === 'static') {
+        return target;
+      }
 
-        // static constants
-        if (p in value) {
-          return value[p as keyof typeof value];
-        }
+      console.log(p);
 
-        if (p in value.prototype) {
-          // methods, (&self, ...params) -> R
-          if (typeof value.prototype[p] === 'function') {
-            return (self: Proto<T>, ...args: Array<any>) => {
-              return self[p](...args);
-            };
-          }
+      // static constants
+      if (p in value) {
+        return value[p as keyof typeof value];
+      }
 
-          // constants
-          // this could possibly change based on instance parameters, so we follow the format of cls.method(params) -> value
-          return (...args: Array<any>) => {
-            return new value(...args)[p];
+      if (p in value.prototype) {
+        // methods, (&self, ...params) -> R
+        if (typeof value.prototype[p] === 'function') {
+          return (self: Proto<T>, ...args: Array<any>) => {
+            return self[p](...args);
           };
         }
-      },
-    })
-  ) as never;
+
+        // constants
+        // this could possibly change based on instance parameters, so we follow the format of cls.method(params) -> value
+        return (...args: Array<any>) => {
+          return new value(...args)[p];
+        };
+      }
+    },
+
+    apply(target, thisArg, argArray): any {
+      return new (target.bind(thisArg))(argArray);
+    },
+  }) as never;
 }

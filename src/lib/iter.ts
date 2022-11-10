@@ -4,7 +4,7 @@ import { None, Some } from './option';
 import type { Result } from './result';
 import { Err, Ok } from './result';
 import { Ordering } from './traits';
-class Iter<T> {
+export class Iter<T> {
   constructor(private iterable: Iterable<T> = []) {
     this.iterator = this.iterable[Symbol.iterator]();
   }
@@ -460,4 +460,3 @@ class Iter<T> {
 }
 
 export const iter = staticify(Iter);
-iter<1>();
