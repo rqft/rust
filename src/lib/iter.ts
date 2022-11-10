@@ -4,7 +4,7 @@ import { None, Some } from './option';
 import type { Result } from './result';
 import { Err, Ok } from './result';
 import { Ordering } from './traits';
-export class Iter<T> {
+export class Iter<T> implements Iterable<Option<T>> {
   constructor(private iterable: Iterable<T> = []) {
     this.iterator = this.iterable[Symbol.iterator]();
   }
