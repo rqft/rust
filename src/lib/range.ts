@@ -34,21 +34,26 @@ export class Range implements Iterable<number> {
     }
   }
 
-  public *use<T>(iterable: Iterable<T>): Iterable<T> {
-    let i = 0;
-    for (const value of iterable) {
-      if (i >= this.end().unwrap()) {
-        break;
-      }
+  public use<T>(iterable: Iterable<T>): Iter<T> {
+    const shield = this;
+    return iter.new(
+      (function* (): Generator<T, void, unknown> {
+        let i = 0;
+        for (const value of iterable) {
+          if (i >= shield.end().unwrap()) {
+            break;
+          }
 
-      if (i < this.start().unwrap()) {
-        i++;
-        continue;
-      }
+          if (i < shield.start().unwrap()) {
+            i++;
+            continue;
+          }
 
-      i++;
-      yield value;
-    }
+          i++;
+          yield value;
+        }
+      })()
+    );
   }
 
   public static new(open: number, close: number): Range {
@@ -132,15 +137,20 @@ export class RangeFrom extends Range {
     return value >= this.start().unwrap();
   }
 
-  public *use<T>(iterable: Iterable<T>): Iterable<T> {
-    let i = 0;
-    for (const value of iterable) {
-      if (i++ < this.start().unwrap()) {
-        continue;
-      }
+  public use<T>(iterable: Iterable<T>): Iter<T> {
+    const shield = this;
+    return iter.new(
+      (function* (): Generator<T, void, unknown> {
+        let i = 0;
+        for (const value of iterable) {
+          if (i++ < shield.start().unwrap()) {
+            continue;
+          }
 
-      yield value;
-    }
+          yield value;
+        }
+      })()
+    );
   }
 
   public static new(open: number): RangeFrom {
@@ -170,10 +180,8 @@ export class RangeFull extends Range {
     return false;
   }
 
-  public *use<T>(iterable: Iterable<T>): Iterable<T> {
-    for (const value of iterable) {
-      yield value;
-    }
+  public use<T>(iterable: Iterable<T>): Iter<T> {
+    return iter.new(iterable);
   }
 
   // eslint-disable-next-line require-yield
@@ -197,21 +205,26 @@ export class RangeInclusive extends Range {
     }
   }
 
-  public *use<T>(iterable: Iterable<T>): Iterable<T> {
-    let i = 0;
-    for (const value of iterable) {
-      if (i > this.end().unwrap()) {
-        break;
-      }
+  public use<T>(iterable: Iterable<T>): Iter<T> {
+    const shield = this;
+    return iter.new(
+      (function* (): Generator<T, void, unknown> {
+        let i = 0;
+        for (const value of iterable) {
+          if (i > shield.end().unwrap()) {
+            break;
+          }
 
-      if (i < this.start().unwrap()) {
-        i++;
-        continue;
-      }
+          if (i < shield.start().unwrap()) {
+            i++;
+            continue;
+          }
 
-      i++;
-      yield value;
-    }
+          i++;
+          yield value;
+        }
+      })()
+    );
   }
 
   public contains(value: number): boolean {
@@ -236,15 +249,20 @@ export class RangeTo extends Range {
     return value < this.end().unwrap();
   }
 
-  public *use<T>(iterable: Iterable<T>): Iterable<T> {
-    let i = 0;
-    for (const value of iterable) {
-      if (i++ >= this.end().unwrap()) {
-        break;
-      }
+  public use<T>(iterable: Iterable<T>): Iter<T> {
+    const shield = this;
+    return iter.new(
+      (function* (): Generator<T, void, unknown> {
+        let i = 0;
+        for (const value of iterable) {
+          if (i++ >= shield.end().unwrap()) {
+            break;
+          }
 
-      yield value;
-    }
+          yield value;
+        }
+      })()
+    );
   }
 
   public static new(open: number): RangeTo {
@@ -265,15 +283,20 @@ export class RangeToInclusive extends Range {
     return value <= this.end().unwrap();
   }
 
-  public *use<T>(iterable: Iterable<T>): Iterable<T> {
-    let i = 0;
-    for (const value of iterable) {
-      if (i++ > this.end().unwrap()) {
-        break;
-      }
+  public use<T>(iterable: Iterable<T>): Iter<T> {
+    const shield = this;
+    return iter.new(
+      (function* (): Generator<T, void, unknown> {
+        let i = 0;
+        for (const value of iterable) {
+          if (i++ > shield.end().unwrap()) {
+            break;
+          }
 
-      yield value;
-    }
+          yield value;
+        }
+      })()
+    );
   }
 
   public static new(open: number): RangeToInclusive {

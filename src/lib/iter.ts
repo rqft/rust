@@ -2,7 +2,7 @@ import { staticify } from '../tools';
 import { None, Some, type Option } from './option';
 import { Err, Ok, type Result } from './result';
 import { Ordering } from './traits';
-export class Iter<T> {
+export class Iter<T> implements Iterable<Option<T>> {
   constructor(private iterable: Iterable<T> = []) {
     this.iterator = this.iterable[Symbol.iterator]();
   }
