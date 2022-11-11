@@ -32,8 +32,6 @@ export function staticify<T extends FnConstructor>(value: T): Staticify<T> {
         return target;
       }
 
-      console.log(p);
-
       // static constants
       if (p in value) {
         return value[p as keyof typeof value];
@@ -56,7 +54,7 @@ export function staticify<T extends FnConstructor>(value: T): Staticify<T> {
     },
 
     apply(target, thisArg, argArray): any {
-      return new (target.bind(thisArg))(argArray);
+      return new (target.bind(thisArg))(...argArray);
     },
   }) as never;
 }

@@ -1,8 +1,6 @@
 import { staticify } from '../tools';
-import type { Option } from './option';
-import { None, Some } from './option';
-import type { Result } from './result';
-import { Err, Ok } from './result';
+import { None, Some, type Option } from './option';
+import { Err, Ok, type Result } from './result';
 import { Ordering } from './traits';
 export class Iter<T> {
   constructor(private iterable: Iterable<T> = []) {
@@ -254,8 +252,8 @@ export class Iter<T> {
     return this;
   }
 
-  public collect(): Array<Option<T>> {
-    return Array.from(this);
+  public collect(): Array<T> {
+    return Array.from(this).map(x=>x.unwrap());
   }
 
   public partition(p: (value: Option<T>) => boolean): {

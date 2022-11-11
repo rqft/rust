@@ -1,3 +1,5 @@
+import { inspect } from 'util';
+
 export type FnOnce<T> = () => T;
 export type FnConsume<T> = (T: T) => T;
 export type FnMap<T, U> = (T: T) => U;
@@ -12,8 +14,37 @@ export interface Comparison<T> {
   le(this: this, other: T): boolean;
 }
 
+export abstract class PartialComparison<T> implements Comparison<T> {
+  public abstract eq(this: this, other: T): boolean;
+  public abstract cmp(this: this, other: T): Ordering;
+
+  public ne(this: this, other: T): boolean {
+    return !this.eq(other);
+  }
+
+  public lt(this: this, other: T): boolean {
+    return this.cmp(other) === Ordering.Less;
+  }
+
+  public gt(this: this, other: T): boolean {
+    return this.cmp(other) === Ordering.More;
+  }
+
+  public le(this: this, other: T): boolean {
+    return !this.gt(other);
+  }
+
+  public ge(this: this, other: T): boolean {
+    return !this.lt(other);
+  }
+}
+
 export enum Ordering {
   Less = -1,
   Equal = 0,
   More = 1,
+}
+
+export interface Debug {
+  [inspect.custom](): string;
 }

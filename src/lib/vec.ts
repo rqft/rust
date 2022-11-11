@@ -1,9 +1,9 @@
 import { staticify } from '../tools';
-import type { Option } from './option';
-import { None, Some } from './option';
+
+import { None, Some, type Option } from './option';
 import type { FnMap, FnOnce } from './traits';
 
-class Vec<T> {
+export class Vec<T> {
   private readonly alloc: Array<Option<T>> = [];
   public static new<T>(): Vec<T> {
     return new this<T>();

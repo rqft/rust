@@ -1,6 +1,6 @@
 import { staticify } from '../tools';
-import type { Option } from './option';
-import { None, Some } from './option';
+
+import { None, Some, type Option } from './option';
 import type { FnConsume, FnMap } from './traits';
 interface ResultImpl<T, E> {
   /** Returns true if the result is Ok. */

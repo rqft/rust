@@ -1,8 +1,6 @@
 import { staticify } from '../tools';
-import type { Iter } from './iter';
-import { iter } from './iter';
-import type { NoneImpl, Option } from './option';
-import { None, Some } from './option';
+import { iter, type Iter } from './iter';
+import { None, Some, type NoneImpl, type Option } from './option';
 
 export class Range implements Iterable<number> {
   constructor(
@@ -19,10 +17,7 @@ export class Range implements Iterable<number> {
   }
 
   public contains(value: number): boolean {
-    return this.start()
-      .andThen<boolean>((f) => Some(value >= f))
-      .and(this.end().andThen((f) => Some(value < f)))
-      .unwrap();
+    return value >= this.start().unwrap() && value < this.end().unwrap();
   }
 
   public isEmpty(): boolean {
@@ -134,9 +129,7 @@ export class RangeFrom extends Range {
   }
 
   public contains(value: number): boolean {
-    return this.start()
-      .andThen<boolean>((f) => Some(value >= f))
-      .unwrap();
+    return value >= this.start().unwrap();
   }
 
   public *use<T>(iterable: Iterable<T>): Iterable<T> {
@@ -221,6 +214,10 @@ export class RangeInclusive extends Range {
     }
   }
 
+  public contains(value: number): boolean {
+    return value >= this.start().unwrap() && value <= this.end().unwrap();
+  }
+
   public static new(open: number, close: number): RangeInclusive {
     return new this(open, close);
   }
@@ -236,9 +233,7 @@ export class RangeTo extends Range {
   }
 
   public contains(value: number): boolean {
-    return this.end()
-      .andThen<boolean>((f) => Some(value < f))
-      .unwrap();
+    return value < this.end().unwrap();
   }
 
   public *use<T>(iterable: Iterable<T>): Iterable<T> {
@@ -267,9 +262,7 @@ export class RangeToInclusive extends Range {
   }
 
   public contains(value: number): boolean {
-    return this.end()
-      .andThen<boolean>((f) => Some(value <= f))
-      .unwrap();
+    return value <= this.end().unwrap();
   }
 
   public *use<T>(iterable: Iterable<T>): Iterable<T> {

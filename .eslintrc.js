@@ -20,8 +20,12 @@ module.exports = {
     quotes: ["warn", "single"],
     semi: ["error", "always"],
     "@typescript-eslint/consistent-type-imports": [
-      "warn",
-      { prefer: "type-imports" },
+      2,
+      {
+        prefer: "type-imports",
+        disallowTypeAnnotations: true,
+        // fixStyle: "separate-type-imports",
+      },
     ],
     "@typescript-eslint/no-unnecessary-condition": "warn",
     "@typescript-eslint/array-type": [
@@ -31,11 +35,11 @@ module.exports = {
         readonly: "generic",
       },
     ],
-    "@typescript-eslint/no-this-alias": ["warn", {"allowedNames": ['shield']}],
+    "@typescript-eslint/no-this-alias": ["warn", { allowedNames: ["shield"] }],
     "@typescript-eslint/explicit-function-return-type": ["warn"],
     "@typescript-eslint/await-thenable": "error",
     "@typescript-eslint/no-namespace": "off",
-    "@typescript-eslint/sort-type-union-intersection-members": 'warn',
+    "@typescript-eslint/sort-type-union-intersection-members": "warn",
     "@typescript-eslint/prefer-includes": "warn",
     "@typescript-eslint/naming-convention": [
       "warn",
@@ -50,8 +54,10 @@ module.exports = {
     ],
     // extensions
 
-    "keyword-spacing": 'off',
-    "@typescript-eslint/keyword-spacing": ["warn", { before:true, after:true }]
-
+    "keyword-spacing": "off",
+    "@typescript-eslint/keyword-spacing": [
+      "warn",
+      { before: true, after: true },
+    ],
   },
 };
