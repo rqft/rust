@@ -1,15 +1,17 @@
 import { staticify } from '../tools';
-import { iter, type Iter } from './iter';
-import { None, Some, type Option } from './option';
+import type { Iter } from './iter';
+import { iter } from './iter';
+import type { Option } from './option';
+import { None, Some } from './option';
 import { range, rangeInclusive } from './range';
-import { Err, Ok, type Result } from './result';
+import type { Result } from './result';
+import { Err, Ok } from './result';
 import { Ordering, PartialComparison } from './traits';
-import { vec, type Vec } from './vec';
+import type { Vec } from './vec';
+import { vec } from './vec';
 
-export class Char<T extends string>
-  extends PartialComparison<CharLike<T>>
+export class Char<T extends string> extends PartialComparison<CharLike<T>> {
   // implements Debug
-{
   private value: number;
   constructor(value: CharLike<T>, safe = true) {
     super();
@@ -34,16 +36,6 @@ export class Char<T extends string>
 
     this.value = value;
   }
-  // [inspect.custom](): string {
-  //   throw new Error('Method not implemented.');
-  // }
-
-  // public [inspect.custom](): string {
-  //   return `Char { '${this.escapeDefault()
-  //     .collect()
-  //     .map((x) => x.unwrap())
-  //     .join('')}' }`;
-  // }
 
   public static new<T extends string>(value: CharLike<T>): Char<T> {
     return new Char(value);
@@ -139,24 +131,29 @@ export class Char<T extends string>
   }
 
   public escapeUnicode(): Iter<Char<string>> {
-    return iter.new(`\\u${this.value.toString(16).padStart(4, '0')}`.split('').map(Char.new));
+    return iter.new(
+      `\\u${this.value.toString(16).padStart(4, '0')}`.split('').map(Char.new)
+    );
   }
 
   public escapeDebug(): Iter<Char<string>> {
     return iter.new(
-      this.str().replace(/.|\n/g, (z) => {
-        return (
-          {
-            '\u0000': '\\0000',
-            '\t': '\\t',
-            '\r': '\\r',
-            '\n': '\\n',
-            '"': '\\"',
-            '\'': '\\\'',
-            '\\': '\\\\',
-          }[z] || z
-        );
-      }).split('').map(x=>Char.new(x))
+      this.str()
+        .replace(/.|\n/g, (z) => {
+          return (
+            {
+              '\u0000': '\\0000',
+              '\t': '\\t',
+              '\r': '\\r',
+              '\n': '\\n',
+              '"': '\\"',
+              '\'': '\\\'',
+              '\\': '\\\\',
+            }[z] || z
+          );
+        })
+        .split('')
+        .map((x) => Char.new(x))
     );
   }
 
@@ -248,31 +245,32 @@ export class Char<T extends string>
   public isNumeric(): boolean {
     return this.match(/\p{N}/u);
   }
-  public toLowercase(): Iter<Char<Lowercase<T>>> {
-    return iter
-      .new(this.str().toLowerCase())
-      .map((x) => x.unwrapWith(Char.new));
+
+  public toLowercase(): Char<Lowercase<T>> {
+    return Char.new(
+      iter.new(this.str().toLowerCase()).map(Char.new).collect().join('')
+    );
   }
 
-  public toUppercase(): Iter<Char<Uppercase<T>>> {
-    return iter
-      .new(this.str().toUpperCase())
-      .map((x) => x.unwrapWith(Char.new));
+  public toUppercase(): Char<Uppercase<T>> {
+    return Char.new(
+      iter.new(this.str().toUpperCase()).map(Char.new).collect().join('')
+    );
   }
 
   public isAscii(): boolean {
     return range(0, 256).contains(this.value);
   }
 
-  public toAsciiUppercase(): Iter<Char<Uppercase<T>>> {
+  public toAsciiUppercase(): Char<Uppercase<T>> {
     if (this.isAscii()) {
       return this.toUppercase();
     }
 
-    return this.iter() as never;
+    return this as never;
   }
 
-  public toAsciiLowercase(): Iter<Char<Lowercase<T>>> {
+  public toAsciiLowercase(): Char<Lowercase<T>> {
     if (this.isAscii()) {
       return this.toLowercase();
     }
@@ -285,18 +283,16 @@ export class Char<T extends string>
   }
 
   public equalsIgnoreAsciiCase(other: CharLike<T>): boolean {
-    return this.toAsciiLowercase()
-      .next()
-      .contains(Char.new(other).toAsciiLowercase().next().unwrap());
+    return this.toAsciiLowercase().eq(Char.new(other).toAsciiLowercase());
   }
 
   public makeAsciiUppercase(): this {
-    this.value = this.toAsciiUppercase().next().unwrap().value;
+    this.value = this.toAsciiUppercase().value;
     return this;
   }
 
   public makeAsciiLowercase(): this {
-    this.value = this.toAsciiLowercase().next().unwrap().value;
+    this.value = this.toAsciiLowercase().value;
     return this;
   }
 

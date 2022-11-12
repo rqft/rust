@@ -1,8 +1,9 @@
 import { staticify } from '../tools';
-import { None, Some, type Option } from './option';
-import { Err, Ok, type Result } from './result';
-import { Ordering } from './traits';
-export class Iter<T> implements Iterable<Option<T>> {
+import type { Option } from './option';
+import { None, Some } from './option';
+import type { Result } from './result';
+import { Err, Ok } from './result';
+export class Iter<T> implements Iterable<T> {
   constructor(private iterable: Iterable<T> = []) {
     this.iterator = this.iterable[Symbol.iterator]();
   }
@@ -22,7 +23,7 @@ export class Iter<T> implements Iterable<Option<T>> {
       return None;
     }
 
-    return Some(value);
+    return Some(value as T);
   }
 
   public count(): number {
@@ -40,7 +41,7 @@ export class Iter<T> implements Iterable<Option<T>> {
     let z: Option<T> = None;
 
     for (const value of this) {
-      z = value;
+      z = Some(value);
     }
 
     return z;
@@ -125,7 +126,7 @@ export class Iter<T> implements Iterable<Option<T>> {
     return new Iter(
       (function* (): Generator<T | U, void, undefined> {
         for (const value of shield) {
-          yield value.unwrap();
+          yield value;
           yield separator;
         }
       })()
@@ -137,14 +138,14 @@ export class Iter<T> implements Iterable<Option<T>> {
     return new Iter(
       (function* (): Generator<T, void, undefined> {
         for (const value of shield) {
-          yield value.unwrap();
+          yield value;
           yield f();
         }
       })()
     );
   }
 
-  public map<U = T>(f: (value: Option<T>) => U): Iter<U> {
+  public map<U = T>(f: (value: T) => U): Iter<U> {
     const shield = this;
     return new Iter(
       (function* (): Generator<U, void, undefined> {
@@ -155,7 +156,7 @@ export class Iter<T> implements Iterable<Option<T>> {
     );
   }
 
-  public forEach(f: (value: Option<T>) => unknown): this {
+  public forEach(f: (value: T) => unknown): this {
     for (const value of this) {
       f(value);
     }
@@ -164,13 +165,13 @@ export class Iter<T> implements Iterable<Option<T>> {
     return this;
   }
 
-  public filter(f: (value: Option<T>) => boolean): Iter<T> {
+  public filter(f: (value: T) => boolean): Iter<T> {
     const shield = this;
     return new Iter(
       (function* (): Generator<T, void, undefined> {
         for (const value of shield) {
           if (f(value)) {
-            yield value.unwrap();
+            yield value;
           }
         }
       })()
@@ -178,8 +179,8 @@ export class Iter<T> implements Iterable<Option<T>> {
   }
 
   public filterMap<U = T>(
-    f: (value: Option<T>) => boolean,
-    m: (value: Option<T>) => U
+    f: (value: T) => boolean,
+    m: (value: T) => U
   ): Iter<U> {
     return this.filter(f).map(m);
   }
@@ -190,7 +191,7 @@ export class Iter<T> implements Iterable<Option<T>> {
       (function* (): Generator<[number, T], void, undefined> {
         let i = 0;
         for (const value of shield) {
-          yield [i++, value.unwrap()];
+          yield [i++, value];
         }
       })()
     );
@@ -200,7 +201,7 @@ export class Iter<T> implements Iterable<Option<T>> {
     return this.clone().next();
   }
 
-  public skipWhile(f: (value: Option<T>) => boolean): Iter<T> {
+  public skipWhile(f: (value: T) => boolean): Iter<T> {
     const shield = this;
     return new Iter(
       (function* (): Generator<T, void, undefined> {
@@ -208,7 +209,7 @@ export class Iter<T> implements Iterable<Option<T>> {
           if (f(value)) {
             continue;
           }
-          yield value.unwrap();
+          yield value;
         }
       })()
     );
@@ -219,7 +220,7 @@ export class Iter<T> implements Iterable<Option<T>> {
     return this.skipWhile(() => i++ < n);
   }
 
-  public takeWhile(f: (value: Option<T>) => boolean): Iter<T> {
+  public takeWhile(f: (value: T) => boolean): Iter<T> {
     const shield = this;
     return new Iter(
       (function* (): Generator<T, void, undefined> {
@@ -227,7 +228,7 @@ export class Iter<T> implements Iterable<Option<T>> {
           if (!f(value)) {
             continue;
           }
-          yield value.unwrap();
+          yield value;
         }
       })()
     );
@@ -238,25 +239,22 @@ export class Iter<T> implements Iterable<Option<T>> {
     return this.takeWhile(() => i++ < n);
   }
 
-  public mapWhile<U>(
-    t: (value: Option<T>) => boolean,
-    m: (value: Option<T>) => U
-  ): Iter<U> {
+  public mapWhile<U>(t: (value: T) => boolean, m: (value: T) => U): Iter<U> {
     return this.takeWhile(t).map(m);
   }
 
   // skip: fuse
 
-  public inspect(i: (value: Option<T>) => unknown): this {
+  public inspect(i: (value: T) => unknown): this {
     this.clone().forEach(i);
     return this;
   }
 
   public collect(): Array<T> {
-    return Array.from(this).map(x=>x.unwrap());
+    return Array.from(this);
   }
 
-  public partition(p: (value: Option<T>) => boolean): {
+  public partition(p: (value: T) => boolean): {
     true: Iter<T>;
     false: Iter<T>;
   } {
@@ -264,16 +262,16 @@ export class Iter<T> implements Iterable<Option<T>> {
 
     for (const value of this) {
       if (p(value)) {
-        out.true.push(value.unwrap());
+        out.true.push(value);
       } else {
-        out.false.push(value.unwrap());
+        out.false.push(value);
       }
     }
 
     return { true: new Iter(out.true), false: new Iter(out.false) };
   }
 
-  public fold<B>(init: B, f: (b: B, value: Option<T>) => B): B {
+  public fold<B>(init: B, f: (b: B, value: T) => B): B {
     for (const value of this) {
       init = f(init, value);
     }
@@ -281,17 +279,17 @@ export class Iter<T> implements Iterable<Option<T>> {
     return init;
   }
 
-  public reduce(f: (acc: Option<T>, value: Option<T>) => Option<T>): Option<T> {
-    let out: Option<T> = None;
+  public reduce(f: (acc: Option<T>, value: T) => T, start?: T): Option<T> {
+    let out: Option<T> = start ? Some(start) : None;
 
     for (const value of this) {
-      out = f(out, value);
+      out = Some(f(out, value));
     }
 
     return out;
   }
 
-  public all(f: (value: Option<T>) => boolean): boolean {
+  public all(f: (value: T) => boolean): boolean {
     for (const value of this) {
       if (!f(value)) {
         return false;
@@ -301,7 +299,7 @@ export class Iter<T> implements Iterable<Option<T>> {
     return true;
   }
 
-  public any(f: (value: Option<T>) => boolean): boolean {
+  public any(f: (value: T) => boolean): boolean {
     for (const value of this) {
       if (f(value)) {
         return true;
@@ -311,24 +309,21 @@ export class Iter<T> implements Iterable<Option<T>> {
     return false;
   }
 
-  public find(f: (value: Option<T>) => boolean): Option<T> {
+  public find(f: (value: T) => boolean): Option<T> {
     for (const value of this) {
       if (f(value)) {
-        return value;
+        return Some(value);
       }
     }
 
     return None;
   }
 
-  public findMap<U>(
-    m: (value: Option<T>) => U,
-    f: (value: Option<U>) => boolean
-  ): Option<U> {
+  public findMap<U>(m: (value: T) => U, f: (value: U) => boolean): Option<U> {
     return this.map(m).find(f);
   }
 
-  public position(f: (value: Option<T>) => boolean): Option<number> {
+  public position(f: (value: T) => boolean): Option<number> {
     let i = 0;
     for (const value of this) {
       if (f(value)) {
@@ -341,73 +336,33 @@ export class Iter<T> implements Iterable<Option<T>> {
     return None;
   }
 
-  public maxBy(
-    o: (value: Option<T>, against: Option<T>) => Ordering
-  ): Option<T> {
-    let max: Option<T> = None;
-
-    for (const value of this) {
-      const z = o(value, max);
-
-      if (z === Ordering.More) {
-        max = value;
-      }
-    }
-
-    return max;
-  }
-
-  public max(): Option<T> {
-    return this.maxBy((o, a) => o.unwrapWith(Number) - a.unwrapWith(Number));
-  }
-
-  public minBy(
-    o: (value: Option<T>, against: Option<T>) => Ordering
-  ): Option<T> {
-    let min: Option<T> = None;
-
-    for (const value of this) {
-      const z = o(value, min);
-
-      if (z === Ordering.Less) {
-        min = value;
-      }
-    }
-
-    return min;
-  }
-
-  public min(): Option<T> {
-    return this.minBy((o, a) => o.unwrapWith(Number) - a.unwrapWith(Number));
-  }
-
   public cycle(): Iter<T> {
     const shield = this;
     return new Iter(
       (function* (): Generator<T, void, undefined> {
         while (1 + 1) {
           for (const value of shield.clone()) {
-            yield value.unwrap();
+            yield value;
           }
         }
       })()
     );
   }
 
-  public sumBy(n: (value: Option<T>) => number): Option<number> {
-    return Some(this.map(n).fold(0, (b, v) => b + v.unwrap()));
+  public sumBy(n: (value: T) => number): Option<number> {
+    return Some(this.map(n).fold(0, (b, v) => b + v));
   }
 
-  public productBy(n: (value: Option<T>) => number): Option<number> {
-    return Some(this.map(n).fold(0, (b, v) => b * v.unwrap()));
+  public productBy(n: (value: T) => number): Option<number> {
+    return Some(this.map(n).fold(0, (b, v) => b * v));
   }
 
   public sum(): Option<number> {
-    return this.sumBy((x) => x.unwrapWith(Number));
+    return this.sumBy(Number);
   }
 
   public product(): Option<number> {
-    return this.productBy((x) => x.unwrapWith(Number));
+    return this.productBy(Number);
   }
 
   public reverse(): Iter<T> {
@@ -431,18 +386,16 @@ export class Iter<T> implements Iterable<Option<T>> {
     return i;
   }
 
-  public *[Symbol.iterator](): Generator<Option<T>, Option<never>, unknown> {
+  public *[Symbol.iterator](): Generator<T, void, unknown> {
     while (1 + 1) {
       const id = this.iterator.next();
 
       if (id.done) {
-        return None;
+        return;
       }
 
-      yield Some(id.value);
+      yield id.value;
     }
-
-    return None;
   }
 
   public clone(): Iter<T> {

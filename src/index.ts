@@ -1,3 +1,5 @@
+import { u8 } from './lib/int';
+
 export { iter } from './lib/iter';
 export { None, Option, Some } from './lib/option';
 export {
@@ -11,8 +13,4 @@ export {
 export { Err, Ok, result as Result } from './lib/result';
 export * as traits from './lib/traits';
 
-import { char } from './lib/char';
-
-for (const c of char.new('\n').escapeUnicode().collect()) {
-  process.stdout.write(c.str());
-}
+console.log(u8(0b101010).rotateLeft(1).value.toString(2));

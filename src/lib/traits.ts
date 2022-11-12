@@ -1,4 +1,3 @@
-import { inspect } from 'util';
 
 export type FnOnce<T> = () => T;
 export type FnConsume<T> = (T: T) => T;
@@ -43,8 +42,4 @@ export enum Ordering {
   Less = -1,
   Equal = 0,
   More = 1,
-}
-
-export interface Debug {
-  [inspect.custom](): string;
 }
