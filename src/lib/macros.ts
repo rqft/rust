@@ -1,5 +1,6 @@
 import type { StrLike } from './str';
 import { str } from './str';
+import type { Debug, Display } from './traits';
 
 export function assert(value: unknown, content = `${value}`): asserts value {
   if (!value) {
@@ -50,14 +51,28 @@ export function format(content: string, argv: object = [] as never): string {
       let name: unknown = tag;
       if ((tag || '') in argv) {
         name = argv[tag as never];
-      }
-
-      if (tag === '' || i === '') {
+      } else if (tag === '' || i === '') {
         if (idx >= Object.keys(argv).filter((x) => !Number.isNaN(x)).length) {
           throw new Error('args already exhausted');
         }
 
         name = argv[idx++ as never];
+      } 
+      
+      if (name === undefined) {
+        name = 'undefined';
+      }
+
+      if (typeof name === 'object' || typeof name === 'function') {
+        if (modifier?.split(':').includes('?')) {
+          if ('fmtDebug' in (name as Debug)) {
+            name = (name as Debug).fmtDebug();
+          } else {
+            throw new Error(`${name} does not impl trait \`Debug\``);
+          }
+        } else if ('fmt' in (name as Display)) {
+          name = (name as Display).fmt();
+        }
       }
 
       let out = String(name);
@@ -234,3 +249,4 @@ export function unreachable(content = 'unreachable'): never {
 }
 
 export { vec } from './vec';
+

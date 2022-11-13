@@ -6,11 +6,15 @@ import { None, Some } from './option';
 import { range, rangeInclusive } from './range';
 import type { Result } from './result';
 import { Err, Ok } from './result';
+import type { Copy, Debug, Default, Display } from './traits';
 import { Ordering, PartialComparison } from './traits';
 import type { Vec } from './vec';
 import { vec } from './vec';
 
-export class Char<T extends string> extends PartialComparison<CharLike<T>> {
+export class Char<T extends string>
+  extends PartialComparison<CharLike<T>>
+  implements Debug, Display, Copy, Default
+{
   // implements Debug
   private value: number;
   constructor(value: CharLike<T>, safe = true) {
@@ -30,11 +34,27 @@ export class Char<T extends string> extends PartialComparison<CharLike<T>> {
       rangeInclusive(0xd800, 0xdfff).contains(value)
     ) {
       if (safe) {
-        throw `invalid char '\\u${value.toString(16).padStart(4, '0')}'`;
+        throw new Error(`invalid char '\\u${value.toString(16).padStart(4, '0')}'`);
       }
     }
 
     this.value = value;
+  }
+
+  public fmt(): string {
+    return `'${this.str()}'`;
+  }
+
+  public fmtDebug(): string {
+    return `'${this.escapeUnicode().collect().map(x=>x.str()).join('')}'`;
+  }
+
+  public clone(): Char<T> {
+    return Char.new(this.value);
+  }
+
+  public default(): Char<'\u0000'> {
+    return Char.new(0);
   }
 
   public static new<T extends string>(value: CharLike<T>): Char<T> {

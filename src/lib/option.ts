@@ -1,6 +1,7 @@
 import { staticify } from '../tools';
-import type { FnConsume, FnMap, FnOnce } from './traits';
-interface OptionImpl<T> {
+import { format } from './macros';
+import type { Copy, Debug, Display, FnConsume, FnMap, FnOnce } from './traits';
+interface OptionImpl<T> extends Debug, Display, Copy {
   /** Returns `true` if the option is a `Some` value. */
   isSome(): boolean;
   /** @nightly Returns true if the option is a Some and the value inside of it matches a predicate. */
@@ -79,6 +80,18 @@ interface OptionImpl<T> {
 
 export class SomeImpl<T> implements OptionImpl<T> {
   constructor(private value: T) {}
+
+  public clone(): SomeImpl<T> {
+    return Some.new(this.value);
+  }
+
+  public fmt(): string {
+    return format('Some({})', [this.value]);
+  }
+
+  public fmtDebug(): string {
+    return format('Some({:?})', [this.value]);
+  }
 
   public isSome(): true {
     return true;
@@ -223,6 +236,19 @@ export class SomeImpl<T> implements OptionImpl<T> {
 export class NoneImpl implements OptionImpl<never> {
   constructor() {
     void 0;
+  }
+
+  public clone(): NoneImpl {
+    // no alloc? :bitches:
+    return None;
+  }
+
+  public fmtDebug(): string {
+    return 'None';
+  }
+
+  public fmt(): string {
+    return 'None';
   }
 
   public isSome(): false {

@@ -3,9 +3,14 @@ import type { Option } from './option';
 import { None, Some } from './option';
 import type { Result } from './result';
 import { Err, Ok } from './result';
-export class Iter<T> implements Iterable<T> {
+import type { Copy, Default } from './traits';
+export class Iter<T> implements Iterable<T>, Copy, Default {
   constructor(private iterable: Iterable<T> = []) {
     this.iterator = this.iterable[Symbol.iterator]();
+  }
+
+  public default(): Iter<never> {
+    return Iter.new([]);
   }
 
   private iterator: Iterator<T, unknown, undefined>;

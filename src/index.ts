@@ -1,4 +1,4 @@
-import { u8 } from './lib/int';
+import { vec } from './lib/vec';
 
 export { iter } from './lib/iter';
 export { None, Option, Some } from './lib/option';
@@ -13,4 +13,4 @@ export {
 export { Err, Ok, result as Result } from './lib/result';
 export * as traits from './lib/traits';
 
-console.log(u8(0b101010).rotateLeft(1).value.toString(2));
+console.log(vec.from([1,2]).fmtDebug());

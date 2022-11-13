@@ -1,4 +1,3 @@
-
 export type FnOnce<T> = () => T;
 export type FnConsume<T> = (T: T) => T;
 export type FnMap<T, U> = (T: T) => U;
@@ -43,3 +42,20 @@ export enum Ordering {
   Equal = 0,
   More = 1,
 }
+
+export interface Display {
+  fmt(): string;
+}
+
+export interface Debug {
+  fmtDebug(): string;
+}
+
+export interface Copy {
+  clone(): unknown;
+}
+
+export interface Default {
+  default(): unknown;
+}
+

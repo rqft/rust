@@ -1,8 +1,9 @@
 import { staticify } from '../tools';
+import { format } from './macros';
 
 import { None, Some, type Option } from './option';
-import type { FnConsume, FnMap } from './traits';
-interface ResultImpl<T, E> {
+import type { Copy, Debug, Display, FnConsume, FnMap } from './traits';
+export interface ResultImpl<T, E> extends Debug, Display, Copy {
   /** Returns true if the result is Ok. */
   isOk(): boolean;
   /** Returns true if the result is Err. */
@@ -93,8 +94,20 @@ interface ResultImpl<T, E> {
   containsErr(error: E): boolean;
 }
 
-class OkImpl<T> implements ResultImpl<T, never> {
+export class OkImpl<T> implements ResultImpl<T, never> {
   constructor(private value: T) {}
+
+  public clone(): OkImpl<T> {
+    return OkImpl.new(this.value);
+  }
+
+  public fmtDebug(): string {
+    return format('Ok({:?})', [this.value]);
+  }
+
+  public fmt(): string {
+    return format('Ok({})', [this.value]);
+  }
 
   public isOk(): true {
     return true;
@@ -225,8 +238,20 @@ class OkImpl<T> implements ResultImpl<T, never> {
   }
 }
 
-class ErrImpl<E> implements ResultImpl<never, E> {
+export class ErrImpl<E> implements ResultImpl<never, E> {
   constructor(private value: E) {}
+
+  public clone(): ErrImpl<E> {
+    return ErrImpl.new(this.value);
+  }
+
+  public fmtDebug(): string {
+    return format('Ok({:?})', [this.value]);
+  }
+
+  public fmt(): string {
+    return format('Ok({})', [this.value]);
+  }
 
   public isOk(): false {
     return false;

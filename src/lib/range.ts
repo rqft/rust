@@ -3,12 +3,21 @@ import type { Iter } from './iter';
 import { iter } from './iter';
 import type { NoneImpl, Option } from './option';
 import { None, Some } from './option';
+import type { Debug, Display } from './traits';
 
-export class Range implements Iterable<number> {
+export class Range implements Iterable<number>, Display, Debug {
   constructor(
     protected readonly open: number,
     protected readonly close: number
   ) {}
+
+  public fmt(): string {
+    return `${this.open}..${this.close}`;
+  }
+
+  public fmtDebug(): string {
+    return this.fmt();
+  }
 
   public start(): Option<number> {
     return Some(this.open);
@@ -27,10 +36,7 @@ export class Range implements Iterable<number> {
   }
 
   public contains(value: number): boolean {
-    return this.start()
-      .andThen<boolean>((f) => Some(value >= f))
-      .and(this.end().andThen((f) => Some(value < f)))
-      .unwrap();
+    return value >= this.start().unwrap() && value < this.end().unwrap();
   }
 
   public isEmpty(): boolean {
@@ -142,6 +148,14 @@ export class RangeFrom extends Range {
     super(open, Infinity);
   }
 
+  public fmt(): string {
+    return `${this.open}..`;
+  }
+
+  public fmtDebug(): string {
+    return this.fmt();
+  }
+
   public hasEnd(): boolean {
     return false;
   }
@@ -151,9 +165,7 @@ export class RangeFrom extends Range {
   }
 
   public contains(value: number): boolean {
-    return this.start()
-      .andThen<boolean>((f) => Some(value >= f))
-      .unwrap();
+    return value >= this.start().unwrap();
   }
 
   public use<T>(iterable: Iterable<T>): Iter<T> {
@@ -180,6 +192,14 @@ export class RangeFrom extends Range {
 export class RangeFull extends Range {
   constructor() {
     super(-Infinity, Infinity);
+  }
+
+  public fmt(): string {
+    return '..';
+  }
+
+  public fmtDebug(): string {
+    return this.fmt();
   }
 
   public hasStart(): boolean {
@@ -232,6 +252,18 @@ export class RangeInclusive extends Range {
     }
   }
 
+  public contains(value: number): boolean {
+    return value >= this.start().unwrap() && value <= this.end().unwrap();
+  }
+
+  public fmt(): string {
+    return `${this.open}..=${this.close}`;
+  }
+
+  public fmtDebug(): string {
+    return this.fmt();
+  }
+
   public use<T>(iterable: Iterable<T>): Iter<T> {
     const shield = this;
     return iter.new(
@@ -264,6 +296,14 @@ export class RangeTo extends Range {
     super(-Infinity, close);
   }
 
+  public fmt(): string {
+    return `..${this.close}`;
+  }
+
+  public fmtDebug(): string {
+    return this.fmt();
+  }
+
   public start(): NoneImpl {
     return None;
   }
@@ -273,9 +313,7 @@ export class RangeTo extends Range {
   }
 
   public contains(value: number): boolean {
-    return this.end()
-      .andThen<boolean>((f) => Some(value < f))
-      .unwrap();
+    return value < this.end().unwrap();
   }
 
   public use<T>(iterable: Iterable<T>): Iter<T> {
@@ -304,6 +342,14 @@ export class RangeToInclusive extends Range {
     super(-Infinity, close);
   }
 
+  public fmt(): string {
+    return `..=${this.close}`;
+  }
+
+  public fmtDebug(): string {
+    return this.fmt();
+  }
+
   public start(): NoneImpl {
     return None;
   }
@@ -313,9 +359,7 @@ export class RangeToInclusive extends Range {
   }
 
   public contains(value: number): boolean {
-    return this.end()
-      .andThen<boolean>((f) => Some(value <= f))
-      .unwrap();
+    return value <= this.end().unwrap();
   }
 
   public use<T>(iterable: Iterable<T>): Iter<T> {

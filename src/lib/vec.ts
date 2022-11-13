@@ -1,17 +1,49 @@
 import { staticify } from '../tools';
+import { format } from './macros';
 
 import { None, Some, type Option } from './option';
-import type { FnMap, FnOnce } from './traits';
+import type { Copy, Debug, Default, Display, FnMap, FnOnce } from './traits';
 
-export class Vec<T> {
+export class Vec<T> implements Display, Debug, Copy, Default {
   private readonly alloc: Array<Option<T>> = [];
   public static new<T>(): Vec<T> {
     return new this<T>();
   }
 
-  *[Symbol.iterator](): Generator<Option<T>, void, unknown> {
+  public clone(): Vec<T> {
+    return Vec.from(this);
+  }
+
+  public default(): Vec<unknown> {
+    return Vec.new();
+  }
+
+  public fmtDebug(): string {
+    return format('vec![{}; {}]', [this.len(), this.capacity()]);
+  }
+
+  public fmt(): string {
+    return format('vec[{}]', [
+      this.alloc
+        .filter((x) => x.isSome())
+        .map((x) => x.unwrap())
+        .map((x) => {
+          if (typeof x === 'object' || typeof x === 'function') {
+            if ('fmt' in (x as Display)) {
+              return (x as Display).fmt();
+            }
+            throw new Error(`${x} does not impl trait \`Display\``);
+          }
+
+          return String(x);
+        })
+        .join(', '),
+    ]);
+  }
+
+  *[Symbol.iterator](): Generator<T, void, unknown> {
     while (this.len() > 0) {
-      yield this.pop();
+      yield this.pop().unwrap();
     }
   }
 
@@ -64,7 +96,7 @@ export class Vec<T> {
   }
 
   private hasTrail(): boolean {
-    return this.alloc[this.capacity() - 1]?.isNone() ?? true;
+    return this.alloc[this.capacity() - 1]?.isNone() ?? false;
   }
 
   private last(): Option<T> {

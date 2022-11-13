@@ -7,15 +7,34 @@ import type { Option } from './option';
 import { None, Some } from './option';
 import type { Range } from './range';
 import { rangeFrom, rangeTo } from './range';
-import type { Ordering } from './traits';
+import type { Copy, Debug, Default, Display, Ordering } from './traits';
 import { PartialComparison } from './traits';
 import type { Vec } from './vec';
 import { vec } from './vec';
-export class Str extends PartialComparison<StrLike> {
+export class Str
+  extends PartialComparison<StrLike>
+  implements Display, Debug, Copy, Default
+{
   private slice: string;
   constructor(slice: StrLike) {
     super();
     this.slice = Str.of(slice);
+  }
+
+  public clone(): Str {
+    return Str.new(this.slice);
+  }
+
+  public default(): Str {
+    return Str.new('');
+  }
+
+  public fmtDebug(): string {
+    return `"${this.escapeDebug().collect().join('')}"`;
+  }
+
+  public fmt(): string {
+    return `"${this.escapeDefault().collect().join('')}"`;
   }
 
   public static new(slice: StrLike): Str {
@@ -93,7 +112,7 @@ export class Str extends PartialComparison<StrLike> {
   }
 
   public bytes(): Iter<number> {
-    return iter.new(this.asBytes()).map((x) => x.unwrap());
+    return iter.new(this.asBytes()).map((x) => x);
   }
 
   public splitWhitespace(): Iter<string> {
@@ -114,7 +133,7 @@ export class Str extends PartialComparison<StrLike> {
       (function* (): Generator<number, void, unknown> {
         for (const char of shield.chars()) {
           for (const u16 of char.encodeUtf16()) {
-            yield u16.unwrap();
+            yield u16;
           }
         }
       })()
@@ -171,7 +190,7 @@ export class Str extends PartialComparison<StrLike> {
       v.pop();
     }
 
-    return iter.new(v).map((x) => Str.new(x.unwrap()));
+    return iter.new(v).map((x) => Str.new(x));
   }
 
   public rsplitTerminator(str: StrLike): Iter<Str> {
@@ -180,7 +199,7 @@ export class Str extends PartialComparison<StrLike> {
       v.pop();
     }
 
-    return iter.new(v).map((x) => Str.new(x.unwrap()));
+    return iter.new(v).map((x) => Str.new(x));
   }
 
   public splitn(n: number, str: StrLike): Iter<Str> {
