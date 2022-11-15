@@ -29,8 +29,8 @@ export class Vec<T> implements Display, Debug, Copy, Default {
         .map((x) => x.unwrap())
         .map((x) => {
           if (typeof x === 'object' || typeof x === 'function') {
-            if ('fmt' in (x as Display)) {
-              return (x as Display).fmt();
+            if ('fmt' in (x as never as Display)) {
+              return (x as never as Display).fmt();
             }
             throw new Error(`${x} does not impl trait \`Display\``);
           }

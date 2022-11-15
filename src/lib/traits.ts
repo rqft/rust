@@ -59,3 +59,6 @@ export interface Default {
   default(): unknown;
 }
 
+export interface Stringify {
+  toString(): string;
+}

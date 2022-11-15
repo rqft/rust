@@ -58,3 +58,4 @@ export function staticify<T extends FnConstructor>(value: T): Staticify<T> {
     },
   }) as never;
 }
+

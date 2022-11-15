@@ -7,13 +7,21 @@ import type { Option } from './option';
 import { None, Some } from './option';
 import type { Range } from './range';
 import { rangeFrom, rangeTo } from './range';
-import type { Copy, Debug, Default, Display, Ordering } from './traits';
+import type {
+  Copy,
+  Debug,
+  Default,
+  Display,
+  Ordering,
+  Stringify
+} from './traits';
 import { PartialComparison } from './traits';
 import type { Vec } from './vec';
 import { vec } from './vec';
+
 export class Str
   extends PartialComparison<StrLike>
-  implements Display, Debug, Copy, Default
+  implements Display, Debug, Copy, Default, Stringify
 {
   private slice: string;
   constructor(slice: StrLike) {
@@ -48,6 +56,10 @@ export class Str
 
     if (slice instanceof char.static) {
       return slice.str();
+    }
+
+    if (slice instanceof this) {
+      return slice.slice;
     }
 
     return iter.new(slice).collect().join('');
@@ -389,7 +401,13 @@ export class Str
   public cmp(other: StrLike): Ordering {
     return this.slice.localeCompare(Str.of(other)) as Ordering;
   }
+
+  // trait Stringify
+
+  public toString(): string {
+    return this.slice;
+  }
 }
 
-export type StrLike = Char<string> | Iterable<Char<string>> | string;
+export type StrLike = Char<string> | Iterable<Char<string>> | Str | string;
 export const str = staticify(Str);

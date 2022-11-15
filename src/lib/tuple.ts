@@ -131,3 +131,4 @@ export class Tuple<T extends ReadonlyArray<unknown>>
 }
 
 export const tuple = staticify(Tuple);
+export const unit = tuple.new();

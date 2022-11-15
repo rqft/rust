@@ -34,7 +34,9 @@ export class Char<T extends string>
       rangeInclusive(0xd800, 0xdfff).contains(value)
     ) {
       if (safe) {
-        throw new Error(`invalid char '\\u${value.toString(16).padStart(4, '0')}'`);
+        throw new Error(
+          `invalid char '\\u${value.toString(16).padStart(4, '0')}'`
+        );
       }
     }
 
@@ -46,7 +48,10 @@ export class Char<T extends string>
   }
 
   public fmtDebug(): string {
-    return `'${this.escapeUnicode().collect().map(x=>x.str()).join('')}'`;
+    return `'${this.escapeUnicode()
+      .collect()
+      .map((x) => x.str())
+      .join('')}'`;
   }
 
   public clone(): Char<T> {

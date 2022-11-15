@@ -1,5 +1,5 @@
 import { staticify } from '../tools';
-import { format } from './macros';
+// import { format } from './macros';
 import type { Copy, Debug, Display, FnConsume, FnMap, FnOnce } from './traits';
 interface OptionImpl<T> extends Debug, Display, Copy {
   /** Returns `true` if the option is a `Some` value. */
@@ -86,11 +86,13 @@ export class SomeImpl<T> implements OptionImpl<T> {
   }
 
   public fmt(): string {
-    return format('Some({})', [this.value]);
+    return '';
+    // return format('Some({})', [this.value]);
   }
 
   public fmtDebug(): string {
-    return format('Some({:?})', [this.value]);
+    return '';
+    // return format('Some({:?})', [this.value]);
   }
 
   public isSome(): true {
@@ -161,7 +163,8 @@ export class SomeImpl<T> implements OptionImpl<T> {
     if (value) {
       return this;
     }
-    return None;
+
+    return new NoneImpl();
   }
 
   public or(other: Option<T>): this {
@@ -179,7 +182,7 @@ export class SomeImpl<T> implements OptionImpl<T> {
       return this;
     }
 
-    return None;
+    return other as NoneImpl;
   }
 
   public insert(value: T): T {
@@ -210,14 +213,14 @@ export class SomeImpl<T> implements OptionImpl<T> {
 
   public zip<U>(other: Option<U>): Option<[T, U]> {
     if (other.isNone()) {
-      return None;
+      return other as NoneImpl;
     }
     return Some.new([this.unwrap(), other.unwrap()] as [T, U]);
   }
 
   public zipWith<U, R>(other: Option<U>, f: (T: T, U: U) => R): Option<R> {
     if (other.isNone()) {
-      return None;
+      return other as NoneImpl;
     }
 
     return Some.new(f(this.unwrap(), other.unwrap()));
@@ -235,12 +238,17 @@ export class SomeImpl<T> implements OptionImpl<T> {
 
 export class NoneImpl implements OptionImpl<never> {
   constructor() {
+    console.log('ok!');
     void 0;
+  }
+
+  public static new(): NoneImpl {
+    return new this();
   }
 
   public clone(): NoneImpl {
     // no alloc? :bitches:
-    return None;
+    return this;
   }
 
   public fmtDebug(): string {
@@ -290,7 +298,7 @@ export class NoneImpl implements OptionImpl<never> {
 
   public map<U>(f: FnMap<never, U>): NoneImpl {
     void f;
-    return None;
+    return this;
   }
 
   public mapOr<U>(other: U, f: FnMap<never, U>): U {
@@ -328,7 +336,7 @@ export class NoneImpl implements OptionImpl<never> {
 
   public xor<T>(other: Option<T>): Option<T> {
     if (other.isNone()) {
-      return None;
+      return this;
     }
 
     return other;

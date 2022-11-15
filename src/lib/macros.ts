@@ -57,8 +57,8 @@ export function format(content: string, argv: object = [] as never): string {
         }
 
         name = argv[idx++ as never];
-      } 
-      
+      }
+
       if (name === undefined) {
         name = 'undefined';
       }
@@ -204,7 +204,7 @@ export function writeln(
 
 export function print(content: string, argv: object = []): void {
   write(stdout, content, argv);
-  if (stdout.at(-1) === '\n') {
+  if (stdout[stdout.length - 1] === '\n') {
     console.log(stdout.join(''));
     stdout = [];
   }
@@ -217,7 +217,7 @@ export function println(content: string, argv: object = []): void {
 
 export function eprint(content: string, argv: object = []): void {
   write(stderr, content, argv);
-  if (stderr.at(-1) === '\n') {
+  if (stderr[stderr.length - 1] === '\n') {
     console.log(stdout.join(''));
     stderr = [];
   }
