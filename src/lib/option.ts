@@ -81,6 +81,14 @@ interface OptionImpl<T> extends Debug, Display, Copy {
 export class SomeImpl<T> implements OptionImpl<T> {
   constructor(private value: T) {}
 
+  public static ifEq<T>(value: T, is: T): Option<T> {
+    if (value === is) {
+      return new this(value);
+    }
+    
+    return new NoneImpl();
+  }
+
   public clone(): SomeImpl<T> {
     return Some.new(this.value);
   }
@@ -242,6 +250,14 @@ export class NoneImpl implements OptionImpl<never> {
     void 0;
   }
 
+  public static ifEq<T, U extends T>(value: T, is: U): Option<Exclude<T, U>> {
+    if (value === is) {
+      return new this();
+    }
+
+    return new SomeImpl(value as never);
+  }
+
   public static new(): NoneImpl {
     return new this();
   }
@@ -386,5 +402,5 @@ export class NoneImpl implements OptionImpl<never> {
 
 export type Option<T> = NoneImpl | SomeImpl<T>;
 
-export const None = new NoneImpl();
+export const None = Object.assign(new NoneImpl(), NoneImpl);
 export const Some = staticify(SomeImpl);
