@@ -381,50 +381,8 @@ export class ErrImpl<E> implements ResultImpl<never, E> {
 }
 
 export type Result<T, E> = ErrImpl<E> | OkImpl<T>;
-function Rs<T, E>(
-  value?: T,
-  error?: E
-): Result<Exclude<T, undefined>, Exclude<E, undefined>> {
-  if (error !== undefined) {
-    return Err(error as Exclude<E, undefined>);
-  }
 
-  if (value !== undefined) {
-    return Ok(value as Exclude<T, undefined>);
-  }
 
-  throw 'Cannot have Result<never, never>';
-}
-
-interface ResultCheck {
-  ok<T>(value: T): OkImpl<T>;
-  err<E>(value: E): ErrImpl<E>;
-  is_ok<T>(value: Result<T, unknown>): value is OkImpl<T>;
-  is_err<E>(value: Result<unknown, E>): value is ErrImpl<E>;
-  assert_ok<T>(value: Result<T, unknown>): asserts value is OkImpl<T>;
-  assert_err<E>(value: Result<unknown, E>): asserts value is OkImpl<E>;
-}
 
 export const Ok = staticify(OkImpl);
 export const Err = staticify(ErrImpl);
-export const result: ResultCheck & typeof Rs = Object.assign(
-  {
-    ok: Ok,
-    err: Err,
-    is_ok<T>(value: Result<T, unknown>): value is OkImpl<T> {
-      return value.isOk();
-    },
-    is_err<E>(value: Result<unknown, E>): value is ErrImpl<E> {
-      return value.isErr();
-    },
-
-    assert_ok<T>(value: Result<T, unknown>): asserts value is OkImpl<T> {
-      void value.expect('value should not be Err');
-    },
-
-    assert_err<E>(value: Result<unknown, E>): asserts value is ErrImpl<E> {
-      void value.expectErr('value should not be Ok');
-    },
-  } as ResultCheck,
-  Rs
-) as ResultCheck & typeof Rs;
