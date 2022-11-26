@@ -3,12 +3,20 @@ import { iter, Iter } from './iter';
 import { format } from './macros';
 import type { Option } from './option';
 import { None, Some } from './option';
-import type { Copy, Debug, Default, Display, FnMap, Stringify } from './traits';
+import type {
+  Copy,
+  Debug,
+  Default,
+  Display,
+  Eq,
+  FnMap,
+  Stringify
+} from './traits';
 import { tuple, Tuple } from './tuple';
 import type { Vec } from './vec';
 import { vec } from './vec';
 
-export class HashMap<K, V>
+export class HashMap<K extends Eq<K>, V>
 implements Iterable<Tuple<[K, V]>>, Display, Copy, Debug, Default, Stringify
 {
   private readonly alloc: Map<K, V> = new Map<K, V>();
@@ -20,18 +28,22 @@ implements Iterable<Tuple<[K, V]>>, Display, Copy, Debug, Default, Stringify
     }
   }
 
-  public static new<K, V>(): HashMap<K, V> {
+  public static new<K extends Eq<K>, V>(): HashMap<K, V> {
     return new this<K, V>();
   }
 
-  public static withCapacity<K, V>(capacity: number): HashMap<K, V> {
+  public static withCapacity<K extends Eq<K>, V>(
+    capacity: number
+  ): HashMap<K, V> {
     const mut = this.new<K, V>();
 
     mut.cap = capacity;
     return mut;
   }
 
-  public static from<K, V>(iterable: Iterable<[K, V]>): HashMap<K, V> {
+  public static from<K extends Eq<K>, V>(
+    iterable: Iterable<[K, V]>
+  ): HashMap<K, V> {
     const i = this.new<K, V>();
 
     for (const [key, value] of iterable) {
@@ -45,8 +57,8 @@ implements Iterable<Tuple<[K, V]>>, Display, Copy, Debug, Default, Stringify
     return HashMap.from<K, V>(this.alloc);
   }
 
-  public default(): HashMap<unknown, unknown> {
-    return HashMap.new<unknown, unknown>();
+  public default(): HashMap<Eq<unknown> & unknown, unknown> {
+    return HashMap.new<Eq<unknown> & unknown, unknown>();
   }
 
   public fmt(): string {
@@ -89,9 +101,13 @@ implements Iterable<Tuple<[K, V]>>, Display, Copy, Debug, Default, Stringify
   }
 
   public get(key: K): Option<V> {
-    const value = this.alloc.get(key);
+    for (const [k, value] of this.alloc) {
+      if (key.eq(k) || key === k) {
+        return Some(value);
+      }
+    }
 
-    return None.ifEq(value, undefined);
+    return None;
   }
 
   public keys(): Keys<K, V> {
@@ -212,8 +228,6 @@ implements Iterable<Tuple<[K, V]>>, Display, Copy, Debug, Default, Stringify
   public removeEntry(key: K): Option<Entry<K, V>> {
     return this.remove(key).map((value) => tuple.new(key, value));
   }
-
-  
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
