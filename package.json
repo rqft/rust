@@ -1,6 +1,6 @@
 {
   "name": "@rqft/rust",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "hi",
   "main": "dist/index.js",
   "engines": {
