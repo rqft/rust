@@ -24,7 +24,7 @@ export class Duration
     }
 
     // real overflow
-    if (this.secs > Duration.Max.secs || this.secs < 0n || this.nanos < 0n) {
+    if (this.secs > (1n << 64n) - 1n || this.secs < 0n || this.nanos < 0n) {
       panic(
         'Duration is out of bounds: seconds should be within u64, nanos within 1 billion'
       );
