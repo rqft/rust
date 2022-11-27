@@ -27,10 +27,7 @@ export class Range implements Iterable<number> {
   }
 
   public contains(value: number): boolean {
-    return this.start()
-      .andThen<boolean>((f) => Some(value >= f))
-      .and(this.end().andThen((f) => Some(value < f)))
-      .unwrap();
+    return value >= this.start().unwrap() && value < this.end().unwrap();
   }
 
   public isEmpty(): boolean {
@@ -151,9 +148,7 @@ export class RangeFrom extends Range {
   }
 
   public contains(value: number): boolean {
-    return this.start()
-      .andThen<boolean>((f) => Some(value >= f))
-      .unwrap();
+    return value >= this.start().unwrap();
   }
 
   public use<T>(iterable: Iterable<T>): Iter<T> {
@@ -232,6 +227,10 @@ export class RangeInclusive extends Range {
     }
   }
 
+  public contains(value: number): boolean {
+    return value >= this.start().unwrap() && value <= this.end().unwrap();
+  }
+
   public use<T>(iterable: Iterable<T>): Iter<T> {
     const shield = this;
     return iter.new(
@@ -273,9 +272,7 @@ export class RangeTo extends Range {
   }
 
   public contains(value: number): boolean {
-    return this.end()
-      .andThen<boolean>((f) => Some(value < f))
-      .unwrap();
+    return value < this.end().unwrap();
   }
 
   public use<T>(iterable: Iterable<T>): Iter<T> {
@@ -313,9 +310,7 @@ export class RangeToInclusive extends Range {
   }
 
   public contains(value: number): boolean {
-    return this.end()
-      .andThen<boolean>((f) => Some(value <= f))
-      .unwrap();
+    return value <= this.end().unwrap();
   }
 
   public use<T>(iterable: Iterable<T>): Iter<T> {
