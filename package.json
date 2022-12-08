@@ -14,16 +14,18 @@
   "author": "mina",
   "license": "ISC",
   "devDependencies": {
+    "@types/eslint": "^8.4.7",
     "@types/node": "^14.18.13",
     "@types/node-fetch": "^2.5.8",
     "@typescript-eslint/eslint-plugin": "^5.26.0",
     "@typescript-eslint/parser": "^5.26.0",
-    "@types/eslint": "^8.4.7",
     "eslint": "^8.16.0",
-    "prettier": "^2.5.1",
-    "nodemon": "^2.0.16"
+    "nodemon": "^2.0.16",
+    "prettier": "^2.5.1"
   },
   "dependencies": {
+    "@types/ramda": "^0.28.20",
+    "ramda": "^0.28.0",
     "typescript": "^4.4.2"
   },
   "repository": {

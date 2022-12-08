@@ -9,14 +9,15 @@
     "rootDir": "./src",
     "composite": true,
     "removeComments": true,
-    "strict": true,
+    "strict": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": false,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["ES2022"]
   },
   "exclude": ["dist", "node_modules", "kv/*.json", ".eslintrc.js"]
 }
