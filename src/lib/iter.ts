@@ -413,6 +413,8 @@ export class Iter<T> implements Iterable<T>, Copy, Default {
       })()
     );
   }
+
+  public static successors<T>(first: Option<T>, f: (T: T) => T) {}
 }
 
 export const iter = staticify(Iter);
