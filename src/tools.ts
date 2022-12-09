@@ -4,9 +4,7 @@ export type FnConstructor = (new (...args: Array<any>) => any) & {
   'new'(...args: Array<any>): any;
 };
 export type Fn = (...args: Array<any>) => any;
-export type Proto<T> = T extends new (...args: Array<any>) => infer R
-  ? R
-  : never;
+
 
 export type Get<T, P> = P extends keyof T
   ? T[P]
@@ -19,9 +17,9 @@ export type Get<T, P> = P extends keyof T
 export type AnyFunction = Fn | FnConstructor;
 export type Staticify<T extends FnConstructor> = Get<T, 'new'> &
   T & {
-    [P in keyof Proto<T>]: Proto<T>[P] extends (...args: infer U) => unknown
-      ? <Self extends Proto<T>>(self: Self, ...args: U) => ReturnType<Self[P]>
-      : (...args: ConstructorParameters<T>) => Proto<T>[P];
+    [P in keyof InstanceType<T>]: InstanceType<T>[P] extends (...args: infer U) => unknown
+      ? <Self extends InstanceType<T>>(self: Self, ...args: U) => ReturnType<Self[P]>
+      : (...args: ConstructorParameters<T>) => InstanceType<T>[P];
   } & { static: T };
 
 export function staticify<T extends FnConstructor>(value: T): Staticify<T> {
@@ -40,7 +38,7 @@ export function staticify<T extends FnConstructor>(value: T): Staticify<T> {
       if (p in value.prototype) {
         // methods, (&self, ...params) -> R
         if (typeof value.prototype[p] === 'function') {
-          return (self: Proto<T>, ...args: Array<any>) => {
+          return (self: InstanceType<T>, ...args: Array<any>) => {
             return self[p](...args);
           };
         }

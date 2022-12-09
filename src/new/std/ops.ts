@@ -1,9 +1,11 @@
+import { staticify } from '../../tools';
+
 export namespace ops {
-  export interface Add<Rhs, Output> {
+  export interface Add<Rhs, Output = Rhs> {
     add(this: Rhs, other: Rhs): Output;
   }
 
-  export interface AddAssign<Rhs, Output> {
+  export interface AddAssign<Rhs, Output = Rhs> {
     add_assign(this: Rhs, other: Rhs): Output;
   }
 
@@ -43,17 +45,57 @@ export namespace ops {
     drop(): void;
   }
 
-  export interface Fn<Args extends Array<unknown>, Output> {
-    call(...args: Args): Output;
+  export class Fn<Args extends Array<unknown> = [], Output = void> {
+    constructor(protected readonly fn: (...args: Args) => Output) {}
+
+    public call(...args: Args): Readonly<Output> {
+      return Object.freeze(this.fn(...args));
+    }
+
+    public static new<Args extends Array<unknown> = [], Output = void>(
+      fn: (...args: Args) => Output
+    ): Fn<Args, Output> {
+      return new this(fn);
+    }
   }
 
-  export interface FnMut<Args extends Array<unknown>, Output> {
-    call_mut(...args: Args): Output;
+  export const fn = staticify(Fn);
+
+  export class FnMut<
+    Args extends Array<unknown> = [],
+    Output = void
+  > extends Fn<Args, Output> {
+    public call_mut(...args: Args): Output {
+      return this.fn(...args);
+    }
+
+    public static new<Args extends Array<unknown> = [], Output = void>(
+      fn: (...args: Args) => Output
+    ): FnMut<Args, Output> {
+      return new this(fn);
+    }
   }
 
-  export interface FnOnce<Args extends Array<unknown>, Output> {
-    call_once(...args: Args): Output;
+  export const fn_mut = staticify(FnMut);
+
+  export class FnOnce<
+    Args extends Array<unknown> = [],
+    Output = void
+  > extends Fn<Args, Output> {
+    protected called = false;
+    call_once(...args: Args): Readonly<Output> {
+      this.called = true;
+      return this.fn(...args);
+    }
+
+    public static new<Args extends Array<unknown> = [], Output = void>(
+      fn: (...args: Args) => Output
+    ): FnOnce<Args, Output> {
+      return new this(fn);
+    }
   }
+
+  export const fn_once = staticify(FnOnce);
 
   export type Indexable<Idx, Output> = Idx extends PropertyKey
     ? Record<Idx, Output>
@@ -126,5 +168,9 @@ export namespace ops {
 
   export interface SubAssign<Rhs, Output = Rhs> {
     sub_assign(this: Rhs, other: Rhs): Output;
+  }
+
+  export interface Construct<Args extends Array<unknown>, Output> {
+    new (...args: Args): Output;
   }
 }

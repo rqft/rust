@@ -48,9 +48,11 @@ module.exports = {
         selector: ["enumMember", "class", "interface", "typeAlias"],
       },
       {
-        format: ["PascalCase", "camelCase"],
+        // format: ["PascalCase", "camelCase"],
+        format: ["snake_case"],
         selector: ["function", "classProperty", "classMethod", "typeProperty"],
       },
+      // {format:["snake_case"],selector:["classMethod"]}
     ],
     // extensions
 
