@@ -1,5 +1,5 @@
-import type { ops } from './std/ops';
-export namespace globalThis {
+import type { ops } from './new/std/ops';
+declare global {
   export interface Number
     extends ops.Add<number>,
       ops.AddAssign<number>,
@@ -7,7 +7,6 @@ export namespace globalThis {
       ops.BitAndAssign<number>,
       ops.BitOr<number>,
       ops.BitOrAssign<number>,
-      ops.Construct<[number], number>,
       ops.Deref<number>,
       ops.DerefMut<number>,
       ops.Div<number>,
@@ -27,5 +26,4 @@ export namespace globalThis {
       ops.SubAssign<number> {}
 }
 
-export { };
-
+export {};

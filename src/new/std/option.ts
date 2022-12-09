@@ -1,8 +1,10 @@
 import { staticify } from '../../tools';
 import type { clone } from './clone';
+import type { cmp } from './cmp';
 import { convert } from './convert';
 import type { def } from './default';
 import type { ops } from './ops';
+import { panic } from './panic';
 
 export namespace option {
   export class SomeImpl<T>
@@ -17,7 +19,7 @@ export namespace option {
       return SomeImpl.new(this.value);
     }
 
-    public is_some(): true {
+    public is_some(): this is SomeImpl<T> {
       return true;
     }
 
@@ -25,7 +27,7 @@ export namespace option {
       return f.call_once(this.value);
     }
 
-    public is_none(): false {
+    public is_none(): this is NoneImpl<T> {
       return false;
     }
 
@@ -114,7 +116,7 @@ export namespace option {
     }
 
     public and_then<U, F extends ops.FnOnce<[T], Option<U>>>(f: F): Option<U> {
-      return f.call_once(this.value);
+      return f.call_once(this.value) as never;
     }
 
     public filter<P extends ops.FnOnce<[T], boolean>>(predicate: P): Option<T> {
@@ -169,28 +171,151 @@ export namespace option {
       void f;
       return convert.ref_mut.new(this, this.value);
     }
+
+    public take(): SomeImpl<T> {
+      const old = this.clone();
+      Object.assign(this, None);
+      return old;
+    }
+
+    public replace(value: T): SomeImpl<T> {
+      const old = this.clone();
+      this.value = value;
+      return old;
+    }
+
+    public contains<U extends cmp.PartialEq<U, T>>(
+      x: convert.Ref<unknown, U>
+    ): boolean {
+      return x.deref().eq(this.value);
+    }
+
+    public zip<U>(other: Option<U>): Option<[T, U]> {
+      if (other.is_none()) {
+        return None;
+      }
+
+      return SomeImpl.new([this.value, other.value] as [T, U]);
+    }
+
+    public zip_with<U, F extends ops.FnOnce<[T, U], R>, R>(
+      other: Option<U>,
+      f: F
+    ): Option<R> {
+      if (other.is_none()) {
+        return None;
+      }
+
+      return SomeImpl.new(f.call_once(this.value, other.value));
+    }
   }
 
-  export class NoneImpl {
-    private value: never = undefined as never;
-    public static new(): NoneImpl {
+  export class NoneImpl<T> {
+    private value: T = undefined as never;
+    public static new<T>(): NoneImpl<T> {
       return new this();
     }
 
-    public is_some(): false {
+    public is_some(): this is SomeImpl<T> {
       return false;
     }
 
-    public is_none(): true {
+    public is_some_and(
+      f: ops.FnOnce<[convert.Ref<unknown, T>], boolean>
+    ): this is SomeImpl<T> {
+      void f;
+      return false;
+    }
+
+    public is_none(): this is NoneImpl<T> {
       return true;
     }
 
-    public unwrap_unchecked(): never {
+    public as_ref(): NoneImpl<T> {
+      return this;
+    }
+
+    public as_mut(): NoneImpl<T> {
+      return this;
+    }
+
+    public expect(message: string): never {
+      throw new panic.Panic(message);
+    }
+
+    public unwrap(): never {
+      this.expect('called unwrap() on None');
+    }
+
+    public unwrap_or(def: T): T {
+      return def;
+    }
+
+    public unwrap_or_else<F extends ops.FnOnce<[], T>>(f: F): T {
+      return f.call_once();
+    }
+
+    public unwrap_or_default(
+      this: T extends def.Default<T> ? NoneImpl<T> : never
+    ): T {
+      throw new panic.Panic('unwrap_or_default not implemented');
+    }
+
+    public unwrap_unchecked(): T {
       return this.value;
     }
+
+    public map<U, F extends ops.FnOnce<[T], U>>(f: F): Option<U> {
+      void f;
+      return NoneImpl.new<U>();
+    }
+
+    public inspect<F extends ops.FnOnce<[convert.Ref<unknown, T>]>>(
+      f: F
+    ): void {
+      void f;
+    }
+
+    public map_or<U, F extends ops.FnOnce<[T], U>>(def: U, f: F): U {
+      void f;
+      return def;
+    }
+
+    public map_or_else<
+      U,
+      D extends ops.FnOnce<[], U>,
+      F extends ops.FnOnce<[T], U>
+    >(def: D, f: F): U {
+      void f;
+      return def.call_once();
+    }
+
+    // ok_or, ok_or_else
+
+    public as_deref<U>(
+      this: T extends ops.Deref<U> ? NoneImpl<T> : never
+    ): NoneImpl<Readonly<U>> {
+      return NoneImpl.new<Readonly<U>>();
+    }
+
+    public as_deref_mut<U>(
+      this: T extends ops.DerefMut<U> ? NoneImpl<T> : never
+    ): NoneImpl<U> {
+      return NoneImpl.new<U>();
+    }
+
+    // iter, iter_mut
+
+    public and<U>(optb: Option<U>): Option<U> {
+      void optb;
+      return None;
+    }
+
+    public and_then<U, F>() {}
   }
 
-  export type Option<T> = NoneImpl | SomeImpl<T>;
+  export type Option<T> = NoneImpl<T> | SomeImpl<T>;
   export const Some = staticify(SomeImpl);
-  export const None = new NoneImpl();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  export const None = new NoneImpl<any>();
 }

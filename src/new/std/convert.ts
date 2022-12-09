@@ -3,7 +3,7 @@ import type { ops } from './ops';
 
 export namespace convert {
   export type Infallible = never;
-  export class Ref<Self, Output> implements ops.Deref<Output> {
+  export class Ref<Self, Output = Self> implements ops.Deref<Output> {
     constructor(readonly self: Self, public value: Output) {}
 
     public static new<Self, Output>(
@@ -20,7 +20,7 @@ export namespace convert {
 
   export const ref = staticify(Ref);
 
-  export class RefMut<Self, Output> implements ops.DerefMut<Output> {
+  export class RefMut<Self, Output = Self> implements ops.DerefMut<Output> {
     constructor(readonly self: Self, public value: Output) {}
 
     public static new<Self, Output>(
