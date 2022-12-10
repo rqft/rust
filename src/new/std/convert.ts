@@ -1,59 +1,59 @@
 import { staticify } from '../../tools';
-import type { ops } from './ops';
+import type { Deref, DerefMut } from './ops';
 
-export namespace convert {
-  export type Infallible = never;
-  export class Ref<Self, Output = Self> implements ops.Deref<Output> {
-    constructor(readonly self: Self, public value: Output) {}
+export type Infallible = never;
+class RefImpl<Self, Output = Self> implements Deref<Output> {
+  constructor(readonly self: Self, public value: Output) {}
 
-    public static new<Self, Output>(
-      self: Self,
-      value: Output
-    ): Ref<Self, Output> {
-      return new this(self, value);
-    }
-
-    public deref(): Output {
-      return Object.freeze(this.value);
-    }
+  public static new<Self, Output>(
+    self: Self,
+    value: Output
+  ): RefImpl<Self, Output> {
+    return new this(self, value);
   }
 
-  export const ref = staticify(Ref);
+  public deref(): Output {
+    return Object.freeze(this.value);
+  }
+}
 
-  export class RefMut<Self, Output = Self> implements ops.DerefMut<Output> {
-    constructor(readonly self: Self, public value: Output) {}
+export type Ref<Self, T = Self> = RefImpl<Self, T>;
+export const Ref = staticify(RefImpl);
 
-    public static new<Self, Output>(
-      self: Self,
-      value: Output
-    ): RefMut<Self, Output> {
-      return new this(self, value);
-    }
+class RefMutImpl<Self, Output = Self> implements DerefMut<Output> {
+  constructor(readonly self: Self, public value: Output) {}
 
-    public deref(): Output {
-      return Object.freeze(this.value);
-    }
-
-    public deref_mut(): Output {
-      return this.value;
-    }
+  public static new<Self, Output>(
+    self: Self,
+    value: Output
+  ): RefMutImpl<Self, Output> {
+    return new this(self, value);
   }
 
-  export const ref_mut = staticify(RefMut);
-
-  export interface AsRef<Output> {
-    as_ref(): Ref<this, Output>;
+  public deref(): Output {
+    return Object.freeze(this.value);
   }
 
-  export interface AsMutRef<Output> {
-    as_mut_ref(): Ref<this, Output>;
+  public deref_mut(): Output {
+    return this.value;
   }
+}
 
-  export interface From<T, Into> {
-    from(value: T): Into;
-  }
+export type RefMut<Self, T = Self> = RefMutImpl<Self, T>;
+export const RefMut = staticify(RefMutImpl);
 
-  export interface Into<T> {
-    into(): T;
-  }
+export interface AsRef<Output> {
+  as_ref(): Ref<this, Output>;
+}
+
+export interface AsMutRef<Output> {
+  as_mut_ref(): Ref<this, Output>;
+}
+
+export interface From<T, Into> {
+  from(value: T): Into;
+}
+
+export interface Into<T> {
+  into(): T;
 }

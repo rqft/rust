@@ -1,5 +1,3 @@
-export namespace hash {
-  export interface Hash {
-    hash(): bigint;
-  }
+export interface Hash {
+  hash(): bigint;
 }

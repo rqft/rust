@@ -1,29 +1,58 @@
-import type { ops } from './new/std/ops';
+import type { FnOnce } from './lib/traits';
+import type {
+  Add,
+  AddAssign,
+  BitAnd,
+  BitAndAssign,
+  BitOr,
+  BitOrAssign,
+  Deref,
+  DerefMut,
+  Div,
+  DivAssign,
+  Drop,
+  Fn,
+  Mul,
+  MulAssign,
+  Neg,
+  Not,
+  Rem,
+  RemAssign,
+  Shl,
+  ShlAssign,
+  Shr,
+  ShrAssign,
+  Sub,
+  SubAssign
+} from './new/std/ops';
 declare global {
   export interface Number
-    extends ops.Add<number>,
-      ops.AddAssign<number>,
-      ops.BitAnd<number>,
-      ops.BitAndAssign<number>,
-      ops.BitOr<number>,
-      ops.BitOrAssign<number>,
-      ops.Deref<number>,
-      ops.DerefMut<number>,
-      ops.Div<number>,
-      ops.DivAssign<number>,
-      ops.Drop,
-      ops.Mul<number>,
-      ops.MulAssign<number>,
-      ops.Neg<number>,
-      ops.Not<number>,
-      ops.Rem<number>,
-      ops.RemAssign<number>,
-      ops.Shl<number>,
-      ops.ShlAssign<number>,
-      ops.Shr<number>,
-      ops.ShrAssign<number>,
-      ops.Sub<number>,
-      ops.SubAssign<number> {}
+    extends Add<number>,
+      AddAssign<number>,
+      BitAnd<number>,
+      BitAndAssign<number>,
+      BitOr<number>,
+      BitOrAssign<number>,
+      Deref<number>,
+      DerefMut<number>,
+      Div<number>,
+      DivAssign<number>,
+      Drop,
+      Mul<number>,
+      MulAssign<number>,
+      Neg<number>,
+      Not<number>,
+      Rem<number>,
+      RemAssign<number>,
+      Shl<number>,
+      ShlAssign<number>,
+      Shr<number>,
+      ShrAssign<number>,
+      Sub<number>,
+      SubAssign<number> {}
+
+  export interface Function extends Fn, FnOnce {}
 }
 
-export {};
+export { };
+
