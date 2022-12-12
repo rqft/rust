@@ -1,6 +1,12 @@
 import { staticify } from '../../tools';
 import type { PartialEq, PartialOrd } from './cmp';
-import { default_partial_eq, default_partial_ord, has_derivable_partial_eq, has_derivable_partial_ord, Ordering } from './cmp';
+import {
+  default_partial_eq,
+  default_partial_ord,
+  has_derivable_partial_eq,
+  has_derivable_partial_ord,
+  Ordering
+} from './cmp';
 import type { AsMutRef, AsRef } from './convert';
 import { Ref, RefMut } from './convert';
 import type { Fn, FnOnce } from './ops';
@@ -103,8 +109,8 @@ interface ResultImpl<T, E>
   contains_err(error: E): boolean;
 }
 
-class OkImpl<T> implements ResultImpl<T, unknown> {
-  constructor(private value: T) {}
+class OkImpl<T = void> implements ResultImpl<T, unknown> {
+  constructor(private value: T = undefined as T) {}
 
   public as_ref(): Ref<this, unknown> {
     return Ref(this, this.value);
@@ -119,7 +125,7 @@ class OkImpl<T> implements ResultImpl<T, unknown> {
   }
 
   public is_ok_and(f: FnOnce<[T], boolean>): boolean {
-    return f.call_once(this.unwrap());
+    return f(this.unwrap());
   }
 
   public is_err(): false {
@@ -140,17 +146,17 @@ class OkImpl<T> implements ResultImpl<T, unknown> {
   }
 
   public map<U>(f: FnOnce<[T], U>): OkImpl<U> {
-    return Ok(f.call_once(this.unwrap()));
+    return Ok(f(this.unwrap()));
   }
 
   public map_or<U>(other: U, f: FnOnce<[T], U>): U {
     void other;
-    return f.call_once(this.unwrap());
+    return f(this.unwrap());
   }
 
   public map_or_else<U>(other: FnOnce<[never], U>, f: FnOnce<[T], U>): U {
     void other;
-    return f.call_once(this.unwrap());
+    return f(this.unwrap());
   }
 
   public map_err<F>(f: FnOnce<[never], F>): this {
@@ -159,7 +165,7 @@ class OkImpl<T> implements ResultImpl<T, unknown> {
   }
 
   public inspect(f: FnOnce<[T]>): this {
-    f.call_once(this.unwrap());
+    f(this.unwrap());
     return this;
   }
 
@@ -198,7 +204,7 @@ class OkImpl<T> implements ResultImpl<T, unknown> {
   }
 
   public and_then<U, E>(f: FnOnce<[T], Result<U, E>>): Result<U, E> {
-    return f.call_once(this.unwrap());
+    return f(this.unwrap());
   }
 
   public or<F>(other: Result<T, F>): Result<T, F> {
@@ -238,7 +244,7 @@ class OkImpl<T> implements ResultImpl<T, unknown> {
     return false;
   }
 
-  public static new<T>(value: T): OkImpl<T> {
+  public static new<T = void>(value: T = undefined as T): OkImpl<T> {
     return new this(value);
   }
 
@@ -291,8 +297,8 @@ class OkImpl<T> implements ResultImpl<T, unknown> {
   }
 }
 
-class ErrImpl<E> implements ResultImpl<unknown, E> {
-  constructor(private value: E) {}
+class ErrImpl<E = void> implements ResultImpl<unknown, E> {
+  constructor(private value: E = undefined as E) {}
 
   public as_ref(): Ref<this, unknown> {
     return Ref(this, this.value);
@@ -316,10 +322,10 @@ class ErrImpl<E> implements ResultImpl<unknown, E> {
   }
 
   public is_err_and(f: FnOnce<[E], boolean>): boolean {
-    return f.call_once(this.unwrap_err());
+    return f(this.unwrap_err());
   }
 
-  public ok(): None {
+  public ok(): Option<unknown> {
     return None;
   }
 
@@ -339,11 +345,11 @@ class ErrImpl<E> implements ResultImpl<unknown, E> {
 
   public map_or_else<U>(other: FnOnce<[E], U>, f: FnOnce<[never], U>): U {
     void f;
-    return other.call_once(this.unwrap_err());
+    return other(this.unwrap_err());
   }
 
   public map_err<F>(f: FnOnce<[E], F>): ErrImpl<F> {
-    return Err(f.call_once(this.unwrap_err()));
+    return Err(f(this.unwrap_err()));
   }
 
   public inspect(f: FnOnce<[unknown]>): this {
@@ -352,7 +358,7 @@ class ErrImpl<E> implements ResultImpl<unknown, E> {
   }
 
   public inspect_err(f: FnOnce<[E]>): this {
-    f.call_once(this.unwrap_err());
+    f(this.unwrap_err());
     return this;
   }
 
@@ -396,7 +402,7 @@ class ErrImpl<E> implements ResultImpl<unknown, E> {
   }
 
   public or_else<T, F>(f: FnOnce<[E], Result<T, F>>): Result<T, F> {
-    return f.call_once(this.unwrap_err());
+    return f(this.unwrap_err());
   }
 
   public unwrap_or<T>(other: T): T {
@@ -404,7 +410,7 @@ class ErrImpl<E> implements ResultImpl<unknown, E> {
   }
 
   public unwrap_or_else<T>(f: FnOnce<[E], T>): T {
-    return f.call_once(this.unwrap_err());
+    return f(this.unwrap_err());
   }
 
   public unwrap_unchecked(): never {
@@ -424,7 +430,7 @@ class ErrImpl<E> implements ResultImpl<unknown, E> {
     return this.unwrap_err() === error;
   }
 
-  public static new<E>(value: E): ErrImpl<E> {
+  public static new<E = void>(value: E = undefined as E): ErrImpl<E> {
     return new this(value);
   }
 

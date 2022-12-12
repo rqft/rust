@@ -1,4 +1,3 @@
-import type { FnOnce } from './lib/traits';
 import type {
   Add,
   AddAssign,
@@ -10,9 +9,7 @@ import type {
   DerefMut,
   Div,
   DivAssign,
-  Drop,
-  Fn,
-  Mul,
+  Drop, Mul,
   MulAssign,
   Neg,
   Not,
@@ -50,8 +47,6 @@ declare global {
       ShrAssign<number>,
       Sub<number>,
       SubAssign<number> {}
-
-  export interface Function extends Fn, FnOnce {}
 }
 
 export { };

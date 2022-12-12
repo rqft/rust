@@ -72,7 +72,7 @@ export class Ordering implements Clone<Ordering> {
   }
 
   public then_with<F extends FnOnce<[], Ordering>>(f: F): Ordering {
-    return this.then(f.call_once());
+    return this.then(f());
   }
 }
 export namespace Ordering {
@@ -100,7 +100,7 @@ export function max_by<T extends Ord<T>, F extends FnOnce<[T, T], Ordering>>(
   v2: T,
   compare: F
 ): T {
-  const v = compare.call_once(v1, v2);
+  const v = compare(v1, v2);
 
   if (v.is_gt()) {
     return v1;
@@ -114,8 +114,8 @@ export function max_by_key<
   F extends FnOnce<[T], K>,
   K extends Ord<K>
 >(v1: T, v2: T, f: F): T {
-  const k1 = f.call_once(v1);
-  const k2 = f.call_once(v2);
+  const k1 = f(v1);
+  const k2 = f(v2);
 
   if (k1.max(k2) === k1) {
     return v1;
@@ -133,7 +133,7 @@ export function min_by<T extends Ord<T>, F extends FnOnce<[T, T], Ordering>>(
   v2: T,
   compare: F
 ): T {
-  const v = compare.call_once(v1, v2);
+  const v = compare(v1, v2);
 
   if (v.is_le()) {
     return v1;
@@ -147,8 +147,8 @@ export function min_by_key<
   F extends FnOnce<[T], K>,
   K extends Ord<K>
 >(v1: T, v2: T, f: F): T {
-  const k1 = f.call_once(v1);
-  const k2 = f.call_once(v2);
+  const k1 = f(v1);
+  const k2 = f(v2);
 
   if (k1.min(k2) === k1) {
     return v1;

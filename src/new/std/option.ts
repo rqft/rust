@@ -11,12 +11,9 @@ import {
 import type { AsMutRef, AsRef } from './convert';
 import { Ref, RefMut } from './convert';
 import type { LogicalAnd, LogicalOr, LogicalXor, _ } from './custom';
-import type { Default } from './default';
-import type { Deref, DerefMut, FnOnce } from './ops';
+import type { FnOnce } from './ops';
 
 import { panic } from './panic';
-import type { Result } from './result';
-import { Ok } from './result';
 
 class SomeImpl<T>
 implements
@@ -35,8 +32,8 @@ implements
     return new this(value);
   }
 
-  public clone(this: Option<T>): Option<T> {
-    return SomeImpl.new(this.value);
+  public clone(): Option<T> {
+    return Some(this.value);
   }
 
   public is_some(): this is SomeImpl<T> {
@@ -44,7 +41,7 @@ implements
   }
 
   public is_some_and(f: FnOnce<[T], boolean>): boolean {
-    return f.call_once(this.value);
+    return f(this.value);
   }
 
   public is_none(): false {
@@ -78,9 +75,7 @@ implements
     return this.value;
   }
 
-  public unwrap_or_default(
-    this: T extends Default<unknown> ? SomeImpl<T> : never
-  ): T {
+  public unwrap_or_default(): T {
     return this.value;
   }
 
@@ -88,12 +83,12 @@ implements
     return this.value;
   }
 
-  public map<U, F extends FnOnce<[T], U>>(f: F): SomeImpl<U> {
-    return SomeImpl.new(f.call_once(this.value));
+  public map<U, F extends FnOnce<[T], U>>(f: F): Option<U> {
+    return SomeImpl.new(f(this.value));
   }
 
   public inspect<F extends FnOnce<[T]>>(f: F): this {
-    f.call_once(this.value);
+    f(this.value);
     return this;
   }
 
@@ -112,19 +107,16 @@ implements
 
   // ok_or, ok_or_else
 
-  public as_deref(
-    this: T extends Deref<T> ? SomeImpl<T> : never
-  ): SomeImpl<Ref<this, T>> {
-    return SomeImpl.new(Ref.new<this, T>(this as never, this.value.deref()));
-  }
+  // public as_deref(): Option<Ref<this, T>> {
+  //   return SomeImpl.new(Ref.new<this, T>(this as never, this.value.deref()));
+  // }
 
-  public as_deref_mut(
-    this: T extends DerefMut<T> ? SomeImpl<T> : never
-  ): SomeImpl<RefMut<this, T>> {
-    return SomeImpl.new(
-      RefMut.new<this, T>(this as never, this.value.deref_mut())
-    );
-  }
+  // public as_deref_mut(): Option<RefMut<this, T>> {
+  //   if (typeof this.value === 'object' && 'deref_mut' in (this.value as DerefMut<_>))
+  //     return SomeImpl.new(
+  //       RefMut.new<this, T>(this as never, this.value.deref_mut())
+  //     );
+  // }
 
   // iter, iter_mut
 
@@ -133,11 +125,11 @@ implements
   }
 
   public and_then<U, F extends FnOnce<[T], Option<U>>>(f: F): Option<U> {
-    return f.call_once(this.value) as never;
+    return f(this.value) as never;
   }
 
   public filter<P extends FnOnce<[T], boolean>>(predicate: P): Option<T> {
-    if (!predicate.call_once(this.value)) {
+    if (!predicate(this.value)) {
       return None;
     }
 
@@ -175,9 +167,7 @@ implements
     return RefMut.new(this, this.value);
   }
 
-  public get_or_insert_default(
-    this: T extends Default<unknown> ? SomeImpl<T> : never
-  ): RefMut<this, T> {
+  public get_or_insert_default(): RefMut<this, T> {
     return RefMut.new(this as never, this.value);
   }
 
@@ -198,8 +188,8 @@ implements
     return old;
   }
 
-  public contains<U extends PartialEq<T>>(x: Ref<unknown, U>): boolean {
-    return x.deref().eq(this.value);
+  public contains<U extends PartialEq<T>>(x: U): boolean {
+    return x.eq(this.value);
   }
 
   public zip<U>(other: Option<U>): Option<[T, U]> {
@@ -218,41 +208,34 @@ implements
       return None;
     }
 
-    return SomeImpl.new(f.call_once(this.value, other.value));
+    return SomeImpl.new(f(this.value, other.value));
   }
 
-  public unzip<Z, U>(
-    this: T extends [Z, U] ? SomeImpl<[Z, U]> : never
-  ): [SomeImpl<Z>, SomeImpl<U>] {
-    return [SomeImpl.new(this.value[0]), SomeImpl.new(this.value[1])];
-  }
+  // public unzip<Z, U>(): [Option<Z>, Option<U>] {
+  //   return [SomeImpl.new(this.value[0]), SomeImpl.new(this.value[1])];
+  // }
 
-  public copied<U>(
-    this: T extends Ref<infer Self, U> ? SomeImpl<Ref<Self, U>> : never
-  ): SomeImpl<U> {
-    return SomeImpl.new(this.value.deref());
-  }
+  // public copied<U>(): Option<U> {
+  //   return SomeImpl.new(this.value.deref());
+  // }
 
-  public copied_mut<U>(
-    this: T extends RefMut<infer Self, U> ? SomeImpl<RefMut<Self, U>> : never
-  ): SomeImpl<U> {
-    return SomeImpl.new(this.value.deref_mut());
-  }
+  // public copied_mut<U>(): Option<U> {
+  //   return SomeImpl.new(this.value.deref_mut());
+  // }
 
-  public transpose<P, E>(
-    this: T extends Result<P, E> ? Option<Result<P, E>> : never
-  ): Result<Option<P>, E> {
-    if (this.value.is_ok()) {
-      // @ts-expect-error wtf is this error
-      return Ok(Some(this.value.value));
-    }
+  // public transpose<P, E>(): Result<Option<P>, E> {
+  //   if ('is_ok' in (this.value as Result<P, E>))
+  //     if ((this.value as Result<P, E>).is_ok()) {
+  //       // @ts-expect-error wtf is this error
+  //       return Ok(Some(this.value.value));
+  //     }
 
-    return this.value;
-  }
+  //   return this.value as never;
+  // }
 
-  public flatten(): T extends Option<infer U> ? Option<U> : never {
-    return this.value as never;
-  }
+  // public flatten(): T extends Option<infer U> ? Option<U> : never {
+  //   return this.value as never;
+  // }
 
   // partialeq
 
@@ -323,7 +306,7 @@ implements
     return new this();
   }
 
-  public clone(this: NoneImpl<T>): Option<T> {
+  public clone(): Option<T> {
     return None;
   }
 
@@ -331,7 +314,7 @@ implements
     return false;
   }
 
-  public is_some_and(f: FnOnce<[Ref<unknown, T>], boolean>): false {
+  public is_some_and(f: FnOnce<[T], boolean>): false {
     void f;
     return false;
   }
@@ -361,12 +344,10 @@ implements
   }
 
   public unwrap_or_else<F extends FnOnce<[], T>>(f: F): T {
-    return f.call_once();
+    return f();
   }
 
-  public unwrap_or_default(
-    this: T extends Default<T> ? NoneImpl<T> : never
-  ): T {
+  public unwrap_or_default(): T {
     panic('unwrap_or_default not implemented');
   }
 
@@ -379,7 +360,7 @@ implements
     return NoneImpl.new<U>();
   }
 
-  public inspect<F extends FnOnce<[Ref<unknown, T>]>>(f: F): void {
+  public inspect<F extends FnOnce<[T]>>(f: F): void {
     void f;
   }
 
@@ -393,22 +374,18 @@ implements
     f: F
   ): U {
     void f;
-    return def.call_once();
+    return def();
   }
 
   // ok_or, ok_or_else
 
-  public as_deref<U>(
-    this: T extends Deref<U> ? NoneImpl<T> : never
-  ): NoneImpl<Readonly<U>> {
-    return NoneImpl.new<Readonly<U>>();
-  }
+  // public as_deref<U>(): Option<Readonly<U>> {
+  //   return NoneImpl.new<Readonly<U>>();
+  // }
 
-  public as_deref_mut<U>(
-    this: T extends DerefMut<U> ? NoneImpl<T> : never
-  ): NoneImpl<U> {
-    return NoneImpl.new<U>();
-  }
+  // public as_deref_mut<U>(): Option<U> {
+  //   return NoneImpl.new<U>();
+  // }
 
   // iter, iter_mut
 
@@ -422,7 +399,7 @@ implements
     return None;
   }
 
-  public filter<P extends FnOnce<[Ref<T>]>>(predicate: P): NoneImpl<T> {
+  public filter<P extends FnOnce<[T]>>(predicate: P): NoneImpl<T> {
     void predicate;
     return this;
   }
@@ -432,7 +409,7 @@ implements
   }
 
   public or_else<F extends FnOnce<[], Option<T>>>(f: F): Option<T> {
-    return f.call_once() as Option<T>;
+    return f() as Option<T>;
   }
 
   public xor(optb: Option<T>): Option<T> {
@@ -457,7 +434,7 @@ implements
   }
 
   public get_or_insert_with<F extends FnOnce<[], T>>(f: F): RefMut<this, T> {
-    return this.insert(f.call_once());
+    return this.insert(f());
   }
 
   public take(): this {
@@ -469,7 +446,7 @@ implements
     return this;
   }
 
-  public contains<U extends PartialEq<T>>(x: Ref<unknown, U>): false {
+  public contains<U extends PartialEq<T>>(x: U): false {
     void x;
     return false;
   }
@@ -488,34 +465,25 @@ implements
     return None;
   }
 
-  public unzip<Z, U>(
-    this: T extends [Z, U] ? None<[Z, U]> : never
-  ): [None<Z>, None<U>] {
-    return [None, None];
-  }
+  // public unzip<Z, U>(): [None<Z>, None<U>] {
+  //   return [None, None];
+  // }
 
-  public copied<U>(
-    this: T extends Ref<infer Self, U> ? SomeImpl<Ref<Self, U>> : never
-  ): None<U> {
-    return None;
-  }
+  // public copied<U>(): Option<U> {
+  //   return None;
+  // }
 
-  public copied_mut<U>(
-    this: T extends RefMut<infer Self, U> ? SomeImpl<RefMut<Self, U>> : never
-  ): None<U> {
-    return None;
-  }
+  // public copied_mut<U>(): Option<U> {
+  //   return None;
+  // }
 
-  public transpose<P, E>(
-    this: T extends Result<P, E> ? Option<Result<P, E>> : never
-  ): Result<Option<P>, E> {
-    // @ts-expect-error wtf
-    return Ok(None);
-  }
+  // public transpose<P, E>(): Result<Option<P>, E> {
+  //   return Ok(None);
+  // }
 
-  public flatten(): T extends Option<infer U> ? Option<U> : never {
-    return None as never;
-  }
+  // public flatten(): T extends Option<infer U> ? Option<U> : never {
+  //   return None as never;
+  // }
 
   // partialeq
 
@@ -566,4 +534,4 @@ export type Some<T> = SomeImpl<T>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type None<T = _> = NoneImpl<T>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const None = new NoneImpl<_>();
+export const None: None<_> = new NoneImpl<_>();
