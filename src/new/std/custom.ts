@@ -12,3 +12,5 @@ export interface LogicalXor<Rhs> {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/naming-convention
 export type _ = any;
+
+export type ArrayOf<T> = T extends Array<_> ? T : [T];

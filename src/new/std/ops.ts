@@ -1,3 +1,5 @@
+import type { ArrayOf } from './custom';
+
 export interface Add<Rhs, Output = Rhs> {
   add(other: Rhs): Output;
 }
@@ -42,17 +44,9 @@ export interface Drop {
   drop(): void;
 }
 
-export type Fn<Args extends Array<unknown>, Output = void> = (
-  ...args: Args
-) => Output;
-export type FnMut<Args extends Array<unknown>, Output = void> = Fn<
-  Args,
-  Output
->;
-export type FnOnce<Args extends Array<unknown>, Output = void> = Fn<
-  Args,
-  Output
->;
+export type Fn<Args, Output = void> = (...args: ArrayOf<Args>) => Output;
+export type FnMut<Args, Output = void> = Fn<Args, Output>;
+export type FnOnce<Args, Output = void> = Fn<Args, Output>;
 
 export type Indexable<Idx, Output> = Idx extends PropertyKey
   ? Record<Idx, Output>
