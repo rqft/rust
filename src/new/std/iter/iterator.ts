@@ -1,11 +1,14 @@
 import { staticify } from '../../../tools';
-import type { FnMut } from '../ops';
+import type { _ } from '../custom';
+import type { Add, FnMut, Mul } from '../ops';
 import type { Option } from '../option';
 import { None, Some } from '../option';
 import type { Result } from '../result';
 import { Err, Ok } from '../result';
+import { ArrayChunks } from './array_chunks';
 
 import { Chain } from './chain';
+import { Cycle } from './cycle';
 import { Enumerate } from './enumerate';
 import { Filter } from './filter';
 import { FilterMap } from './filter_map';
@@ -211,7 +214,104 @@ export class IteratorImpl<T> implements Iterable<T> {
   public inspect(f: FnMut<[T], void>): Inspect<T> {
     return Inspect(this, f);
   }
+
+  // collect
+
+  public collect_into<B extends FromIterator<T>>(into: B): B {
+    return into.from_iter(this);
+  }
+
+  public fold<B>(init: B, f: FnMut<[B, T], B>): B {
+    for (const value of this) {
+      init = f(init, value);
+    }
+    return init;
+  }
+
+  public reduce(f: FnMut<[T, T], T>): Option<T> {
+    const next = this.next();
+
+    if (next.is_none()) {
+      return None;
+    }
+
+    return Some(this.fold(next.unwrap(), f));
+  }
+
+  public all(f: FnMut<[T], boolean>): boolean {
+    for (const value of this) {
+      if (!f(value)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  public any(f: FnMut<[T], boolean>): boolean {
+    for (const value of this) {
+      if (f(value)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  public find(predicate: FnMut<[T], boolean>): Option<T> {
+    for (const value of this) {
+      if (predicate(value)) {
+        return Some(value);
+      }
+    }
+
+    return None;
+  }
+
+  public find_map<B>(f: FnMut<[T], Option<B>>): Option<B> {
+    return this.filter_map(f).next();
+  }
+
+  public position(predicate: FnMut<[T], boolean>): Option<number> {
+    let index = 0;
+    for (const value of this) {
+      if (predicate(value)) {
+        return Some(index);
+      }
+
+      index++;
+    }
+    return None;
+  }
+
+  public cycle(): Cycle<T> {
+    return Cycle(this);
+  }
+
+  public array_chunks<N extends number>(size: N): ArrayChunks<T, N> {
+    return ArrayChunks(this, size);
+  }
+
+  public sum<U>(): T extends Add<U, T> ? Option<T> : None {
+    return this.reduce((t, u) => {
+      if ('add' in (t as Add<_, _>)) {
+        return (t as Add<_, _>).add(u);
+      }
+    }) as never;
+  }
+
+  public product<U>(): T extends Mul<U, T> ? Option<T> : None {
+    return this.reduce((t, u) => {
+      if ('mul' in (t as Mul<_, _>)) {
+        return (t as Mul<_, _>).mul(u);
+      }
+    }) as never;
+  }
 }
 
 export type Iterator<T> = IteratorImpl<T>;
 export const Iterator = staticify(IteratorImpl);
+
+export interface FromIterator<T> {
+  from_iter(iter: Iterable<T>): this;
+}
