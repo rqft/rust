@@ -2,19 +2,19 @@ import type { Clone } from './clone';
 import type { FnOnce } from './ops';
 import { panic } from './panic';
 
-export interface PartialEq<Rhs> {
-  eq(other: Rhs): boolean;
-  ne(other: Rhs): boolean;
+export interface PartialEq<Rhs, Output = boolean> {
+  eq(other: Rhs): Output;
+  ne(other: Rhs): Output;
 }
 
 export type Eq<Self> = PartialEq<Self>;
 
-export interface PartialOrd<Rhs> extends PartialEq<Rhs> {
+export interface PartialOrd<Rhs, Output = boolean> extends PartialEq<Rhs, Output> {
   partial_cmp(other: Rhs): Ordering;
-  lt(other: Rhs): boolean;
-  le(other: Rhs): boolean;
-  gt(other: Rhs): boolean;
-  ge(other: Rhs): boolean;
+  lt(other: Rhs): Output;
+  le(other: Rhs): Output;
+  gt(other: Rhs): Output;
+  ge(other: Rhs): Output;
 }
 
 export class Ordering implements Clone<Ordering> {

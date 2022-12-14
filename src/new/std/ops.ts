@@ -24,6 +24,14 @@ export interface BitOrAssign<Rhs, Output = Rhs> {
   bitor_assign(other: Rhs): Output;
 }
 
+export interface BitXor<Rhs, Output = Rhs> {
+  bitxor(other: Rhs): Output;
+}
+
+export interface BitXorAssign<Rhs, Output = Rhs> {
+  bitxor_assign(other: Rhs): Output;
+}
+
 export interface Deref<Target> {
   deref(): Target;
 }

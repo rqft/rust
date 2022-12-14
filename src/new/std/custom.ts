@@ -1,3 +1,5 @@
+import type { Anybool } from '../../types';
+
 export interface LogicalOr<Rhs> {
   or(other: Rhs): Rhs | this;
 }
@@ -14,3 +16,7 @@ export interface LogicalXor<Rhs> {
 export type _ = any;
 
 export type ArrayOf<T> = T extends Array<_> ? T : [T];
+
+export interface ToBool<T extends Anybool = boolean> {
+  valueOf(): T;
+}

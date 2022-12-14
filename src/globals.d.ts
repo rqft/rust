@@ -1,3 +1,4 @@
+import type { bool } from './new/std/bool';
 import type {
   Add,
   AddAssign,
@@ -9,7 +10,8 @@ import type {
   DerefMut,
   Div,
   DivAssign,
-  Drop, Mul,
+  Drop,
+  Mul,
   MulAssign,
   Neg,
   Not,
@@ -47,6 +49,8 @@ declare global {
       ShrAssign<number>,
       Sub<number>,
       SubAssign<number> {}
+
+  export type Boolean = bool<boolean>;
 }
 
 export { };
