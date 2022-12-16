@@ -9,7 +9,8 @@ export interface PartialEq<Rhs, Output = boolean> {
 
 export type Eq<Self> = PartialEq<Self>;
 
-export interface PartialOrd<Rhs, Output = boolean> extends PartialEq<Rhs, Output> {
+export interface PartialOrd<Rhs, Output = boolean>
+  extends PartialEq<Rhs, Output> {
   partial_cmp(other: Rhs): Ordering;
   lt(other: Rhs): Output;
   le(other: Rhs): Output;
@@ -82,9 +83,7 @@ export namespace Ordering {
   export const Greater = new Ordering(1);
 }
 
-export interface Ord<Self extends PartialOrd<unknown>>
-  extends Eq<Self>,
-    PartialOrd<Self> {
+export interface Ord<Self> extends Eq<Self>, PartialOrd<Self> {
   cmp(other: Self): Ordering;
   max(other: Self): Self;
   min(other: Self): Self;

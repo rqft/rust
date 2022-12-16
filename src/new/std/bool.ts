@@ -4,7 +4,6 @@ import type { And, Anybool, Not as not, Or, True, Xor } from '../../types';
 import type { Clone } from './clone';
 import type { PartialEq, PartialOrd } from './cmp';
 import { Ordering } from './cmp';
-import type { ToBool } from './custom';
 import type { Default } from './default';
 import type {
   BitAnd,
@@ -30,9 +29,9 @@ implements
     Default<BoolImpl<false>>,
     Not<BoolImpl<not<T>>>,
     PartialOrd<Anybool, BoolImpl<Anybool>>,
-    PartialEq<Anybool, BoolImpl<Anybool>>,
-    ToBool<T>
+    PartialEq<Anybool, BoolImpl<Anybool>>
 {
+  // ToBool<T>
   constructor(private value: T) {}
 
   public static new<T extends boolean>(value: T): BoolImpl<T> {
@@ -47,8 +46,8 @@ implements
   }
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  public valueOf(): T {
-    return this.value;
+  public valueOf(): boolean {
+    return !!this.value;
   }
 
   public then_some<U>(t: U): T extends True ? Some<U> : None {
@@ -147,7 +146,7 @@ implements
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export type bool<T extends Anybool> = BoolImpl<T>;
+export type bool<T extends Anybool = Anybool> = BoolImpl<T>;
 export const bool = staticify(BoolImpl);
 
 export type Eq<T extends Anybool, U extends Anybool> = not<Xor<T, U>>;
