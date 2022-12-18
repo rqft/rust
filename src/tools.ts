@@ -58,6 +58,10 @@ export function staticify<T extends FnConstructor>(value: T): Staticify<T> {
     apply(target, thisArg, argArray): any {
       return new (target.bind(thisArg))(...argArray);
     },
+
+    construct(target, argArray): any {
+      return target.new(argArray);
+    },
   }) as never;
 }
 
@@ -104,5 +108,3 @@ export const UnicodeRegexCategories = {
   separator: /\p{Z}/u,
 } as const;
 export const radii = '0123456789abcdefghijklmnopqrstuvwxyz' as const;
-
-

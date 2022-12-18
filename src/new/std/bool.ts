@@ -41,8 +41,8 @@ implements
   public static readonly true: BoolImpl<true> = new BoolImpl(true);
   public static readonly false: BoolImpl<false> = new BoolImpl(false);
 
-  public as_primitive(): T {
-    return this.value;
+  public as_primitive(): boolean {
+    return !!this.value;
   }
 
   // eslint-disable-next-line @typescript-eslint/naming-convention

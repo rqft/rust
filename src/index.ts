@@ -1,3 +1,3 @@
-import { isize } from './new/std/number/isize';
+import { size } from './new/std/number/size';
 
-console.log(isize(0x1234567890123456n).swap_bytes().as_primitive().toString(16));
+console.log(size(0x1234567890123456n).swap_bytes(64).valueOf().toString(16));
