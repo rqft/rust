@@ -1,6 +1,33 @@
 import { staticify } from '../../../tools';
 import { bool } from '../bool';
+import type { Clone } from '../clone';
+import type { Eq, Ord, PartialEq, PartialOrd } from '../cmp';
+import { default_partial_eq, default_partial_ord, Ordering } from '../cmp';
 import type { _ } from '../custom';
+import type {
+  Add,
+  AddAssign,
+  BitAnd,
+  BitAndAssign,
+  BitOr,
+  BitOrAssign,
+  BitXor,
+  BitXorAssign,
+  Div,
+  DivAssign,
+  Mul,
+  MulAssign,
+  Neg,
+  Not,
+  Rem,
+  RemAssign,
+  Shl,
+  ShlAssign,
+  Shr,
+  ShrAssign,
+  Sub,
+  SubAssign
+} from '../ops';
 import type { Option } from '../option';
 import { None, Some } from '../option';
 import { panic } from '../panic';
@@ -9,9 +36,43 @@ import { Err, Ok } from '../result';
 import { IntErrorKind } from './int_error_kind';
 import { ParseIntError } from './parse_int_error';
 
-class SizeImpl {
-  private value: bigint;
+export class SizeImpl
+implements
+    Add<Num, size>,
+    AddAssign<Num, size>,
+    Clone<size>,
+    // Default<f64>,
+    Div<Num, size>,
+    DivAssign<Num, size>,
+    Mul<Num, size>,
+    MulAssign<Num, size>,
+    Neg<size>,
+    Rem<Num, size>,
+    RemAssign<Num, size>,
+    Sub<Num, size>,
+    SubAssign<Num, size>,
+    BitAnd<Num, size>,
+    BitAndAssign<Num, size>,
+    BitOr<Num, size>,
+    BitOrAssign<Num, size>,
+    BitXor<Num, size>,
+    BitXorAssign<Num, size>,
+    Not<size>,
+    PartialEq<Num>,
+    PartialOrd<Num>,
+    Eq<size>,
+    Ord<size>,
+    Shl<Num, size>,
+    ShlAssign<Num, size>,
+    Shr<Num, size>,
+    ShrAssign<Num, size>
+{
+  protected value: bigint;
   constructor(value: _) {
+    if (value instanceof SizeImpl) {
+      value = value.value;
+    }
+
     this.value = BigInt(value);
   }
 
@@ -120,7 +181,7 @@ class SizeImpl {
     return size(count);
   }
 
-  private n_bit_mask(n: Num): size {
+  protected n_bit_mask(n: Num): size {
     n = size(n);
     // let bits = 0n;
 
@@ -191,16 +252,16 @@ class SizeImpl {
 
   // from_be, from_le, to_be, to_le
 
-  private unchecked_op(
+  protected unchecked_op(
     rhs: Num,
     x: (self: bigint, rhs: bigint) => bigint
   ): size {
     return size(x(this.value, size(rhs).value));
   }
 
-  private checked(
+  protected checked(
     value: size,
-    [min, max]: [Num, Num] = [-(1n << 32n), (1n << 32n) - 1n]
+    [min, max]: Bound = [-(1n << 32n), (1n << 32n) - 1n]
   ): Option<size> {
     [min, max] = [size(min), size(max)];
     if (value.value < min.value || value.value > max.value) {
@@ -210,10 +271,10 @@ class SizeImpl {
     return Some(value);
   }
 
-  private checked_op(
+  protected checked_op(
     rhs: Num,
     x: (self: bigint, rhs: bigint) => bigint,
-    lim?: [Num, Num]
+    lim?: Bound
   ): Option<size> {
     const value = this.unchecked_op(rhs, x);
 
@@ -224,7 +285,7 @@ class SizeImpl {
     return this.unchecked_op(rhs, (self, rhs) => self + rhs);
   }
 
-  public checked_add(rhs: Num, lim?: [Num, Num]): Option<size> {
+  public checked_add(rhs: Num, lim?: Bound): Option<size> {
     return this.checked_op(rhs, (self, rhs) => self + rhs, lim);
   }
 
@@ -232,7 +293,7 @@ class SizeImpl {
     return this.unchecked_op(rhs, (self, rhs) => self - rhs);
   }
 
-  public checked_sub(rhs: Num, lim?: [Num, Num]): Option<size> {
+  public checked_sub(rhs: Num, lim?: Bound): Option<size> {
     return this.checked_op(rhs, (self, rhs) => self - rhs, lim);
   }
 
@@ -240,11 +301,11 @@ class SizeImpl {
     return this.unchecked_op(rhs, (self, rhs) => self * rhs);
   }
 
-  public checked_mul(rhs: Num, lim?: [Num, Num]): Option<size> {
+  public checked_mul(rhs: Num, lim?: Bound): Option<size> {
     return this.checked_op(rhs, (self, rhs) => self * rhs, lim);
   }
 
-  public checked_div(rhs: Num, lim?: [Num, Num]): Option<size> {
+  public checked_div(rhs: Num, lim?: Bound): Option<size> {
     rhs = size(rhs);
     if (rhs.value === 0n) {
       return None;
@@ -255,7 +316,7 @@ class SizeImpl {
 
   // checked_div_euclid
 
-  public checked_rem(rhs: Num, lim?: [Num, Num]): Option<size> {
+  public checked_rem(rhs: Num, lim?: Bound): Option<size> {
     rhs = size(rhs);
     if (rhs.value === 0n) {
       return None;
@@ -266,11 +327,11 @@ class SizeImpl {
 
   // checked_rem_euclid
 
-  private unchecked_neg(): size {
+  protected unchecked_neg(): size {
     return this.unchecked_op(0n, (self) => -self);
   }
 
-  public checked_neg(lim?: [Num, Num]): Option<size> {
+  public checked_neg(lim?: Bound): Option<size> {
     return this.checked(this.unchecked_neg(), lim);
   }
 
@@ -316,7 +377,7 @@ class SizeImpl {
   }
 
   public checked_abs(
-    [min, max]: [Num, Num] = [-(1n << 32n), (1n << 32n) - 1n]
+    [min, max]: Bound = [-(1n << 32n), (1n << 32n) - 1n]
   ): Option<size> {
     min = size(min);
     max = size(max);
@@ -336,22 +397,13 @@ class SizeImpl {
     return this.unchecked_op(rhs, (self, rhs) => self ** rhs);
   }
 
-  public checked_pow(rhs: Num, bits: Num = 32): Option<size> {
-    rhs = size(rhs);
-    bits = size(bits);
-
-    if (rhs.value >= bits.value) {
-      return None;
-    }
-
-    return Some(
-      size(this.n_bit_mask(bits).value & this.unchecked_pow(rhs.value).value)
-    );
+  public checked_pow(rhs: Num, lim?: Bound): Option<size> {
+    return this.checked(this.unchecked_pow(rhs), lim);
   }
 
-  private saturate(
+  protected saturate(
     value: size,
-    [min, max]: [Num, Num] = [-(1n << 32n), (1n << 32n) - 1n]
+    [min, max]: Bound = [-(1n << 32n), (1n << 32n) - 1n]
   ): size {
     [min, max] = [size(min), size(max)];
     if (value.value < min.value) {
@@ -365,41 +417,41 @@ class SizeImpl {
     return value;
   }
 
-  private saturating_op(
+  protected saturating_op(
     rhs: Num,
     x: (self: bigint, rhs: bigint) => bigint,
-    lim?: [Num, Num]
+    lim?: Bound
   ): size {
     return this.saturate(this.unchecked_op(rhs, x), lim);
   }
 
-  public saturating_add(rhs: Num, lim?: [Num, Num]): size {
+  public saturating_add(rhs: Num, lim?: Bound): size {
     return this.saturate(this.unchecked_add(rhs), lim);
   }
 
-  public saturating_sub(rhs: Num, lim?: [Num, Num]): size {
+  public saturating_sub(rhs: Num, lim?: Bound): size {
     return this.saturate(this.unchecked_sub(rhs), lim);
   }
 
-  public saturating_neg(lim?: [Num, Num]): size {
+  public saturating_neg(lim?: Bound): size {
     return this.saturate(this.unchecked_neg(), lim);
   }
 
-  public saturating_mul(rhs: Num, lim?: [Num, Num]): size {
+  public saturating_mul(rhs: Num, lim?: Bound): size {
     return this.saturate(this.unchecked_mul(rhs), lim);
   }
 
-  public saturating_div(rhs: Num, lim?: [Num, Num]): size {
+  public saturating_div(rhs: Num, lim?: Bound): size {
     return this.saturating_op(rhs, (self, rhs) => self / rhs, lim);
   }
 
-  public saturating_pow(exp: Num, lim?: [Num, Num]): size {
+  public saturating_pow(exp: Num, lim?: Bound): size {
     return this.saturate(this.unchecked_pow(exp), lim);
   }
 
-  private wrapping(
+  protected wrapping(
     value: size,
-    [min, max]: [Num, Num] = [-(1n << 32n), (1n << 32n) - 1n]
+    [min, max]: Bound = [-(1n << 32n), (1n << 32n) - 1n]
   ): size {
     let p = value.value;
 
@@ -414,53 +466,53 @@ class SizeImpl {
     return size(p);
   }
 
-  private wrapping_op(
+  protected wrapping_op(
     rhs: Num,
     x: (self: bigint, rhs: bigint) => bigint,
-    lim?: [Num, Num]
+    lim?: Bound
   ): size {
     return this.wrapping(this.unchecked_op(rhs, x), lim);
   }
 
-  public wrapping_add(rhs: Num, lim?: [Num, Num]): size {
+  public wrapping_add(rhs: Num, lim?: Bound): size {
     return this.wrapping(this.unchecked_add(rhs), lim);
   }
 
-  public wrapping_sub(rhs: Num, lim?: [Num, Num]): size {
+  public wrapping_sub(rhs: Num, lim?: Bound): size {
     return this.wrapping(this.unchecked_sub(rhs), lim);
   }
 
-  public wrapping_mul(rhs: Num, lim?: [Num, Num]): size {
+  public wrapping_mul(rhs: Num, lim?: Bound): size {
     return this.wrapping(this.unchecked_mul(rhs), lim);
   }
 
-  public wrapping_div(rhs: Num, lim?: [Num, Num]): size {
+  public wrapping_div(rhs: Num, lim?: Bound): size {
     return this.wrapping_op(rhs, (x, rhs) => x / rhs, lim);
   }
 
   // wrapping_div_euclid
 
-  public wrapping_rem(rhs: Num, lim?: [Num, Num]): size {
+  public wrapping_rem(rhs: Num, lim?: Bound): size {
     return this.wrapping_op(rhs, (x, rhs) => x % rhs, lim);
   }
 
   // wrapping_rem_euclid
 
-  public wrapping_neg(lim?: [Num, Num]): size {
+  public wrapping_neg(lim?: Bound): size {
     return this.wrapping(this.unchecked_neg(), lim);
   }
 
   // wrapping_shl, wrapping_shr
 
-  public wrapping_abs(lim?: [Num, Num]): size {
+  public wrapping_abs(lim?: Bound): size {
     return this.wrapping(this.unchecked_abs(), lim);
   }
 
-  public wrapping_pow(rhs: Num, lim?: [Num, Num]): size {
+  public wrapping_pow(rhs: Num, lim?: Bound): size {
     return this.wrapping(this.unchecked_pow(rhs), lim);
   }
 
-  private overflowing(value: size, lim?: [Num, Num]): [size, bool] {
+  protected overflowing(value: size, lim?: Bound): [size, bool] {
     const wrapped = this.wrapping(value, lim);
 
     if (wrapped.value !== value.value) {
@@ -470,55 +522,55 @@ class SizeImpl {
     return [value, bool.false];
   }
 
-  private overflowing_op(
+  protected overflowing_op(
     rhs: Num,
     x: (self: bigint, rhs: bigint) => bigint,
-    lim?: [Num, Num]
+    lim?: Bound
   ): [size, bool] {
     return this.overflowing(this.unchecked_op(rhs, x), lim);
   }
 
-  public overflowing_add(rhs: Num, lim?: [Num, Num]): [size, bool] {
+  public overflowing_add(rhs: Num, lim?: Bound): [size, bool] {
     return this.overflowing(this.unchecked_add(rhs), lim);
   }
 
-  public overflowing_sub(rhs: Num, lim?: [Num, Num]): [size, bool] {
+  public overflowing_sub(rhs: Num, lim?: Bound): [size, bool] {
     return this.overflowing(this.unchecked_sub(rhs), lim);
   }
 
-  public overflowing_mul(rhs: Num, lim?: [Num, Num]): [size, bool] {
+  public overflowing_mul(rhs: Num, lim?: Bound): [size, bool] {
     return this.overflowing(this.unchecked_mul(rhs), lim);
   }
 
-  public overflowing_div(rhs: Num, lim?: [Num, Num]): [size, bool] {
+  public overflowing_div(rhs: Num, lim?: Bound): [size, bool] {
     return this.overflowing_op(rhs, (self, rhs) => self / rhs, lim);
   }
 
   // overflowing_div_euclid
 
-  public overflowing_rem(rhs: Num, lim?: [Num, Num]): [size, bool] {
+  public overflowing_rem(rhs: Num, lim?: Bound): [size, bool] {
     return this.overflowing_op(rhs, (self, rhs) => self % rhs, lim);
   }
 
   // overflowing_rem_euclid
 
-  public overflowing_neg(lim?: [Num, Num]): [size, bool] {
+  public overflowing_neg(lim?: Bound): [size, bool] {
     return this.overflowing(this.unchecked_neg(), lim);
   }
 
   // overflowing_shl, overflowing_shr
 
-  public overflowing_abs(lim?: [Num, Num]): [size, bool] {
+  public overflowing_abs(lim?: Bound): [size, bool] {
     return this.overflowing(this.unchecked_abs(), lim);
   }
 
-  public overflowing_pow(exp: Num, lim?: [Num, Num]): [size, bool] {
+  public overflowing_pow(exp: Num, lim?: Bound): [size, bool] {
     return this.overflowing(this.unchecked_pow(exp), lim);
   }
 
   // raw
 
-  public pow(exp: Num, lim?: Num): size {
+  public pow(exp: Num, lim?: Bound): size {
     return this.checked_pow(exp, lim).unwrap();
   }
 
@@ -526,7 +578,7 @@ class SizeImpl {
 
   // rem_euclid, div_floor, div_ceil
 
-  public next_multiple_of(rhs: Num, lim?: [Num, Num]): size {
+  public next_multiple_of(rhs: Num, lim?: Bound): size {
     rhs = size(rhs);
 
     if (rhs.value === 0n) {
@@ -540,7 +592,7 @@ class SizeImpl {
     }
   }
 
-  public checked_next_multiple_of(rhs: Num, lim?: [Num, Num]): Option<size> {
+  public checked_next_multiple_of(rhs: Num, lim?: Bound): Option<size> {
     rhs = size(rhs);
 
     if (rhs.value === 0n) {
@@ -553,10 +605,226 @@ class SizeImpl {
       }
     }
   }
+
+  // ilog, ilog2, ilog10, checked_ilog, checked_ilog2, checked_ilog10
+
+  public abs(max: Num = 1n << (31n - 1n)): size {
+    if (this.value < 0n) {
+      const abs = -this.value;
+
+      if (abs > max) {
+        panic('method `abs` overflowed past the maximum');
+      }
+
+      return size(abs);
+    }
+
+    return this;
+  }
+
+  public abs_diff(other: Num, max?: Num): size {
+    return this.unchecked_sub(other).abs(max);
+  }
+
+  public signum(): size {
+    if (this.value === 0n) {
+      return this;
+    }
+
+    if (this.value < 0n) {
+      return size(-1);
+    }
+
+    return size(1);
+  }
+
+  public is_positive(): bool {
+    return bool(this.value > 0);
+  }
+
+  public is_negative(): bool {
+    return bool(this.value < 0);
+  }
+
+  protected map(f: (x: bigint) => bigint): this {
+    this.value = f(this.value);
+    return this;
+  }
+
+  // std::ops
+
+  public add(other: Num): size {
+    return size(this.valueOf() + size(other).valueOf());
+  }
+
+  public add_assign(other: Num): size {
+    return this.map(() => this.add(other).valueOf());
+  }
+
+  public clone(): size {
+    return size(this);
+  }
+
+  public static default(): size {
+    return size(0);
+  }
+
+  public div(other: Num): size {
+    return size(this.valueOf() / size(other).valueOf());
+  }
+
+  public div_assign(other: Num): size {
+    return this.map(() => this.div(other).valueOf());
+  }
+
+  public mul(other: Num): size {
+    return size(this.valueOf() * size(other).valueOf());
+  }
+
+  public mul_assign(other: Num): size {
+    return this.map(() => this.mul(other).valueOf());
+  }
+
+  public neg(): size {
+    return this.map((x) => -x);
+  }
+
+  public rem(other: Num): size {
+    return size(this.valueOf() % size(other).valueOf());
+  }
+
+  public rem_assign(other: Num): size {
+    return this.map(() => this.rem(other).valueOf());
+  }
+
+  public sub(other: Num): size {
+    return size(this.valueOf() - size(other).valueOf());
+  }
+
+  public sub_assign(other: Num): size {
+    return this.map(() => this.sub(other).valueOf());
+  }
+
+  public bitand(other: Num): SizeImpl {
+    return size(this.valueOf() & size(other).valueOf());
+  }
+
+  public bitand_assign(other: Num): SizeImpl {
+    return this.map(() => this.bitand(other).valueOf());
+  }
+
+  public bitor(other: Num): SizeImpl {
+    return size(this.valueOf() | size(other).valueOf());
+  }
+
+  public bitor_assign(other: Num): SizeImpl {
+    return this.map(() => this.bitor(other).valueOf());
+  }
+
+  public bitxor(other: Num): SizeImpl {
+    return size(this.valueOf() ^ size(other).valueOf());
+  }
+
+  public bitxor_assign(other: Num): SizeImpl {
+    return this.map(() => this.bitxor(other).valueOf());
+  }
+
+  public shl(other: Num): SizeImpl {
+    return size(this.valueOf() << size(other).valueOf());
+  }
+
+  public shl_assign(other: Num): SizeImpl {
+    return this.map(() => this.shl(other).valueOf());
+  }
+
+  public shr(other: Num): SizeImpl {
+    return size(this.valueOf() >> size(other).valueOf());
+  }
+
+  public shr_assign(other: Num): SizeImpl {
+    return this.map(() => this.shr(other).valueOf());
+  }
+
+  public eq(other: Num): boolean {
+    return this.value === size(other).value;
+  }
+
+  public ne(other: Num): boolean {
+    return default_partial_eq<size, Num>(this).ne(other);
+  }
+
+  public not(): size {
+    return this.map((x) => ~x);
+  }
+
+  public partial_cmp(other: Num): Ordering {
+    other = size(other);
+
+    if (this.eq(other)) {
+      return Ordering.Equal;
+    }
+
+    if (this.value > other.value) {
+      return Ordering.Greater;
+    }
+
+    return Ordering.Less;
+  }
+
+  public ge(other: Num): boolean {
+    return default_partial_ord<this, Num>(this).ge(other);
+  }
+
+  public gt(other: Num): boolean {
+    return default_partial_ord<this, Num>(this).gt(other);
+  }
+
+  public le(other: Num): boolean {
+    return default_partial_ord<this, Num>(this).le(other);
+  }
+
+  public lt(other: Num): boolean {
+    return default_partial_ord<this, Num>(this).gt(other);
+  }
+
+  public clamp(min: Num, max: Num): size {
+    [min, max] = [size(min), size(max)];
+    if (this.lt(min)) {
+      return min;
+    }
+
+    if (this.gt(max)) {
+      return max;
+    }
+
+    return this;
+  }
+
+  public cmp(other: size): Ordering {
+    return this.partial_cmp(other);
+  }
+
+  public max(other: size): size {
+    if (this.lt(other)) {
+      return other;
+    }
+    return this;
+  }
+
+  public min(other: size): size {
+    if (this.gt(other)) {
+      return other;
+    }
+    return this;
+  }
 }
 
+/**
+ * any integer type.
+ */
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export type size = SizeImpl;
 export const size = staticify(SizeImpl);
 
 type Num = size | bigint | number;
+type Bound = [Num, Num];
