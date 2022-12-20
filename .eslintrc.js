@@ -19,6 +19,7 @@ module.exports = {
     "linebreak-style": ["warn", "windows"],
     quotes: ["warn", "single"],
     semi: ["error", "always"],
+    curly: ['error', 'all'],
     "@typescript-eslint/consistent-type-imports": [
       2,
       {

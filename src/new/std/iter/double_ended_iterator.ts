@@ -34,6 +34,10 @@ class DoubleEndedIteratorImpl<T> extends IteratorImpl<T> {
     return this.rev().find(predicate);
   }
 
+  public rposition(predicate: FnMut<[T], boolean>): Option<number> {
+    return this.rev().position(predicate);
+  }
+
   public static new<T>(iter: Iterable<T>): DoubleEndedIteratorImpl<T> {
     return new this(iter);
   }

@@ -1,5 +1,5 @@
 import { staticify } from '../../../tools';
-import type { bool } from '../bool';
+// import type { bool } from '../bool';
 import type { Ordering } from '../cmp';
 import type { _ } from '../custom';
 import type { Option } from '../option';
@@ -430,60 +430,60 @@ export class IntSizedImpl<T extends IntSizedImpl<_>> extends SizeImpl {
     return super.partial_cmp(other);
   }
 
-  public is_negative(): bool {
+  public is_negative(): boolean {
     return super.is_negative();
   }
 
-  public is_positive(): bool {
+  public is_positive(): boolean {
     return super.is_positive();
   }
 
-  protected overflowing(value: T): [T, bool] {
+  protected overflowing(value: T): [T, boolean] {
     const [p, b] = super.overflowing(value, this.bound);
 
     return [this.fit(p), b];
   }
 
-  private fix_overflow(v: [SizeImpl, bool]): [T, bool] {
+  private fix_overflow(v: [SizeImpl, boolean]): [T, boolean] {
     return [this.fit(v[0]), v[1]];
   }
 
-  public overflowing_abs(): [T, bool] {
+  public overflowing_abs(): [T, boolean] {
     return this.fix_overflow(super.overflowing_abs(this.bound));
   }
 
-  public overflowing_add(rhs: io<T>): [T, bool] {
+  public overflowing_add(rhs: io<T>): [T, boolean] {
     return this.fix_overflow(super.overflowing_add(rhs, this.bound));
   }
 
-  public overflowing_div(rhs: io<T>): [T, bool] {
+  public overflowing_div(rhs: io<T>): [T, boolean] {
     return this.fix_overflow(super.overflowing_add(rhs, this.bound));
   }
 
-  public overflowing_mul(rhs: io<T>): [T, bool] {
+  public overflowing_mul(rhs: io<T>): [T, boolean] {
     return this.fix_overflow(super.overflowing_add(rhs, this.bound));
   }
 
-  public overflowing_neg(): [T, bool] {
+  public overflowing_neg(): [T, boolean] {
     return this.fix_overflow(super.overflowing_neg(this.bound));
   }
 
   public overflowing_op(
     rhs: io<T>,
     x: (self: bigint, rhs: bigint) => bigint
-  ): [T, bool] {
+  ): [T, boolean] {
     return this.fix_overflow(super.overflowing_op(rhs, x, this.bound));
   }
 
-  public overflowing_pow(rhs: io<T>): [T, bool] {
+  public overflowing_pow(rhs: io<T>): [T, boolean] {
     return this.fix_overflow(super.overflowing_pow(rhs, this.bound));
   }
 
-  public overflowing_rem(rhs: io<T>): [T, bool] {
+  public overflowing_rem(rhs: io<T>): [T, boolean] {
     return this.fix_overflow(super.overflowing_rem(rhs, this.bound));
   }
 
-  public overflowing_sub(rhs: io<T>): [T, bool] {
+  public overflowing_sub(rhs: io<T>): [T, boolean] {
     return this.fix_overflow(super.overflowing_sub(rhs, this.bound));
   }
 }

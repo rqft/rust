@@ -1,6 +1,8 @@
 import { radii, staticify } from '../../../tools';
-import type { Extends, IndexOf, RadiiIdx, StrToArray } from '../../../types';
-import { bool } from '../bool';
+import type { IndexOf, RadiiIdx, StrToArray } from '../../../types';
+import type { int } from '../number/size';
+import { size, SizeImpl } from '../number/size';
+// import { boolean } from '../bool';
 import type { Ord } from '../cmp';
 import { default_partial_ord, Ordering } from '../cmp';
 import type { _ } from '../custom';
@@ -11,22 +13,19 @@ import { DecodeUtf16 } from './decode_utf16';
 import { EscapeDebug } from './escape_debug';
 import { EscapeDefault } from './escape_default';
 import { EscapeUnicode } from './escape_unicode';
-import type {
-  Ascii,
-  AsciiAlphabetic,
-  AsciiControl,
-  AsciiDigit,
-  AsciiGraphic,
-  AsciiHexDigit,
-  AsciiLowercase,
-  AsciiPunctuation,
-  AsciiWhitespace,
-  ToAsciiLowercase,
-  ToAsciiUppercase
-} from './types';
+import type { ToAsciiLowercase, ToAsciiUppercase } from './types';
 
 class CharImpl<T extends string> implements Ord<char<_>> {
-  constructor(private value: T) {
+  public value: T;
+  constructor(value: int | T) {
+    if (typeof value === 'number' || typeof value === 'bigint') {
+      value = size(value);
+    }
+
+    if (value instanceof SizeImpl) {
+      value = String.fromCodePoint(value.into(Number)) as T;
+    }
+
     const i = value.codePointAt(0) || 0;
 
     if (
@@ -37,6 +36,8 @@ class CharImpl<T extends string> implements Ord<char<_>> {
     ) {
       panic('Invalid character');
     }
+
+    this.value = value;
   }
 
   public static readonly max: char<'\u{10ffff}'> = new this('\u{10ffff}');
@@ -44,7 +45,7 @@ class CharImpl<T extends string> implements Ord<char<_>> {
     '\u{fffd}'
   );
 
-  public static new<T extends string>(value: T): CharImpl<T> {
+  public static new<T extends string>(value: int | T): CharImpl<T> {
     return new this(value);
   }
 
@@ -150,16 +151,16 @@ class CharImpl<T extends string> implements Ord<char<_>> {
     return other;
   }
 
-  public is_digit(radix: RadiiIdx): bool<_> {
+  public is_digit(radix: RadiiIdx): boolean {
     const idx = radii.indexOf(this.value.toLowerCase());
 
-    return bool(idx > 0 && idx <= radix);
+    return idx > 0 && idx <= radix;
   }
 
   public to_digit(
     radix: RadiiIdx
   ): Option<IndexOf<StrToArray<typeof radii>, Lowercase<T>>> {
-    if (this.is_digit(radix).as_primitive()) {
+    if (this.is_digit(radix)) {
       return Some(radii.indexOf(this.value.toLowerCase())) as never;
     }
 
@@ -230,41 +231,41 @@ class CharImpl<T extends string> implements Ord<char<_>> {
       .map((x) => x.codePointAt(0) || CharImpl.replacement_char.codepoint());
   }
 
-  private is_category(...cats: Array<string>): bool {
-    let p: bool = bool.false;
+  private is_category(...cats: Array<string>): boolean {
+    let p = false;
 
     for (const value of cats) {
-      p = p.bitor(new RegExp(`\\p{${value}}`, 'u').test(this.value));
+      p = p || new RegExp(`\\p{${value}}`, 'u').test(this.value);
     }
 
     return p;
   }
 
-  public is_alphabetic(): bool {
+  public is_alphabetic(): boolean {
     return this.is_category('Alphabetic');
   }
 
-  public is_lowercase(): bool<T extends Lowercase<T> ? true : false> {
+  public is_lowercase(): boolean {
     return this.is_category('Lowercase') as never;
   }
 
-  public is_uppercase(): bool<T extends Uppercase<T> ? true : false> {
+  public is_uppercase(): boolean {
     return this.is_category('Uppercase') as never;
   }
 
-  public is_whitespace(): bool {
-    return bool(/\s/u.test(this.value));
+  public is_whitespace(): boolean {
+    return /\s/u.test(this.value);
   }
 
-  public is_alphanumeric(): bool {
-    return this.is_alphabetic().bitor(this.is_numeric());
+  public is_alphanumeric(): boolean {
+    return this.is_alphabetic() || this.is_numeric();
   }
 
-  public is_control(): bool {
+  public is_control(): boolean {
     return this.is_category('Cc');
   }
 
-  public is_numeric(): bool {
+  public is_numeric(): boolean {
     return this.is_category('Nd', 'Nl', 'No');
   }
 
@@ -276,8 +277,8 @@ class CharImpl<T extends string> implements Ord<char<_>> {
     return new CharImpl(this.value.toUpperCase() as Uppercase<T>);
   }
 
-  public is_ascii(): bool<Extends<T, Ascii>> {
-    return bool((this.codepoint() < 0xff) as never);
+  public is_ascii(): boolean {
+    return (this.codepoint() < 0xff) as never;
   }
 
   public to_ascii_uppercase(): ToAsciiUppercase<this> {
@@ -296,12 +297,8 @@ class CharImpl<T extends string> implements Ord<char<_>> {
     return this as never;
   }
 
-  public eq_ignore_ascii_case<U extends string>(
-    other: char<U>
-  ): bool<Extends<AsciiLowercase<T>, AsciiLowercase<U>>> {
-    return bool(
-      this.to_ascii_lowercase().eq(other.to_ascii_lowercase())
-    ) as never;
+  public eq_ignore_ascii_case<U extends string>(other: char<U>): boolean {
+    return this.to_ascii_lowercase().eq(other.to_ascii_lowercase());
   }
 
   public make_ascii_uppercase(): ToAsciiUppercase<this> {
@@ -314,57 +311,46 @@ class CharImpl<T extends string> implements Ord<char<_>> {
     return this as never;
   }
 
-  public is_ascii_alphabetic(): bool<Extends<T, AsciiAlphabetic>> {
-    return this.is_ascii().bitand(this.is_alphabetic()) as never;
+  public is_ascii_alphabetic(): boolean {
+    return this.is_ascii() && (this.is_alphabetic() as never);
   }
 
-  public is_ascii_uppercase(): bool<
-    // T extends Uppercase<T> ? (T extends Ascii ? true : false) : false
-    Extends<T, Uppercase<Ascii>>
-    > {
-    return this.is_ascii().bitand(this.is_uppercase()) as never;
+  public is_ascii_uppercase(): boolean {
+    return this.is_ascii() && (this.is_uppercase() as never);
   }
 
-  public is_ascii_lowercase(): bool<
-    // T extends Lowercase<T> ? (T extends Ascii ? true : false) : false
-    Extends<T, Lowercase<Ascii>>
-    > {
-    return this.is_ascii().bitand(this.is_lowercase()) as never;
+  public is_ascii_lowercase(): boolean {
+    return this.is_ascii() && (this.is_lowercase() as never);
   }
 
-  public is_ascii_digit(): bool<Extends<T, AsciiDigit>> {
-    return this.is_ascii().bitand(this.is_numeric()) as never;
+  public is_ascii_digit(): boolean {
+    return this.is_ascii() && (this.is_numeric() as never);
   }
 
-  public is_ascii_alphanumeric(): bool<
-    // T extends AsciiAlphabetic | AsciiDigit ? true : false
-    Extends<Lowercase<T>, AsciiAlphabetic | AsciiDigit>
-    > {
-    return bool(
-      this.is_ascii_alphabetic().valueOf() || this.is_ascii_digit().valueOf()
-    ) as never;
+  public is_ascii_alphanumeric(): boolean {
+    return (this.is_ascii_alphabetic().valueOf() ||
+      this.is_ascii_digit().valueOf()) as never;
   }
 
-  public is_ascii_hexdigit(): bool<Extends<Lowercase<T>, AsciiHexDigit>> {
-    return this.is_ascii_digit().bitor(/[a-f]/i.test(this.value)) as never;
+  public is_ascii_hexdigit(): boolean {
+    return this.is_ascii_digit() || (/[a-f]/i.test(this.value) as never);
   }
 
-  public is_ascii_punctuation(): bool<Extends<Lowercase<T>, AsciiPunctuation>> {
-    return this.is_ascii().bitand(this.is_category('Punctuation')) as never;
+  public is_ascii_punctuation(): boolean {
+    return this.is_ascii() && (this.is_category('Punctuation') as never);
   }
 
-  public is_ascii_graphic(): bool<Extends<T, AsciiGraphic>> {
-    return bool(
-      this.is_ascii().valueOf() && this.clamp(char('!'), char('~')).eq(this)
-    ) as never;
+  public is_ascii_graphic(): boolean {
+    return (this.is_ascii().valueOf() &&
+      this.clamp(char('!'), char('~')).eq(this)) as never;
   }
 
-  public is_ascii_whitespace(): bool<Extends<T, AsciiWhitespace>> {
-    return this.is_ascii().bitand(this.is_whitespace()) as never;
+  public is_ascii_whitespace(): boolean {
+    return this.is_ascii() && (this.is_whitespace() as never);
   }
 
-  public is_ascii_control(): bool<Extends<T, AsciiControl>> {
-    return this.is_ascii().bitand(this.is_control()) as never;
+  public is_ascii_control(): boolean {
+    return this.is_ascii() && (this.is_control() as never);
   }
 }
 

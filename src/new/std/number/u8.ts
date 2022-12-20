@@ -11,6 +11,10 @@ class U8 extends IntSizedImpl<U8> {
   public static new(value: _): u8 {
     return new this(value);
   }
+
+  public is_utf8_char_boundary(): boolean {
+    return this.lt(128) || this.ge(192);
+  }
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention

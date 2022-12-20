@@ -108,3 +108,17 @@ export const UnicodeRegexCategories = {
   separator: /\p{Z}/u,
 } as const;
 export const radii = '0123456789abcdefghijklmnopqrstuvwxyz' as const;
+
+export function iter_len<T>(t: Iterable<T>): number {
+  let i = 0;
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  for (const _ of t) {
+    if (i === Infinity) {
+      return i;
+    }
+    i++;
+  }
+
+  return i;
+}

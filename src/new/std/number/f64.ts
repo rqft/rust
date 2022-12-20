@@ -1,5 +1,5 @@
 import { staticify } from '../../../tools';
-import { bool } from '../bool';
+// import { bool } from '../bool';
 import type { Clone } from '../clone';
 import type { Ord } from '../cmp';
 import { default_partial_eq, default_partial_ord, Ordering } from '../cmp';
@@ -262,32 +262,32 @@ implements
   public static readonly infinity: f64 = new this(Infinity);
   public static readonly neg_infinity: f64 = new this(-Infinity);
 
-  public is_nan(): bool {
-    return bool(+this != +this);
+  public is_nan(): boolean {
+    return +this != +this;
   }
 
-  public is_infinity(): bool {
-    return bool(+this === Infinity || +this === -Infinity);
+  public is_infinity(): boolean {
+    return +this === Infinity || +this === -Infinity;
   }
 
-  public is_finite(): bool {
-    return this.is_nan().bitor(this.is_infinity()).not();
+  public is_finite(): boolean {
+    return this.is_nan() || !this.is_infinity();
   }
 
   // is_subnormal
 
-  public is_normal(): bool {
-    return this.is_finite().bitand(this.value !== 0);
+  public is_normal(): boolean {
+    return this.is_finite() && this.value !== 0;
   }
 
   // classify
 
-  public is_sign_positive(): bool {
-    return bool(this.value > 0);
+  public is_sign_positive(): boolean {
+    return this.value > 0;
   }
 
-  public is_sign_negative(): bool {
-    return bool(this.value < 0);
+  public is_sign_negative(): boolean {
+    return this.value < 0;
   }
 
   // next_up, next_down
@@ -307,7 +307,7 @@ implements
   public maximum(other: Num): f64 {
     other = f64(other);
 
-    if (this.is_nan().bitor(other.is_nan()).valueOf()) {
+    if (this.is_nan() || other.is_nan().valueOf()) {
       return F64Impl.nan;
     }
 
@@ -317,7 +317,7 @@ implements
   public minimum(other: Num): f64 {
     other = f64(other);
 
-    if (this.is_nan().bitor(other.is_nan()).valueOf()) {
+    if (this.is_nan() || other.is_nan().valueOf()) {
       return F64Impl.nan;
     }
 
@@ -327,10 +327,10 @@ implements
   public total_cmp(other: Num): Ordering {
     other = f64(other);
 
-    if (this.is_sign_negative().as_primitive()) {
+    if (this.is_sign_negative()) {
       // -NaN
-      if (this.is_nan().as_primitive()) {
-        if (other.is_sign_negative().bitand(this.is_nan()).as_primitive()) {
+      if (this.is_nan()) {
+        if (other.is_sign_negative() && this.is_nan()) {
           return Ordering.Equal;
         }
 
@@ -338,10 +338,8 @@ implements
       }
 
       // -∞
-      if (this.is_infinity().as_primitive()) {
-        if (
-          other.is_sign_negative().bitand(this.is_infinity()).as_primitive()
-        ) {
+      if (this.is_infinity()) {
+        if (other.is_sign_negative() && this.is_infinity()) {
           return Ordering.Equal;
         }
 
@@ -349,7 +347,7 @@ implements
       }
 
       // -x
-      if (other.is_sign_negative().as_primitive()) {
+      if (other.is_sign_negative()) {
         return this.cmp(other);
       }
     }
@@ -364,16 +362,16 @@ implements
       return Ordering.Less;
     }
 
-    if (other.is_infinity().as_primitive()) {
-      if (this.is_infinity().as_primitive()) {
+    if (other.is_infinity()) {
+      if (this.is_infinity()) {
         return Ordering.Equal;
       }
 
       return Ordering.Less;
     }
 
-    if (other.is_nan().as_primitive()) {
-      if (this.is_nan().as_primitive()) {
+    if (other.is_nan()) {
+      if (this.is_nan()) {
         return Ordering.Equal;
       }
 

@@ -1,3 +1,3 @@
-import { u8 } from './new/std/number';
+// import { bool } from './new/std';
 
-console.log(u8(256));
+// bool.true.eq(bool.false);

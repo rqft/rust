@@ -1,0 +1,2 @@
+export { str } from './str';
+

@@ -216,3 +216,19 @@ export function default_partial_ord<T, Rhs = T>(value: T): PartialOrd<Rhs> {
 
   panic('PartialOrd cannot be derived without (eq, partial_cmp) methods');
 }
+
+// @ts-expect-error ts(2677)
+export function is_eq<T, O>(x: T): x is PartialEq<T, O> {
+  return (
+    typeof x === 'object' && 'eq' in (x as object) && 'ne' in (x as object)
+  );
+}
+
+// @ts-expect-error ts(2677)
+export function is_cmp<T, O>(x: T): x is PartialOrd<T, O> {
+  return (
+    typeof x === 'object' &&
+    is_eq(x) &&
+    ['partial_cmp', 'lt', 'le', 'gt', 'ge'].every((p) => p in x)
+  );
+}
