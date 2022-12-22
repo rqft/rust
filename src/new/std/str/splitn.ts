@@ -1,13 +1,14 @@
 import { staticify } from '../../../tools';
+import type { char } from '../char';
+import type { _ } from '../custom';
 import { IteratorImpl } from '../iter/iterator';
 import type { int } from '../number/size';
 import { size } from '../number/size';
-import type { Io } from './str';
 import { str } from './str';
 
 // @ts-expect-error ts(2714)
 class SplitNImpl extends IteratorImpl<str> {
-  constructor(v: str, n: int, pattern: Io) {
+  constructor(v: str, n: int, pattern: char<_> | str | string) {
     super(
       (function* (): Generator<str, void, unknown> {
         let i = 0n;
@@ -27,7 +28,7 @@ class SplitNImpl extends IteratorImpl<str> {
     );
   }
 
-  public static new(ptr: str, n: int, pattern: Io): SplitN {
+  public static new(ptr: str, n: int, pattern: char<_> | str | string): SplitN {
     return new this(ptr, n, pattern);
   }
 }

@@ -17,6 +17,8 @@ import { EncodeUtf16 } from './encode_utf16';
 import { Lines } from './lines';
 import { Matches } from './matches';
 import { MatchIndices } from './match_indices';
+import type { Matcher } from './pattern';
+import { Pattern } from './pattern';
 import { RMatches } from './rmatches';
 import { RMatchIndices } from './rmatch_indices';
 import { RSplit } from './rsplit';
@@ -183,19 +185,19 @@ class StrImpl {
     return EncodeUtf16(this.chars(), u16(0));
   }
 
-  public contains(pattern: Io): boolean {
+  public contains(pattern: Matcher): boolean {
     return this.alloc.includes(str(pattern).alloc);
   }
 
-  public starts_with(pattern: Io): boolean {
+  public starts_with(pattern: Matcher): boolean {
     return this.alloc.startsWith(str(pattern).alloc);
   }
 
-  public ends_with(pattern: Io): boolean {
-    return this.alloc.endsWith(str(pattern).alloc);
+  public ends_with(pattern: Matcher): boolean {
+    return Pattern(pattern).is_suffix_of(this.alloc);
   }
 
-  public find(pattern: Io): Option<usize> {
+  public find(pattern: Matcher): Option<usize> {
     const iof = this.alloc.indexOf(str(pattern).alloc);
 
     if (iof === -1) {
@@ -205,7 +207,7 @@ class StrImpl {
     return Some(usize(iof));
   }
 
-  public rfind(pattern: Io): Option<usize> {
+  public rfind(pattern: Matcher): Option<usize> {
     const iof = this.alloc.lastIndexOf(str(pattern).alloc);
 
     if (iof === -1) {
@@ -215,39 +217,39 @@ class StrImpl {
     return Some(usize(iof));
   }
 
-  public split(pattern: Io): Split {
+  public split(pattern: Matcher): Split {
     return Split(this, pattern);
   }
 
-  public split_inclusive(pattern: Io): SplitInclusive {
+  public split_inclusive(pattern: Matcher): SplitInclusive {
     return SplitInclusive(this, pattern);
   }
 
-  public rsplit(pattern: Io): RSplit {
+  public rsplit(pattern: Matcher): RSplit {
     return RSplit(this, pattern);
   }
 
-  public rsplit_inclusive(pattern: Io): RSplitInclusive {
+  public rsplit_inclusive(pattern: Matcher): RSplitInclusive {
     return RSplitInclusive(this, pattern);
   }
 
-  public split_terminator(pattern: Io): SplitTerminator {
+  public split_terminator(pattern: Matcher): SplitTerminator {
     return SplitTerminator(this, pattern);
   }
 
-  public rsplit_terminator(pattern: Io): RSplitTerminator {
+  public rsplit_terminator(pattern: Matcher): RSplitTerminator {
     return RSplitTerminator(this, pattern);
   }
 
-  public splitn(n: int, pattern: Io): SplitN {
+  public splitn(n: int, pattern: Matcher): SplitN {
     return SplitN(this, n, pattern);
   }
 
-  public rsplitn(n: int, pattern: Io): RSplitN {
+  public rsplitn(n: int, pattern: Matcher): RSplitN {
     return RSplitN(this, n, pattern);
   }
 
-  public split_once(delimiter: Io): Option<[str, str]> {
+  public split_once(delimiter: Matcher): Option<[str, str]> {
     delimiter = str(delimiter);
 
     const iof = this.find(delimiter);
@@ -259,7 +261,7 @@ class StrImpl {
     return Some(this.split_at(iof.unwrap()));
   }
 
-  public rsplit_once(delimiter: Io): Option<[str, str]> {
+  public rsplit_once(delimiter: Matcher): Option<[str, str]> {
     delimiter = str(delimiter);
 
     const iof = this.rfind(delimiter);
@@ -271,19 +273,19 @@ class StrImpl {
     return Some(this.split_at(iof.unwrap()));
   }
 
-  public matches(pattern: Io): Matches {
+  public matches(pattern: Matcher): Matches {
     return Matches(this, pattern);
   }
 
-  public rmatches(pattern: Io): RMatches {
+  public rmatches(pattern: Matcher): RMatches {
     return RMatches(this, pattern);
   }
 
-  public match_indices(pattern: Io): MatchIndices {
+  public match_indices(pattern: Matcher): MatchIndices {
     return MatchIndices(this, pattern);
   }
 
-  public rmatch_indices(pattern: Io): RMatchIndices {
+  public rmatch_indices(pattern: Matcher): RMatchIndices {
     return RMatchIndices(this, pattern);
   }
 
@@ -299,7 +301,7 @@ class StrImpl {
     return str(this.alloc.trimEnd());
   }
 
-  public strip_prefix(pattern: Io): str {
+  public strip_prefix(pattern: Matcher): str {
     if (this.starts_with(pattern)) {
       return this.slice_unchecked(0, str(pattern).len());
     }
@@ -307,7 +309,7 @@ class StrImpl {
     return this;
   }
 
-  public strip_suffix(pattern: Io): str {
+  public strip_suffix(pattern: Matcher): str {
     if (this.ends_with(pattern)) {
       return this.slice_unchecked(
         this.len().sub(str(pattern).len()),
@@ -318,7 +320,7 @@ class StrImpl {
     return this;
   }
 
-  public trim_start_matches(pattern: Io): str {
+  public trim_start_matches(pattern: Matcher): str {
     let self = str(this);
     while (self.starts_with(pattern)) {
       self = self.strip_prefix(pattern);
@@ -327,7 +329,7 @@ class StrImpl {
     return self;
   }
 
-  public trim_end_matches(pattern: Io): str {
+  public trim_end_matches(pattern: Matcher): str {
     let self = str(this);
     while (self.ends_with(pattern)) {
       self = self.strip_suffix(pattern);
@@ -336,7 +338,7 @@ class StrImpl {
     return self;
   }
 
-  public trim_matches(pattern: Io): str {
+  public trim_matches(pattern: Matcher): str {
     return this.trim_start_matches(pattern).trim_end_matches(pattern);
   }
 
