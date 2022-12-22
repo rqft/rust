@@ -1,7 +1,8 @@
 import { staticify } from '../../../tools';
 import type { _ } from '../custom';
 import { IteratorImpl } from '../iter/iterator';
-import { panic } from '../panic';
+import { u16 } from '../number';
+import type { io } from '../number/int_sized';
 import type { Result } from '../result';
 import { Err, Ok } from '../result';
 import { char } from './char';
@@ -11,29 +12,26 @@ import { DecodeUtf16Error } from './decode_utf16_error';
 class DecodeUtf16Impl extends IteratorImpl<
   Result<char<_>, DecodeUtf16Error<_>>
 > {
-  constructor(iter: Iterable<number>) {
+  constructor(iter: Iterable<io<u16>>) {
     super(
       (function* (): Generator<
         Result<char<_>, DecodeUtf16Error<_>>,
         void,
         unknown
         > {
-        for (const u32 of iter) {
-          if (u32 < 0 || u32 > 2 ** 32) {
-            panic('Invalid u32 value');
-          }
-
+        for (let u of iter) {
+          u = u16(u);
           try {
-            yield Ok(char(String.fromCodePoint(u32)));
+            yield Ok(char(String.fromCodePoint(Number(u))));
           } catch {
-            yield Err(DecodeUtf16Error(u32));
+            yield Err(DecodeUtf16Error(u));
           }
         }
       })()
     );
   }
 
-  public static new(iter: Iterable<number>): DecodeUtf16Impl {
+  public static new(iter: Iterable<io<u16>>): DecodeUtf16Impl {
     return new this(iter);
   }
 }

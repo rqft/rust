@@ -122,3 +122,7 @@ export function iter_len<T>(t: Iterable<T>): number {
 
   return i;
 }
+
+export function is_iter<T>(t: unknown): t is Iterable<T> {
+  return typeof t === 'object' && Symbol.iterator in (t as object);
+}

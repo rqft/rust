@@ -6,6 +6,8 @@ import { size, SizeImpl } from '../number/size';
 import type { Ord } from '../cmp';
 import { default_partial_ord, Ordering } from '../cmp';
 import type { _ } from '../custom';
+import { u16, u8 } from '../number';
+import type { io } from '../number/int_sized';
 import type { Option } from '../option';
 import { None, Some } from '../option';
 import { panic } from '../panic';
@@ -49,7 +51,7 @@ class CharImpl<T extends string> implements Ord<char<_>> {
     return new this(value);
   }
 
-  public static decode_utf16(iter: Iterable<number>): DecodeUtf16 {
+  public static decode_utf16(iter: Iterable<io<u16>>): DecodeUtf16 {
     return DecodeUtf16(iter);
   }
 
@@ -195,22 +197,22 @@ class CharImpl<T extends string> implements Ord<char<_>> {
     return this.value.length;
   }
 
-  public encode_utf8(): Array<number> {
+  public encode_utf8(): Array<u8> {
     const code = this.codepoint();
 
     if (code < 0x80) {
-      return [code];
+      return [u8(code)];
     }
 
     if (code < 0x800) {
-      return [0xc0 | (code >> 6), 0x80 | (code & 0x3f)];
+      return [u8(0xc0 | (code >> 6)), u8(0x80 | (code & 0x3f))];
     }
 
     if (code < 0xd800 || code >= 0xe000) {
       return [
-        0xe0 | (code >> 12),
-        0x80 | ((code >> 6) & 0x3f),
-        0x80 | (code & 0x3f),
+        u8(0xe0 | (code >> 12)),
+        u8(0x80 | ((code >> 6) & 0x3f)),
+        u8(0x80 | (code & 0x3f)),
       ];
     }
 
@@ -218,17 +220,19 @@ class CharImpl<T extends string> implements Ord<char<_>> {
       0x10000 + (((code & 0x3ff) << 10) | (this.value.charCodeAt(1) & 0x3ff));
 
     return [
-      0xf0 | (p << 18),
-      0x80 | ((p >> 12) & 0x3f),
-      0x80 | ((code >> 6) & 0x3f),
-      0x80 | (code & 0x3f),
+      u8(0xf0 | (p << 18)),
+      u8(0x80 | ((p >> 12) & 0x3f)),
+      u8(0x80 | ((code >> 6) & 0x3f)),
+      u8(0x80 | (code & 0x3f)),
     ];
   }
 
-  public encode_utf16(): Array<number> {
+  public encode_utf16(): Array<u16> {
     return this.value
       .split('')
-      .map((x) => x.codePointAt(0) || CharImpl.replacement_char.codepoint());
+      .map((x) =>
+        u16(x.codePointAt(0) || CharImpl.replacement_char.codepoint())
+      );
   }
 
   private is_category(...cats: Array<string>): boolean {
@@ -351,6 +355,11 @@ class CharImpl<T extends string> implements Ord<char<_>> {
 
   public is_ascii_control(): boolean {
     return this.is_ascii() && (this.is_control() as never);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  public toString(): string {
+    return this.as_primitive();
   }
 }
 

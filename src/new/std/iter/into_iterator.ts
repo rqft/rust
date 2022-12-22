@@ -1,5 +1,5 @@
-import type { Iterator } from './iterator';
+// import type { Iterator } from './iterator';
 
-export interface IntoIterator<T, I extends Iterator<T>> {
-  into_iter(): I;
-}
+// export interface IntoIterator<T, I extends Iterator<T>> {
+//   into_iter(): I;
+// }

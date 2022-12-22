@@ -3,22 +3,35 @@ import { char } from '../char';
 import { min } from '../cmp';
 import type { _ } from '../custom';
 import { DoubleEndedIterator } from '../iter';
-import { u8, usize } from '../number';
+import { u16, u8, usize } from '../number';
 import type { int } from '../number/size';
 import { size } from '../number/size';
 import type { Option } from '../option';
-
+import { None, Some } from '../option';
 import { panic } from '../panic';
 import { slice } from '../slice';
 import { Bytes } from './bytes';
 import { Chars } from './chars';
 import { CharIndices } from './char_indices';
+import { EncodeUtf16 } from './encode_utf16';
 import { Lines } from './lines';
+import { Matches } from './matches';
+import { MatchIndices } from './match_indices';
+import { RMatches } from './rmatches';
+import { RMatchIndices } from './rmatch_indices';
+import { RSplit } from './rsplit';
+import { RSplitN } from './rsplitn';
+import { RSplitInclusive } from './rsplit_inclusive';
+import { RSplitTerminator } from './rsplit_terminator';
+import { Split } from './split';
+import { SplitN } from './splitn';
 import { SplitAsciiWhitespace } from './split_ascii_whitespace';
+import { SplitInclusive } from './split_inclusive';
+import { SplitTerminator } from './split_terminator';
 import { SplitWhitespace } from './split_whitespace';
 
 class StrImpl {
-  public readonly alloc: string;
+  public alloc: string;
   constructor(value: Io) {
     if (value instanceof u8.static) {
       value = char(String.fromCodePoint(Number(value.as_primitive())));
@@ -41,6 +54,10 @@ class StrImpl {
     }
 
     this.alloc = value as string;
+  }
+
+  public clone(): str {
+    return str(this.alloc);
   }
 
   public static new(value: Io): StrImpl {
@@ -162,7 +179,253 @@ class StrImpl {
     return Lines(this);
   }
 
-  
+  public encode_utf16(): EncodeUtf16 {
+    return EncodeUtf16(this.chars(), u16(0));
+  }
+
+  public contains(pattern: Io): boolean {
+    return this.alloc.includes(str(pattern).alloc);
+  }
+
+  public starts_with(pattern: Io): boolean {
+    return this.alloc.startsWith(str(pattern).alloc);
+  }
+
+  public ends_with(pattern: Io): boolean {
+    return this.alloc.endsWith(str(pattern).alloc);
+  }
+
+  public find(pattern: Io): Option<usize> {
+    const iof = this.alloc.indexOf(str(pattern).alloc);
+
+    if (iof === -1) {
+      return None;
+    }
+
+    return Some(usize(iof));
+  }
+
+  public rfind(pattern: Io): Option<usize> {
+    const iof = this.alloc.lastIndexOf(str(pattern).alloc);
+
+    if (iof === -1) {
+      return None;
+    }
+
+    return Some(usize(iof));
+  }
+
+  public split(pattern: Io): Split {
+    return Split(this, pattern);
+  }
+
+  public split_inclusive(pattern: Io): SplitInclusive {
+    return SplitInclusive(this, pattern);
+  }
+
+  public rsplit(pattern: Io): RSplit {
+    return RSplit(this, pattern);
+  }
+
+  public rsplit_inclusive(pattern: Io): RSplitInclusive {
+    return RSplitInclusive(this, pattern);
+  }
+
+  public split_terminator(pattern: Io): SplitTerminator {
+    return SplitTerminator(this, pattern);
+  }
+
+  public rsplit_terminator(pattern: Io): RSplitTerminator {
+    return RSplitTerminator(this, pattern);
+  }
+
+  public splitn(n: int, pattern: Io): SplitN {
+    return SplitN(this, n, pattern);
+  }
+
+  public rsplitn(n: int, pattern: Io): RSplitN {
+    return RSplitN(this, n, pattern);
+  }
+
+  public split_once(delimiter: Io): Option<[str, str]> {
+    delimiter = str(delimiter);
+
+    const iof = this.find(delimiter);
+
+    if (iof.is_none()) {
+      return None;
+    }
+
+    return Some(this.split_at(iof.unwrap()));
+  }
+
+  public rsplit_once(delimiter: Io): Option<[str, str]> {
+    delimiter = str(delimiter);
+
+    const iof = this.rfind(delimiter);
+
+    if (iof.is_none()) {
+      return None;
+    }
+
+    return Some(this.split_at(iof.unwrap()));
+  }
+
+  public matches(pattern: Io): Matches {
+    return Matches(this, pattern);
+  }
+
+  public rmatches(pattern: Io): RMatches {
+    return RMatches(this, pattern);
+  }
+
+  public match_indices(pattern: Io): MatchIndices {
+    return MatchIndices(this, pattern);
+  }
+
+  public rmatch_indices(pattern: Io): RMatchIndices {
+    return RMatchIndices(this, pattern);
+  }
+
+  public trim(): str {
+    return str(this.alloc.trim());
+  }
+
+  public trim_start(): str {
+    return str(this.alloc.trimStart());
+  }
+
+  public trim_end(): str {
+    return str(this.alloc.trimEnd());
+  }
+
+  public strip_prefix(pattern: Io): str {
+    if (this.starts_with(pattern)) {
+      return this.slice_unchecked(0, str(pattern).len());
+    }
+
+    return this;
+  }
+
+  public strip_suffix(pattern: Io): str {
+    if (this.ends_with(pattern)) {
+      return this.slice_unchecked(
+        this.len().sub(str(pattern).len()),
+        this.len()
+      );
+    }
+
+    return this;
+  }
+
+  public trim_start_matches(pattern: Io): str {
+    let self = str(this);
+    while (self.starts_with(pattern)) {
+      self = self.strip_prefix(pattern);
+    }
+
+    return self;
+  }
+
+  public trim_end_matches(pattern: Io): str {
+    let self = str(this);
+    while (self.ends_with(pattern)) {
+      self = self.strip_suffix(pattern);
+    }
+
+    return self;
+  }
+
+  public trim_matches(pattern: Io): str {
+    return this.trim_start_matches(pattern).trim_end_matches(pattern);
+  }
+
+  public parse<T>(x: (s: string) => T): T {
+    return x(this.alloc);
+  }
+
+  public is_ascii(): boolean {
+    return this.chars().all((x) => x.is_ascii());
+  }
+
+  public eq_ignore_ascii_case(other: Io): boolean {
+    return this.chars()
+      .zip(str(other).chars())
+      .all(([a, b]) => a.eq_ignore_ascii_case(b));
+  }
+
+  public make_ascii_uppercase(): this {
+    this.alloc = str(this.chars().map((x) => x.make_ascii_uppercase())).alloc;
+    return this;
+  }
+
+  public make_ascii_lowercase(): this {
+    this.alloc = str(this.chars().map((x) => x.make_ascii_lowercase())).alloc;
+    return this;
+  }
+
+  public escape_debug(): this {
+    this.alloc = str(
+      this.chars()
+        .map((x) => x.escape_debug())
+        .flatten()
+    ).alloc;
+    return this;
+  }
+
+  public escape_default(): this {
+    this.alloc = str(
+      this.chars()
+        .map((x) => x.escape_default())
+        .flatten()
+    ).alloc;
+    return this;
+  }
+
+  public escape_unicode(): this {
+    this.alloc = str(
+      this.chars()
+        .map((x) => x.escape_unicode())
+        .flatten()
+    ).alloc;
+    return this;
+  }
+
+  public replace(from: Io, to: Io): str {
+    return str(this.alloc.replace(str(from).alloc, str(to).alloc));
+  }
+
+  public replacen(pattern: Io, to: Io, count: int): str {
+    let i = 0n;
+    return str(
+      this.alloc.replace(str(pattern).alloc, (g) => {
+        if (size(count).lt(i++)) {
+          return g;
+        }
+        return str(to).alloc;
+      })
+    );
+  }
+
+  public to_lowercase(): str {
+    return str(this.alloc.toLowerCase());
+  }
+
+  public to_uppercase(): str {
+    return str(this.alloc.toUpperCase());
+  }
+
+  public repeat(n: int): str {
+    return str(this.alloc.repeat(size(n).into(Number)));
+  }
+
+  public to_ascii_uppercase(): str {
+    return this.clone().make_ascii_uppercase();
+  }
+
+  public to_ascii_lowercase(): str {
+    return this.clone().make_ascii_lowercase();
+  }
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention

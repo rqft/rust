@@ -1,3 +1,3 @@
-// import { bool } from './new/std';
+import { Pattern } from './new/std/str/pattern';
 
-// bool.true.eq(bool.false);
+Pattern([]);

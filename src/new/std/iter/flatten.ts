@@ -1,32 +1,34 @@
-import { staticify } from '../../../tools';
-import { IteratorImpl } from './iterator';
+// import { staticify } from '../../../tools';
+// import type { _ } from '../custom';
+// import { IteratorImpl } from './iterator';
 
-class FlattenImpl<T> extends IteratorImpl<T> {
-  constructor(iter: Iterable<Iterable<T> | T>) {
-    super(
-      (function* (): Generator<T, void, unknown> {
-        for (const value of iter) {
-          if (
-            typeof value === 'object' &&
-            Symbol.iterator in (value as object)
-          ) {
-            for (const item of value as Iterable<T>) {
-              yield item;
-            }
+// // @ts-expect-error ts(2714)
+// class FlattenImpl<T> extends IteratorImpl<T extends Iterable<infer U> ? U : T> {
+//   constructor(iter: Iterable<Iterable<T> | T>) {
+//     super(
+//       (function* (): Generator<_, void, unknown> {
+//         for (const value of iter) {
+//           if (
+//             typeof value === 'object' &&
+//             Symbol.iterator in (value as object)
+//           ) {
+//             for (const item of value as Iterable<_>) {
+//               yield item;
+//             }
 
-            continue;
-          }
+//             continue;
+//           }
 
-          yield value as T;
-        }
-      })()
-    );
-  }
+//           yield value as _;
+//         }
+//       })()
+//     );
+//   }
 
-  public static new<T>(iter: Iterable<Iterable<T> | T>): FlattenImpl<T> {
-    return new this(iter);
-  }
-}
+//   public static new<T>(iter: Iterable<Iterable<T> | T>): FlattenImpl<T> {
+//     return new this(iter);
+//   }
+// }
 
-export type Flatten<T> = FlattenImpl<T>;
-export const Flatten = staticify(FlattenImpl);
+// export type Flatten<T> = FlattenImpl<T>;
+// export const Flatten = staticify(FlattenImpl);
