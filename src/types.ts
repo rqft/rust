@@ -1,4 +1,4 @@
-import type { ToBool } from './new/std/custom';
+import type { ToBool } from './std/custom';
 
 export type And<T extends Anybool, U extends Anybool> = [T, U] extends [
   True,
