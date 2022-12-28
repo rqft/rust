@@ -32,24 +32,6 @@ implements
 {
   private readonly secs: u64;
   private readonly nanos: u32;
-  constructor(secs: int, nanos: int) {
-    this.secs = u64(secs);
-    this.nanos = u32(nanos);
-
-    if (this.nanos.gt(1_000_000_000n)) {
-      this.secs.add_assign(this.nanos.div(1_000_000_000n));
-      this.nanos.rem_assign(1_000_000_000n);
-    }
-
-    if (this.secs.gt(Duration.max.secs)) {
-      panic('overflowed past u64 bound');
-    }
-  }
-
-  public static new(secs: int, nanos: int): DurationImpl {
-    return new this(secs, nanos);
-  }
-
   private static readonly nanos_per_sec: u32 = u32(1_000_000_000);
   private static readonly nanos_per_milli: u32 = u32(1_000_000);
   private static readonly nanos_per_micro: u32 = u32(1_000);
@@ -65,6 +47,23 @@ implements
   public static readonly millisecond: Duration = DurationImpl.from_millis(1);
   public static readonly microsecond: Duration = DurationImpl.from_micros(1);
   public static readonly nanosecond: Duration = DurationImpl.from_nanos(1);
+  constructor(secs: int, nanos: int) {
+    this.secs = u64(secs);
+    this.nanos = u32(nanos);
+
+    if (this.nanos.gt(1_000_000_000n)) {
+      this.secs.add_assign(this.nanos.div(1_000_000_000n));
+      this.nanos.rem_assign(1_000_000_000n);
+    }
+
+    if (this.secs.gt((1n << 63n) - 1n)) {
+      panic('overflowed past u64 bound');
+    }
+  }
+
+  public static new(secs: int, nanos: int): DurationImpl {
+    return new this(secs, nanos);
+  }
 
   public static from_secs(secs: int): DurationImpl {
     return new this(secs, 0);

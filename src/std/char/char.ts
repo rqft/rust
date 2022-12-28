@@ -28,17 +28,6 @@ class CharImpl<T extends string> implements Ord<char<_>> {
       value = String.fromCodePoint(value.into(Number)) as T;
     }
 
-    const i = value.codePointAt(0) || 0;
-
-    if (
-      value.length !== 1 ||
-      i > 0x10ffff ||
-      i < 0 ||
-      (i >= 0xd800 && i <= 0xdfff)
-    ) {
-      panic('Invalid character');
-    }
-
     this.value = value;
   }
 
