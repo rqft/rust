@@ -17,6 +17,14 @@ class TupleImpl<T extends Array<unknown>> implements Into<T> {
   public into<U>(f: (value: T) => U): U {
     return f(this.alloc);
   }
+
+  public as_primitive(): T {
+    return this.alloc;
+  }
+
+  public *[Symbol.iterator](): Generator<T[number], void, undefined> {
+    yield* this.alloc;
+  }
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
