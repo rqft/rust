@@ -14,6 +14,19 @@ class TimeImpl {
     return new this(h, m, s, n);
   }
 
+  public static readonly max: TimeImpl = this.from_hms_nano(
+    23,
+    59,
+    59,
+    999_999_999
+  ).unwrap_unchecked();
+  public static readonly min: TimeImpl = this.from_hms_nano(
+    0,
+    0,
+    0,
+    0
+  ).unwrap_unchecked();
+
   // eslint-disable-next-line @typescript-eslint/naming-convention
   public static __from_hms_nanos_unchecked(
     h: u8,
@@ -189,7 +202,12 @@ class TimeImpl {
   }
 
   // safety: 0 is always a valid component.
-  public static readonly midnight = this.from_hms_nano(0, 0, 0, 0).unwrap_unchecked();
+  public static readonly midnight = this.from_hms_nano(
+    0,
+    0,
+    0,
+    0
+  ).unwrap_unchecked();
 }
 
 export type Time = TimeImpl;

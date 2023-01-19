@@ -37,6 +37,14 @@ implements
     return Some(this.value);
   }
 
+  public some(): boolean {
+    return this.is_some();
+  }
+
+  public none(): boolean {
+    return this.is_none();
+  }
+
   public is_some(): this is SomeImpl<T> {
     return true;
   }
@@ -45,7 +53,7 @@ implements
     return f(this.value);
   }
 
-  public is_none(): false {
+  public is_none(): this is NoneImpl<T> {
     return false;
   }
 
@@ -307,11 +315,19 @@ implements
     return new this();
   }
 
+  public some(): boolean {
+    return this.is_some();
+  }
+
+  public none(): boolean {
+    return this.is_none();
+  }
+
   public clone(): Option<T> {
     return None;
   }
 
-  public is_some(): false {
+  public is_some(): this is SomeImpl<T> {
     return false;
   }
 
@@ -528,6 +544,21 @@ implements
 }
 
 export type Option<T> = None<T> | Some<T>;
+export const Option = {
+  is_some<T>(value: Option<T>): boolean {
+    return value.is_some();
+  },
+  is_none<T>(value: Option<T>): boolean {
+    return value.is_none();
+  },
+  some<T>(T: T): SomeImpl<T> {
+    return Some(T);
+  },
+  none<T>(T?: T): NoneImpl<T> {
+    void T;
+    return None;
+  },
+};
 
 export const Some = staticify(SomeImpl);
 export type Some<T> = SomeImpl<T>;

@@ -8,9 +8,12 @@ import { None, Some } from '../../std/option';
 import type { Result } from '../../std/result';
 import { Err, Ok } from '../../std/result';
 import { tuple } from '../../std/tuple';
+import { staticify } from '../../tools';
 import { ComponentRangeError } from './error/component_range';
 import type { MonthValue } from './month';
 import { Month } from './month';
+import { PrimitiveDateTime } from './primitive_date_time';
+import { Time } from './time';
 import {
   days_in_year,
   days_in_year_month,
@@ -373,4 +376,70 @@ class DateImpl {
   }
 
   // not doing checked/saturating/wrapping arithm, or replacement
+
+  public midnight(): PrimitiveDateTime {
+    return PrimitiveDateTime(this, Time.midnight);
+  }
+
+  public with_time(time: Time): PrimitiveDateTime {
+    return PrimitiveDateTime(this, time);
+  }
+
+  public with_hms(
+    h: int,
+    m: int,
+    s: int
+  ): Result<PrimitiveDateTime, ComponentRangeError> {
+    const raw = Time.from_hms(h, m, s);
+
+    if (raw.is_err()) {
+      return raw as Err<ComponentRangeError>;
+    }
+    return Ok(PrimitiveDateTime(this, raw.unwrap_unchecked()));
+  }
+
+  public with_hms_milli(
+    h: int,
+    m: int,
+    s: int,
+    milli: int
+  ): Result<PrimitiveDateTime, ComponentRangeError> {
+    const raw = Time.from_hms_milli(h, m, s, milli);
+
+    if (raw.is_err()) {
+      return raw as Err<ComponentRangeError>;
+    }
+    return Ok(PrimitiveDateTime(this, raw.unwrap_unchecked()));
+  }
+
+  public with_hms_micro(
+    h: int,
+    m: int,
+    s: int,
+    micro: int
+  ): Result<PrimitiveDateTime, ComponentRangeError> {
+    const raw = Time.from_hms_micro(h, m, s, micro);
+
+    if (raw.is_err()) {
+      return raw as Err<ComponentRangeError>;
+    }
+    return Ok(PrimitiveDateTime(this, raw.unwrap_unchecked()));
+  }
+
+  public with_hms_nano(
+    h: int,
+    m: int,
+    s: int,
+    nano: int
+  ): Result<PrimitiveDateTime, ComponentRangeError> {
+    const raw = Time.from_hms_nano(h, m, s, nano);
+
+    if (raw.is_err()) {
+      return raw as Err<ComponentRangeError>;
+    }
+    return Ok(PrimitiveDateTime(this, raw.unwrap_unchecked()));
+  }
 }
+
+export type Date = DateImpl;
+export const Date = staticify(DateImpl);

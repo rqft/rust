@@ -1,3 +1,4 @@
+import type { PartialEq } from './cmp';
 import type { usize } from './number';
 import type { Option } from './option';
 import { None, Some } from './option';
@@ -15,13 +16,23 @@ export function assert_eq(
   y: unknown,
   message?: string
 ): asserts x is typeof y {
-  if (x != y) {
+  if (
+    ('ne' in (x as PartialEq<unknown>) &&
+      typeof (x as PartialEq<unknown>).ne === 'function' &&
+      (x as PartialEq<unknown>).ne(y)) ||
+    x != y
+  ) {
     panic(`assertion failed: ${message || `${x} == ${y}`}`);
   }
 }
 
 export function assert_ne(x: unknown, y: unknown, message?: string): void {
-  if (x == y) {
+  if (
+    ('eq' in (x as PartialEq<unknown>) &&
+      typeof (x as PartialEq<unknown>).eq === 'function' &&
+      (x as PartialEq<unknown>).eq(y)) ||
+    x == y
+  ) {
     panic(`assertion failed: ${message || `${x} != ${y}`}`);
   }
 }
