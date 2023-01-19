@@ -14,11 +14,10 @@ export * as hash from './hash';
 export * as iter from './iter';
 export * from './macros';
 export * as macros from './macros';
+export * from './match';
 export * as int from './number';
 export * as ops from './ops';
 export * as option from './option';
 export * as panic from './panic';
 export * as result from './result';
 export * as time from './time';
-
-
