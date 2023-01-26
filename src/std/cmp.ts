@@ -168,6 +168,7 @@ export function default_partial_eq<T, Rhs = T>(value: T): PartialEq<Rhs> {
     return {
       eq: value.eq,
       ne(other: Rhs): boolean {
+        console.log(value, other, value.eq.toString());
         return !value.eq(other);
       },
     };

@@ -60,7 +60,7 @@ export function staticify<T extends FnConstructor>(value: T): Staticify<T> {
     },
 
     construct(target, argArray): any {
-      return target.new(argArray);
+      return target.new(...argArray);
     },
   }) as never;
 }

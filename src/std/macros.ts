@@ -16,12 +16,12 @@ export function assert_eq(
   y: unknown,
   message?: string
 ): asserts x is typeof y {
+  const wrap_ne = 'ne' in (x as PartialEq<unknown>) && typeof (x as PartialEq<unknown>).ne === 'function';
   if (
-    ('ne' in (x as PartialEq<unknown>) &&
-      typeof (x as PartialEq<unknown>).ne === 'function' &&
-      (x as PartialEq<unknown>).ne(y)) ||
+    (wrap_ne && (x as PartialEq<unknown>).ne(y)) ||
     x != y
   ) {
+    console.log(x, y);
     panic(`assertion failed: ${message || `${x} == ${y}`}`);
   }
 }

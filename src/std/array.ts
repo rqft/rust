@@ -12,18 +12,24 @@ type Rw<T> = globalThis.Array<T>;
 class ArrayImpl<T> {
   private alloc: ReadonlyArray<T> = [];
   constructor(alloc: Rw<T>) {
+    
     this.alloc = Object.freeze(alloc);
   }
   public static new<T>(value: Rw<T>): ArrayImpl<T> {
+    
     return new this(value);
   }
 
   public static with_length<T>(value: T, len: int): ArrayImpl<T> {
     len = size(len);
-    const o: globalThis.Array<T> = [];
-    for (let i = 0; i < len.valueOf(); i++) {
+    const o: Rw<T> = [];
+    for (let i = 0n; i < len.valueOf(); i++) {
+      
       o.push(value);
     }
+
+    
+
 
     return new this<T>(o);
   }
@@ -57,6 +63,7 @@ class ArrayImpl<T> {
   }
 
   public len(): usize {
+    
     return usize(this.alloc.length);
   }
 }
