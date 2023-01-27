@@ -2,7 +2,7 @@ import { staticify } from '../../tools';
 // import { bool } from '../bool';
 import type { Clone } from '../clone';
 import type { Eq, Ord, PartialEq, PartialOrd } from '../cmp';
-import { default_partial_eq, default_partial_ord, Ordering } from '../cmp';
+import { default_partial_ord, Ordering } from '../cmp';
 import type { Cast, Into } from '../convert';
 import type { _ } from '../custom';
 import type {
@@ -770,7 +770,7 @@ implements
   }
 
   public ne(other: int): boolean {
-    return default_partial_eq<size, int>(this).ne(other);
+    return !this.eq(other);
   }
 
   public not(): size {

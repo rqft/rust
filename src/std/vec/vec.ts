@@ -177,7 +177,7 @@ export class VecImpl<T> {
     } else {
       // double capacity when you run out of space
       this.capacity_extension();
-      this.push(element);
+      this.alloc.push(Some.new(element));
     }
 
     return this;

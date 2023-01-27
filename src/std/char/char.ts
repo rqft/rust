@@ -353,5 +353,5 @@ class CharImpl<T extends string> implements Ord<char<_>> {
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export type char<T extends string> = CharImpl<T>;
+export type char<T extends string = string> = CharImpl<T>;
 export const char = staticify(CharImpl);

@@ -1,13 +1,9 @@
-import { Array as array, assert_eq, usize } from '.';
+import { println, Vec } from '.';
 
 export namespace tests {
-  export function array_new(): void {
-    array([]);
-  }
-
-  export function array_with_len(): void {
-    const a = array.with_length(0, 10);
-    assert_eq(a.len(), usize(10));
+  export function usize_eq() {
+    const v = Vec.new().push(1);
+    println(v.alloc);
   }
 }
 

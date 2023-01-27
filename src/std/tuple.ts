@@ -31,9 +31,14 @@ class TupleImpl<T extends Array<unknown>> implements Into<T> {
 export type tuple<T extends Array<unknown>> = TupleImpl<T>;
 export const tuple = staticify(TupleImpl);
 
+// @ts-expect-error ts(2714)
 class UnitImpl extends TupleImpl<[]> {
   constructor() {
     super([]);
+  }
+
+  public static new(): UnitImpl {
+    return new this();
   }
 
   public get<U extends number>(index: U): never {

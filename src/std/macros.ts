@@ -5,35 +5,39 @@ import { None, Some } from './option';
 import { panic } from './panic';
 import { Vec } from './vec';
 
-export function assert(x: unknown, message?: string): asserts x {
+export function assert(x: unknown, label = String(x)): asserts x {
   if (!x) {
-    panic(`assertion failed: ${message || `${x} is not truthy`}`);
+    panic(`assertion failed: ${label}`);
   }
 }
 
 export function assert_eq(
   x: unknown,
   y: unknown,
-  message?: string
+  label_x = String(x),
+  label_y = String(x)
 ): asserts x is typeof y {
-  const wrap_ne = 'ne' in (x as PartialEq<unknown>) && typeof (x as PartialEq<unknown>).ne === 'function';
-  if (
-    (wrap_ne && (x as PartialEq<unknown>).ne(y)) ||
-    x != y
-  ) {
+  const wrap_ne =
+    'ne' in (x as PartialEq<unknown>) &&
+    typeof (x as PartialEq<unknown>).ne === 'function';
+  if (wrap_ne && (x as PartialEq<unknown>).ne(y) && x != y) {
     console.log(x, y);
-    panic(`assertion failed: ${message || `${x} == ${y}`}`);
+    panic(`assertion failed: ${label_x} == ${label_y}`);
   }
 }
 
-export function assert_ne(x: unknown, y: unknown, message?: string): void {
-  if (
-    ('eq' in (x as PartialEq<unknown>) &&
-      typeof (x as PartialEq<unknown>).eq === 'function' &&
-      (x as PartialEq<unknown>).eq(y)) ||
-    x == y
-  ) {
-    panic(`assertion failed: ${message || `${x} != ${y}`}`);
+export function assert_ne(
+  x: unknown,
+  y: unknown,
+  label_x = String(x),
+  label_y = String(y)
+): void {
+  const wrap_eq =
+    'eq' in (x as PartialEq<unknown>) &&
+    typeof (x as PartialEq<unknown>).eq === 'function';
+  if ((wrap_eq && (x as PartialEq<unknown>).eq(y)) || x == y) {
+    console.log(x, y);
+    panic(`assertion failed: ${label_x} != ${label_y}`);
   }
 }
 
@@ -74,29 +78,39 @@ export function dbg(value: unknown): void {
   console.debug(value);
 }
 
-export function debug_assert(x: unknown, message?: string): asserts x {
+export function debug_assert(x: unknown, label = String(x)): asserts x {
   if (!x) {
-    panic(`debug assertion failed: ${message || `${x} is not truthy`}`);
+    panic(`debug assertion failed: ${label}`);
   }
 }
 
 export function debug_assert_eq(
   x: unknown,
   y: unknown,
-  message?: string
+  label_x = String(x),
+  label_y = String(x)
 ): asserts x is typeof y {
-  if (x != y) {
-    panic(`debug assertion failed: ${message || `${x} == ${y}`}`);
+  const wrap_ne =
+    'ne' in (x as PartialEq<unknown>) &&
+    typeof (x as PartialEq<unknown>).ne === 'function';
+  if (wrap_ne && (x as PartialEq<unknown>).ne(y) && x != y) {
+    console.log(x, y);
+    panic(`debug assertion failed: ${label_x} == ${label_y}`);
   }
 }
 
 export function debug_assert_ne(
   x: unknown,
   y: unknown,
-  message?: string
+  label_x = String(x),
+  label_y = String(y)
 ): void {
-  if (x == y) {
-    panic(`debug assertion failed: ${message || `${x} != ${y}`}`);
+  const wrap_eq =
+    'eq' in (x as PartialEq<unknown>) &&
+    typeof (x as PartialEq<unknown>).eq === 'function';
+  if ((wrap_eq && (x as PartialEq<unknown>).eq(y)) || x == y) {
+    console.log(x, y);
+    panic(`debug assertion failed: ${label_x} != ${label_y}`);
   }
 }
 
