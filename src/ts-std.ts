@@ -1,6 +1,6 @@
 export namespace std {
   export async function awaited<T>(value: T): Promise<Awaited<T>> {
-    if (typeof value === 'object' && value instanceof Promise) {
+    if (typeof value === "object" && value instanceof Promise) {
       return value.then(awaited) as Awaited<T>;
     }
 
@@ -25,7 +25,7 @@ export namespace std {
         (value[key] as unknown) === undefined
       ) {
         throw new Error(
-          'Type \'T\' does not match the predicate for \'Required<T>\': missing key ' +
+          "Type 'T' does not match the predicate for 'Required<T>': missing key " +
             String(key)
         );
       }
@@ -140,7 +140,7 @@ export namespace std {
   export function non_nullable<T>(value: T): NonNullable<T> {
     if (value === undefined || value === null) {
       throw new Error(
-        'Type \'T\' does not match the predicate for \'NonNullable<T>\''
+        "Type 'T' does not match the predicate for 'NonNullable<T>'"
       );
     }
 
@@ -158,7 +158,7 @@ export namespace std {
       return this as ThisParameterType<T>;
     }
 
-    if (typeof value === 'function') {
+    if (typeof value === "function") {
       return get_this_parameter.apply(value);
     }
 
@@ -166,7 +166,7 @@ export namespace std {
   }
 
   export function omit_this_parameter<T>(value: T): OmitThisParameter<T> {
-    if (typeof value === 'function') {
+    if (typeof value === "function") {
       return value.bind(globalThis);
     }
 

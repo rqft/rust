@@ -1,7 +1,7 @@
-import { staticify } from '../../tools';
-import type { Clone } from '../clone';
-import { f64, u128, u32, u64 } from '../number';
-import type { int } from '../number/size';
+import { staticify } from "../../tools";
+import type { Clone } from "../clone";
+import { f64, u128, u32, u64 } from "../number";
+import type { int } from "../number/size";
 import type {
   Add,
   AddAssign,
@@ -11,14 +11,14 @@ import type {
   Mul,
   MulAssign,
   Sub,
-  SubAssign
-} from '../ops';
-import type { Option } from '../option';
-import { None, Some } from '../option';
-import { panic } from '../panic';
+  SubAssign,
+} from "../ops";
+import type { Option } from "../option";
+import { None, Some } from "../option";
+import { panic } from "../panic";
 
 class DurationImpl
-implements
+  implements
     Add<Duration>,
     AddAssign<Duration>,
     Sub<Duration>,
@@ -57,7 +57,7 @@ implements
     }
 
     if (this.secs.gt((1n << 63n) - 1n)) {
-      panic('overflowed past u64 bound');
+      panic("overflowed past u64 bound");
     }
   }
 
@@ -256,7 +256,7 @@ implements
   }
 
   public add(other: DurationImpl): DurationImpl {
-    return this.checked_add(other).expect('overflow when adding durations');
+    return this.checked_add(other).expect("overflow when adding durations");
   }
 
   public add_assign(other: DurationImpl): DurationImpl {
@@ -265,7 +265,7 @@ implements
 
   public sub(other: DurationImpl): DurationImpl {
     return this.checked_sub(other).expect(
-      'overflow when subtracting durations'
+      "overflow when subtracting durations"
     );
   }
 
@@ -279,7 +279,7 @@ implements
 
   public div(other: int): DurationImpl {
     return this.checked_div(other).expect(
-      'overflow when dividing duration by scalar'
+      "overflow when dividing duration by scalar"
     );
   }
 
@@ -289,7 +289,7 @@ implements
 
   public mul(other: int): DurationImpl {
     return this.checked_mul(other).expect(
-      'overflow when multiplying duration by scalar'
+      "overflow when multiplying duration by scalar"
     );
   }
 

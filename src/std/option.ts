@@ -1,23 +1,23 @@
-import { staticify } from '../tools';
-import type { Clone } from './clone';
-import type { PartialEq, PartialOrd } from './cmp';
+import { staticify } from "../tools";
+import type { Clone } from "./clone";
+import type { PartialEq, PartialOrd } from "./cmp";
 import {
   default_partial_eq,
   default_partial_ord,
   has_derivable_partial_eq,
   has_derivable_partial_ord,
-  Ordering
-} from './cmp';
-import type { AsMutRef, AsRef } from './convert';
-import { Ref, RefMut } from './convert';
-import type { LogicalAnd, LogicalOr, LogicalXor, _ } from './custom';
-import { compare_hash } from './hash';
-import type { FnOnce } from './ops';
+  Ordering,
+} from "./cmp";
+import type { AsMutRef, AsRef } from "./convert";
+import { Ref, RefMut } from "./convert";
+import type { LogicalAnd, LogicalOr, LogicalXor, _ } from "./custom";
+import { compare_hash } from "./hash";
+import type { FnOnce } from "./ops";
 
-import { panic } from './panic';
+import { panic } from "./panic";
 
 class SomeImpl<T>
-implements
+  implements
     AsRef<T>,
     AsMutRef<T>,
     Clone<Option<T>>,
@@ -258,7 +258,7 @@ implements
     }
 
     panic(
-      'Option<T> is not an impl of PartialEq because bound `T: PartialEq` is not satisfied'
+      "Option<T> is not an impl of PartialEq because bound `T: PartialEq` is not satisfied"
     );
   }
 
@@ -278,7 +278,7 @@ implements
     }
 
     panic(
-      'Option<T> is not an impl of PartialOrd because bound `T: PartialOrd` is not satisified'
+      "Option<T> is not an impl of PartialOrd because bound `T: PartialOrd` is not satisified"
     );
   }
 
@@ -300,7 +300,7 @@ implements
 }
 
 class NoneImpl<T>
-implements
+  implements
     AsRef<T>,
     AsMutRef<T>,
     Clone<Option<T>>,
@@ -353,7 +353,7 @@ implements
   }
 
   public unwrap(): never {
-    this.expect('called unwrap() on None');
+    this.expect("called unwrap() on None");
   }
 
   public unwrap_or(def: T): T {
@@ -365,7 +365,7 @@ implements
   }
 
   public unwrap_or_default(): T {
-    panic('unwrap_or_default not implemented');
+    panic("unwrap_or_default not implemented");
   }
 
   public unwrap_unchecked(): T {
@@ -447,7 +447,7 @@ implements
   }
 
   public get_or_insert_default(): RefMut<T> {
-    panic('get_or_insert_default not implemented for None');
+    panic("get_or_insert_default not implemented for None");
   }
 
   public get_or_insert_with<F extends FnOnce<[], T>>(f: F): RefMut<this, T> {

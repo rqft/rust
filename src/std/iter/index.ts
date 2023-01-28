@@ -24,4 +24,4 @@
 // export { TakeWhile } from './take_while';
 // export { Zip } from './zip';
 
-export * from './iterator';
+export * from "./iterator";

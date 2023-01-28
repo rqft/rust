@@ -1,36 +1,36 @@
-import { staticify } from '../../tools';
-import { char } from '../char';
-import { min } from '../cmp';
-import type { _ } from '../custom';
-import { DoubleEndedIterator } from '../iter';
-import { u16, u8, usize } from '../number';
-import type { int } from '../number/size';
-import { size } from '../number/size';
-import type { Option } from '../option';
-import { None, Some } from '../option';
-import { panic } from '../panic';
-import { slice } from '../slice';
-import { Bytes } from './bytes';
-import { Chars } from './chars';
-import { CharIndices } from './char_indices';
-import { EncodeUtf16 } from './encode_utf16';
-import { Lines } from './lines';
-import { Matches } from './matches';
-import { MatchIndices } from './match_indices';
-import type { Matcher } from './pattern';
-import { Pattern } from './pattern';
-import { RMatches } from './rmatches';
-import { RMatchIndices } from './rmatch_indices';
-import { RSplit } from './rsplit';
-import { RSplitN } from './rsplitn';
-import { RSplitInclusive } from './rsplit_inclusive';
-import { RSplitTerminator } from './rsplit_terminator';
-import { Split } from './split';
-import { SplitN } from './splitn';
-import { SplitAsciiWhitespace } from './split_ascii_whitespace';
-import { SplitInclusive } from './split_inclusive';
-import { SplitTerminator } from './split_terminator';
-import { SplitWhitespace } from './split_whitespace';
+import { staticify } from "../../tools";
+import { char } from "../char";
+import { min } from "../cmp";
+import type { _ } from "../custom";
+import { DoubleEndedIterator } from "../iter";
+import { u16, u8, usize } from "../number";
+import type { int } from "../number/size";
+import { size } from "../number/size";
+import type { Option } from "../option";
+import { None, Some } from "../option";
+import { panic } from "../panic";
+import { slice } from "../slice";
+import { Bytes } from "./bytes";
+import { Chars } from "./chars";
+import { CharIndices } from "./char_indices";
+import { EncodeUtf16 } from "./encode_utf16";
+import { Lines } from "./lines";
+import { Matches } from "./matches";
+import { MatchIndices } from "./match_indices";
+import type { Matcher } from "./pattern";
+import { Pattern } from "./pattern";
+import { RMatches } from "./rmatches";
+import { RMatchIndices } from "./rmatch_indices";
+import { RSplit } from "./rsplit";
+import { RSplitN } from "./rsplitn";
+import { RSplitInclusive } from "./rsplit_inclusive";
+import { RSplitTerminator } from "./rsplit_terminator";
+import { Split } from "./split";
+import { SplitN } from "./splitn";
+import { SplitAsciiWhitespace } from "./split_ascii_whitespace";
+import { SplitInclusive } from "./split_inclusive";
+import { SplitTerminator } from "./split_terminator";
+import { SplitWhitespace } from "./split_whitespace";
 
 class StrImpl {
   public alloc: string;
@@ -119,7 +119,7 @@ class StrImpl {
     index = size(index);
 
     if (index.gt(this.len())) {
-      panic('Cannot check char boundary of out-of-bounds indices');
+      panic("Cannot check char boundary of out-of-bounds indices");
     }
 
     const upper_bound = min(index.add(4), this.len());

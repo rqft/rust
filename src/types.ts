@@ -1,4 +1,4 @@
-import type { ToBool } from './std/custom';
+import type { ToBool } from "./std/custom";
 
 export type And<T extends Anybool, U extends Anybool> = [T, U] extends [
   True,
@@ -41,7 +41,7 @@ export type IndexOf<
 > = U extends T[number]
   ? T extends [infer F, ...infer R]
     ? [U] extends [F]
-      ? C['length']
+      ? C["length"]
       : C extends [...infer R1]
       ? IndexOf<R, U, [...R1, 1]>
       : C

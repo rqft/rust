@@ -1,11 +1,11 @@
-import { u16, u32, u8 } from '../../std/number';
-import type { int } from '../../std/number/size';
-import { Range } from '../../std/ops/range';
-import type { Result } from '../../std/result';
-import { Err, Ok } from '../../std/result';
-import { tuple } from '../../std/tuple';
-import { staticify } from '../../tools';
-import { ComponentRangeError } from './error/component_range';
+import { u16, u32, u8 } from "../../std/number";
+import type { int } from "../../std/number/size";
+import { Range } from "../../std/ops/range";
+import type { Result } from "../../std/result";
+import { Err, Ok } from "../../std/result";
+import { tuple } from "../../std/tuple";
+import { staticify } from "../../tools";
+import { ComponentRangeError } from "./error/component_range";
 
 class TimeImpl {
   constructor(private h: u8, private m: u8, private s: u8, private n: u32) {}
@@ -47,15 +47,15 @@ class TimeImpl {
     second = u8(second);
 
     if (!Range<u8>(u8(0), u8(24)).contains(hour)) {
-      return Err(new ComponentRangeError('hour', false));
+      return Err(new ComponentRangeError("hour", false));
     }
 
     if (!Range<u8>(u8(0), u8(60)).contains(minute)) {
-      return Err(new ComponentRangeError('minute', false));
+      return Err(new ComponentRangeError("minute", false));
     }
 
     if (!Range<u8>(u8(0), u8(60)).contains(second)) {
-      return Err(new ComponentRangeError('second', false));
+      return Err(new ComponentRangeError("second", false));
     }
 
     return Ok(
@@ -86,7 +86,7 @@ class TimeImpl {
     }
 
     if (!Range<u16>(u16(0), u16(1_000)).contains(second)) {
-      return Err(new ComponentRangeError('millisecond', false));
+      return Err(new ComponentRangeError("millisecond", false));
     }
 
     return Ok(
@@ -117,7 +117,7 @@ class TimeImpl {
     }
 
     if (!Range<u32>(u32(0), u32(1_000_000)).contains(second)) {
-      return Err(new ComponentRangeError('microsecond', false));
+      return Err(new ComponentRangeError("microsecond", false));
     }
 
     return Ok(
@@ -148,7 +148,7 @@ class TimeImpl {
     }
 
     if (!Range<u32>(u32(0), u32(1_000_000_000)).contains(second)) {
-      return Err(new ComponentRangeError('nanosecond', false));
+      return Err(new ComponentRangeError("nanosecond", false));
     }
 
     return Ok(

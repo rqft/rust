@@ -1,19 +1,19 @@
-import { staticify } from '../tools';
-import type { PartialEq, PartialOrd } from './cmp';
+import { staticify } from "../tools";
+import type { PartialEq, PartialOrd } from "./cmp";
 import {
   default_partial_eq,
   default_partial_ord,
   has_derivable_partial_eq,
   has_derivable_partial_ord,
-  Ordering
-} from './cmp';
-import type { AsMutRef, AsRef } from './convert';
-import { Ref, RefMut } from './convert';
-import type { _ } from './custom';
-import type { Fn, FnOnce } from './ops';
-import type { Option } from './option';
-import { None, Some } from './option';
-import { panic } from './panic';
+  Ordering,
+} from "./cmp";
+import type { AsMutRef, AsRef } from "./convert";
+import { Ref, RefMut } from "./convert";
+import type { _ } from "./custom";
+import type { Fn, FnOnce } from "./ops";
+import type { Option } from "./option";
+import { None, Some } from "./option";
+import { panic } from "./panic";
 
 interface ResultImpl<T, E>
   extends AsMutRef<E | T>,
@@ -189,7 +189,7 @@ class OkImpl<T = void> implements ResultImpl<T, unknown> {
   }
 
   public unwrap_err(): never {
-    return this.expect_err('Called unwrap_err() on Ok');
+    return this.expect_err("Called unwrap_err() on Ok");
   }
 
   public into_ok(): T {
@@ -259,7 +259,7 @@ class OkImpl<T = void> implements ResultImpl<T, unknown> {
     }
 
     panic(
-      'Ok(T) is not an impl of PartialEq because bound `T: PartialEq` is not satisfied'
+      "Ok(T) is not an impl of PartialEq because bound `T: PartialEq` is not satisfied"
     );
   }
 
@@ -277,7 +277,7 @@ class OkImpl<T = void> implements ResultImpl<T, unknown> {
     }
 
     panic(
-      'Ok(T) is not an impl of PartialOrd because bound `T: PartialOrd` is not satisified'
+      "Ok(T) is not an impl of PartialOrd because bound `T: PartialOrd` is not satisified"
     );
   }
 
@@ -368,7 +368,7 @@ class ErrImpl<E = void> implements ResultImpl<unknown, E> {
   }
 
   public unwrap(): never {
-    return this.expect('Called unwrap() on Err');
+    return this.expect("Called unwrap() on Err");
   }
 
   public expect_err(message: string): E {
@@ -445,7 +445,7 @@ class ErrImpl<E = void> implements ResultImpl<unknown, E> {
     }
 
     panic(
-      'Err(E) is not an impl of PartialEq because bound `E: PartialEq` is not satisfied'
+      "Err(E) is not an impl of PartialEq because bound `E: PartialEq` is not satisfied"
     );
   }
 
@@ -463,7 +463,7 @@ class ErrImpl<E = void> implements ResultImpl<unknown, E> {
     }
 
     panic(
-      'Ok(T) is not an impl of PartialOrd because bound `T: PartialOrd` is not satisified'
+      "Ok(T) is not an impl of PartialOrd because bound `T: PartialOrd` is not satisified"
     );
   }
 

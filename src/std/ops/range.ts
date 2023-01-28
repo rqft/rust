@@ -1,6 +1,6 @@
-import { staticify } from '../../tools';
-import { Iterator } from '../iter';
-import type { int, SizeImpl } from '../number/size';
+import { staticify } from "../../tools";
+import { Iterator } from "../iter";
+import type { int, SizeImpl } from "../number/size";
 
 class RangeImpl<T extends SizeImpl> {
   constructor(public readonly start: T, public readonly end: T) {}

@@ -1,6 +1,6 @@
-import { staticify } from '../tools';
-import type { Into } from './convert';
-import { size } from './number/size';
+import { staticify } from "../tools";
+import type { Into } from "./convert";
+import { size } from "./number/size";
 
 class TupleImpl<T extends Array<unknown>> implements Into<T> {
   constructor(private readonly alloc: T) {}

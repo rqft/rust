@@ -1,4 +1,4 @@
-import type { ArrayOf } from '../custom';
+import type { ArrayOf } from "../custom";
 
 export interface Add<Rhs, Output = Rhs> {
   add(other: Rhs): Output;
@@ -130,7 +130,7 @@ export interface SubAssign<Rhs, Output = Rhs> {
 }
 
 export interface Assign<Rhs> {
-  assign(other: Rhs): this
+  assign(other: Rhs): this;
 }
 
 export interface Construct<Args extends Array<unknown>, Output> {

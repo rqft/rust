@@ -1,10 +1,10 @@
-import { staticify } from '../../tools';
+import { staticify } from "../../tools";
 // import type { bool } from '../bool';
-import type { Ordering } from '../cmp';
-import type { _ } from '../custom';
-import type { Option } from '../option';
-import { panic } from '../panic';
-import { SizeImpl } from './size';
+import type { Ordering } from "../cmp";
+import type { _ } from "../custom";
+import type { Option } from "../option";
+import { panic } from "../panic";
+import { SizeImpl } from "./size";
 
 // @ts-expect-error ts(2714)
 export class IntSizedImpl<T extends IntSizedImpl<_>> extends SizeImpl {
@@ -25,7 +25,7 @@ export class IntSizedImpl<T extends IntSizedImpl<_>> extends SizeImpl {
       this.umax = (1n << bits) - 1n;
     }
 
-    const n = unsigned ? 'u' : 'i';
+    const n = unsigned ? "u" : "i";
 
     if (this.valueOf() < this.umin || this.valueOf() > this.umax) {
       panic(

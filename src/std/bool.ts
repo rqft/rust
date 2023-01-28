@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-import { staticify } from '../tools';
-import type { Clone } from './clone';
-import type { PartialEq, PartialOrd } from './cmp';
-import { Ordering } from './cmp';
-import type { Default } from './default';
+import { staticify } from "../tools";
+import type { Clone } from "./clone";
+import type { PartialEq, PartialOrd } from "./cmp";
+import { Ordering } from "./cmp";
+import type { Default } from "./default";
 import type {
   BitAnd,
   BitAndAssign,
@@ -12,13 +12,13 @@ import type {
   BitXor,
   BitXorAssign,
   FnOnce,
-  Not
-} from './ops';
-import type { Option } from './option';
-import { None, Some } from './option';
+  Not,
+} from "./ops";
+import type { Option } from "./option";
+import { None, Some } from "./option";
 
 class BoolImpl
-implements
+  implements
     BitAnd<boolean, BoolImpl>,
     BitAndAssign<boolean, BoolImpl>,
     BitOr<boolean, BoolImpl>,

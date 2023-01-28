@@ -1,10 +1,10 @@
-import { staticify } from '../../tools';
+import { staticify } from "../../tools";
 // import { bool } from '../bool';
-import type { Clone } from '../clone';
-import type { Eq, Ord, PartialEq, PartialOrd } from '../cmp';
-import { default_partial_ord, Ordering } from '../cmp';
-import type { Cast, Into } from '../convert';
-import type { _ } from '../custom';
+import type { Clone } from "../clone";
+import type { Eq, Ord, PartialEq, PartialOrd } from "../cmp";
+import { default_partial_ord, Ordering } from "../cmp";
+import type { Cast, Into } from "../convert";
+import type { _ } from "../custom";
 import type {
   Add,
   AddAssign,
@@ -28,18 +28,18 @@ import type {
   Shr,
   ShrAssign,
   Sub,
-  SubAssign
-} from '../ops';
-import type { Option } from '../option';
-import { None, Some } from '../option';
-import { panic } from '../panic';
-import type { Result } from '../result';
-import { Err, Ok } from '../result';
-import { IntErrorKind } from './int_error_kind';
-import { ParseIntError } from './parse_int_error';
+  SubAssign,
+} from "../ops";
+import type { Option } from "../option";
+import { None, Some } from "../option";
+import { panic } from "../panic";
+import type { Result } from "../result";
+import { Err, Ok } from "../result";
+import { IntErrorKind } from "./int_error_kind";
+import { ParseIntError } from "./parse_int_error";
 
 export class SizeImpl
-implements
+  implements
     Add<int, size>,
     AddAssign<int, size>,
     Clone<size>,
@@ -598,7 +598,7 @@ implements
     rhs = size(rhs);
 
     if (rhs.value === 0n) {
-      panic('parameter rhs in fn `next_multiple_of` cannot be 0');
+      panic("parameter rhs in fn `next_multiple_of` cannot be 0");
     }
 
     for (let i = this.value; ; i++) {
@@ -629,7 +629,7 @@ implements
       const abs = -this.value;
 
       if (abs > max) {
-        panic('method `abs` overflowed past the maximum');
+        panic("method `abs` overflowed past the maximum");
       }
 
       return size(abs);

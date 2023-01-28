@@ -1,7 +1,7 @@
-import { staticify } from '../../tools';
-import { IteratorImpl } from '../iter/iterator';
-import { u8 } from '../number';
-import type { str } from './str';
+import { staticify } from "../../tools";
+import { IteratorImpl } from "../iter/iterator";
+import { u8 } from "../number";
+import type { str } from "./str";
 
 // @ts-expect-error ts(2714)
 class BytesImpl extends IteratorImpl<u8> {

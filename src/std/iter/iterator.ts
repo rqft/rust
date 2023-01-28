@@ -1,12 +1,12 @@
-import { staticify } from '../../tools';
-import { Ref, RefMut } from '../convert';
-import type { _ } from '../custom';
-import type { Add, FnMut, Mul } from '../ops';
-import type { Option } from '../option';
-import { None, Some } from '../option';
-import { panic } from '../panic';
-import type { Result } from '../result';
-import { Err, Ok } from '../result';
+import { staticify } from "../../tools";
+import { Ref, RefMut } from "../convert";
+import type { _ } from "../custom";
+import type { Add, FnMut, Mul } from "../ops";
+import type { Option } from "../option";
+import { None, Some } from "../option";
+import { panic } from "../panic";
+import type { Result } from "../result";
+import { Err, Ok } from "../result";
 
 export class IteratorImpl<T> implements Iterable<T> {
   constructor(iter: Iterable<T> = []) {
@@ -273,7 +273,7 @@ export class IteratorImpl<T> implements Iterable<T> {
 
   public sum<U>(): T extends Add<U, T> ? Option<T> : None {
     return this.reduce((t, u) => {
-      if ('add' in (t as Add<_, _>)) {
+      if ("add" in (t as Add<_, _>)) {
         return (t as Add<_, _>).add(u);
       }
     }) as never;
@@ -281,7 +281,7 @@ export class IteratorImpl<T> implements Iterable<T> {
 
   public product<U>(): T extends Mul<U, T> ? Option<T> : None {
     return this.reduce((t, u) => {
-      if ('mul' in (t as Mul<_, _>)) {
+      if ("mul" in (t as Mul<_, _>)) {
         return (t as Mul<_, _>).mul(u);
       }
     }) as never;
@@ -301,7 +301,7 @@ class ArrayChunksImpl<T, N extends number> extends IteratorImpl<
 > {
   constructor(iter: Iterable<T>, size: N) {
     if (size <= 0) {
-      panic('ArrayChunks<T, N> failed due to unmet bound: N > 0');
+      panic("ArrayChunks<T, N> failed due to unmet bound: N > 0");
     }
 
     super(
@@ -579,7 +579,7 @@ class FlattenImpl<T> extends IteratorImpl<T extends Iterable<infer U> ? U : T> {
       (function* (): Generator<_, void, unknown> {
         for (const value of iter) {
           if (
-            typeof value === 'object' &&
+            typeof value === "object" &&
             Symbol.iterator in (value as object)
           ) {
             for (const item of value as Iterable<_>) {

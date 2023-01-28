@@ -1,7 +1,7 @@
-import { staticify } from '../../tools';
-import type { _ } from '../custom';
-import { IteratorImpl } from '../iter/iterator';
-import type { char } from './char';
+import { staticify } from "../../tools";
+import type { _ } from "../custom";
+import { IteratorImpl } from "../iter/iterator";
+import type { char } from "./char";
 
 // @ts-expect-error ts(2714)
 class EscapeDefaultImpl<T extends string> extends IteratorImpl<char<_>> {

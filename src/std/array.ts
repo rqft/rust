@@ -1,22 +1,20 @@
-import { staticify } from '../tools';
-import { Iterator } from './iter';
-import { assert } from './macros';
-import { usize } from './number';
-import type { int } from './number/size';
-import { size } from './number/size';
-import type { FnMut } from './ops';
-import { slice } from './slice';
+import { staticify } from "../tools";
+import { Iterator } from "./iter";
+import { assert } from "./macros";
+import { usize } from "./number";
+import type { int } from "./number/size";
+import { size } from "./number/size";
+import type { FnMut } from "./ops";
+import { slice } from "./slice";
 
 type Rw<T> = globalThis.Array<T>;
 
 class ArrayImpl<T> {
   private alloc: ReadonlyArray<T> = [];
   constructor(alloc: Rw<T>) {
-    
     this.alloc = Object.freeze(alloc);
   }
   public static new<T>(value: Rw<T>): ArrayImpl<T> {
-    
     return new this(value);
   }
 
@@ -24,12 +22,8 @@ class ArrayImpl<T> {
     len = size(len);
     const o: Rw<T> = [];
     for (let i = 0n; i < len.valueOf(); i++) {
-      
       o.push(value);
     }
-
-    
-
 
     return new this<T>(o);
   }
@@ -59,11 +53,14 @@ class ArrayImpl<T> {
   }
 
   public get_slice(start: int, end: int): ArrayImpl<T> {
-    return new ArrayImpl(globalThis.Array.from(this.as_slice().get_slice(start, end).unwrap_unchecked()));
+    return new ArrayImpl(
+      globalThis.Array.from(
+        this.as_slice().get_slice(start, end).unwrap_unchecked()
+      )
+    );
   }
 
   public len(): usize {
-    
     return usize(this.alloc.length);
   }
 }

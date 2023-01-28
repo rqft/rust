@@ -1,17 +1,17 @@
-import { staticify } from '../../../tools';
-import { compare_hash } from '../../hash';
-import { usize } from '../../number';
-import type { io } from '../../number/int_sized';
-import type { FnMut } from '../../ops';
-import type { Option } from '../../option';
-import { None, Some } from '../../option';
-import { Vec } from '../../vec/vec';
-import { IntoIter } from './into_iter';
-import { IntoKeys } from './into_keys';
-import { IntoValues } from './into_values';
-import { Iter } from './iter';
-import { Keys } from './keys';
-import { Values } from './values';
+import { staticify } from "../../../tools";
+import { compare_hash } from "../../hash";
+import { usize } from "../../number";
+import type { io } from "../../number/int_sized";
+import type { FnMut } from "../../ops";
+import type { Option } from "../../option";
+import { None, Some } from "../../option";
+import { Vec } from "../../vec/vec";
+import { IntoIter } from "./into_iter";
+import { IntoKeys } from "./into_keys";
+import { IntoValues } from "./into_values";
+import { Iter } from "./iter";
+import { Keys } from "./keys";
+import { Values } from "./values";
 
 class HashMapImpl<K, V> {
   public vec: Vec<[K, V]> = Vec();

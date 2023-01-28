@@ -1,18 +1,18 @@
-import { staticify } from '../../../tools';
-import { compare_hash } from '../../hash';
-import type { IntoIterator } from '../../iter';
-import type { usize } from '../../number';
-import type { io } from '../../number/int_sized';
-import type { FnOnce } from '../../ops';
-import type { Option } from '../../option';
-import { None, Some } from '../../option';
-import { Vec } from '../../vec';
-import { Difference } from './difference';
-import { Intersection } from './intersection';
-import { IntoIter } from './into_iter';
-import { Iter } from './iter';
-import { SymmetricDifference } from './symmetric_difference';
-import { Union } from './union';
+import { staticify } from "../../../tools";
+import { compare_hash } from "../../hash";
+import type { IntoIterator } from "../../iter";
+import type { usize } from "../../number";
+import type { io } from "../../number/int_sized";
+import type { FnOnce } from "../../ops";
+import type { Option } from "../../option";
+import { None, Some } from "../../option";
+import { Vec } from "../../vec";
+import { Difference } from "./difference";
+import { Intersection } from "./intersection";
+import { IntoIter } from "./into_iter";
+import { Iter } from "./iter";
+import { SymmetricDifference } from "./symmetric_difference";
+import { Union } from "./union";
 
 class HashSetImpl<T> implements IntoIterator<T> {
   public vec: Vec<T> = Vec();

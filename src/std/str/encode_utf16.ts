@@ -1,9 +1,9 @@
-import { staticify } from '../../tools';
-import { IteratorImpl } from '../iter/iterator';
-import { u16 } from '../number';
-import type { Option } from '../option';
-import { Some } from '../option';
-import type { Chars } from './chars';
+import { staticify } from "../../tools";
+import { IteratorImpl } from "../iter/iterator";
+import { u16 } from "../number";
+import type { Option } from "../option";
+import { Some } from "../option";
+import type { Chars } from "./chars";
 
 // @ts-expect-error ts(2714)
 class EncodeUtf16Impl extends IteratorImpl<u16> {

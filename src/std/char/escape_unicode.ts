@@ -1,7 +1,7 @@
-import { staticify } from '../../tools';
-import type { _ } from '../custom';
-import { IteratorImpl } from '../iter/iterator';
-import { char } from './char';
+import { staticify } from "../../tools";
+import type { _ } from "../custom";
+import { IteratorImpl } from "../iter/iterator";
+import { char } from "./char";
 
 // @ts-expect-error ts(2714)
 class EscapeUnicodeImpl<T extends string> extends IteratorImpl<char<_>> {
@@ -9,14 +9,14 @@ class EscapeUnicodeImpl<T extends string> extends IteratorImpl<char<_>> {
     const codepoint = value.codepoint().toString().padStart(4);
     super(
       (function* (): Generator<char<_>, void, unknown> {
-        yield char('\\');
-        yield char('u');
-        yield char('{');
+        yield char("\\");
+        yield char("u");
+        yield char("{");
 
         for (const digit of codepoint) {
           yield char(digit);
         }
-        yield char('}');
+        yield char("}");
       })()
     );
   }

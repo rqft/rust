@@ -1,8 +1,8 @@
-import { staticify } from '../../tools';
-import { DoubleEndedIterator } from '../iter';
-import { IteratorImpl } from '../iter/iterator';
-import type { int } from '../number/size';
-import type { Io, str } from './str';
+import { staticify } from "../../tools";
+import { DoubleEndedIterator } from "../iter";
+import { IteratorImpl } from "../iter/iterator";
+import type { int } from "../number/size";
+import type { Io, str } from "./str";
 
 // @ts-expect-error ts(2714)
 class RSplitNImpl extends IteratorImpl<str> {

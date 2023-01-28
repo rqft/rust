@@ -1,4 +1,4 @@
-import type { Anybool } from '../types';
+import type { Anybool } from "../types";
 
 export interface LogicalOr<Rhs> {
   or(other: Rhs): Rhs | this;

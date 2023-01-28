@@ -1,12 +1,12 @@
-import { staticify } from '../../tools';
-import type { _ } from '../custom';
-import { IteratorImpl } from '../iter/iterator';
-import { u16 } from '../number';
-import type { io } from '../number/int_sized';
-import type { Result } from '../result';
-import { Err, Ok } from '../result';
-import { char } from './char';
-import { DecodeUtf16Error } from './decode_utf16_error';
+import { staticify } from "../../tools";
+import type { _ } from "../custom";
+import { IteratorImpl } from "../iter/iterator";
+import { u16 } from "../number";
+import type { io } from "../number/int_sized";
+import type { Result } from "../result";
+import { Err, Ok } from "../result";
+import { char } from "./char";
+import { DecodeUtf16Error } from "./decode_utf16_error";
 
 // @ts-expect-error ts(2714)
 class DecodeUtf16Impl extends IteratorImpl<
@@ -18,7 +18,7 @@ class DecodeUtf16Impl extends IteratorImpl<
         Result<char<_>, DecodeUtf16Error<_>>,
         void,
         unknown
-        > {
+      > {
         for (let u of iter) {
           u = u16(u);
           try {

@@ -1,9 +1,9 @@
-import { staticify } from '../../tools';
+import { staticify } from "../../tools";
 // import { bool } from '../bool';
-import type { Clone } from '../clone';
-import type { Ord } from '../cmp';
-import { default_partial_eq, default_partial_ord, Ordering } from '../cmp';
-import type { _ } from '../custom';
+import type { Clone } from "../clone";
+import type { Ord } from "../cmp";
+import { default_partial_eq, default_partial_ord, Ordering } from "../cmp";
+import type { _ } from "../custom";
 // import type { Default } from '../default';
 import type {
   Add,
@@ -16,11 +16,11 @@ import type {
   Rem,
   RemAssign,
   Sub,
-  SubAssign
-} from '../ops';
+  SubAssign,
+} from "../ops";
 
 class F64Impl
-implements
+  implements
     Ord<Num>,
     Add<Num, f64>,
     AddAssign<Num, f64>,

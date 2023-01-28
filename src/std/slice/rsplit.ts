@@ -1,8 +1,8 @@
-import { staticify } from '../../tools';
-import { IteratorImpl } from '../iter/iterator';
+import { staticify } from "../../tools";
+import { IteratorImpl } from "../iter/iterator";
 
-import type { FnMut } from '../ops';
-import type { slice } from './slice';
+import type { FnMut } from "../ops";
+import type { slice } from "./slice";
 
 // @ts-expect-error ts(2714)
 class RSplitImpl<T> extends IteratorImpl<IteratorImpl<T>> {

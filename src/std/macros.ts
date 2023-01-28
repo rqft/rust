@@ -1,9 +1,9 @@
-import type { PartialEq } from './cmp';
-import type { usize } from './number';
-import type { Option } from './option';
-import { None, Some } from './option';
-import { panic } from './panic';
-import { Vec } from './vec';
+import type { PartialEq } from "./cmp";
+import type { usize } from "./number";
+import type { Option } from "./option";
+import { None, Some } from "./option";
+import { panic } from "./panic";
+import { Vec } from "./vec";
 
 export function assert(x: unknown, label = String(x)): asserts x {
   if (!x) {
@@ -18,8 +18,8 @@ export function assert_eq(
   label_y = String(x)
 ): asserts x is typeof y {
   const wrap_ne =
-    'ne' in (x as PartialEq<unknown>) &&
-    typeof (x as PartialEq<unknown>).ne === 'function';
+    "ne" in (x as PartialEq<unknown>) &&
+    typeof (x as PartialEq<unknown>).ne === "function";
   if (wrap_ne && (x as PartialEq<unknown>).ne(y) && x != y) {
     console.log(x, y);
     panic(`assertion failed: ${label_x} == ${label_y}`);
@@ -33,8 +33,8 @@ export function assert_ne(
   label_y = String(y)
 ): void {
   const wrap_eq =
-    'eq' in (x as PartialEq<unknown>) &&
-    typeof (x as PartialEq<unknown>).eq === 'function';
+    "eq" in (x as PartialEq<unknown>) &&
+    typeof (x as PartialEq<unknown>).eq === "function";
   if ((wrap_eq && (x as PartialEq<unknown>).eq(y)) || x == y) {
     console.log(x, y);
     panic(`assertion failed: ${label_x} != ${label_y}`);
@@ -42,9 +42,9 @@ export function assert_ne(
 }
 
 export function is_node(): boolean {
-  if (typeof process === 'object') {
-    if (typeof process.versions === 'object') {
-      if (typeof process.versions.node !== 'undefined') {
+  if (typeof process === "object") {
+    if (typeof process.versions === "object") {
+      if (typeof process.versions.node !== "undefined") {
         return true;
       }
     }
@@ -54,7 +54,7 @@ export function is_node(): boolean {
 }
 
 export function cfg(
-  flag: keyof NodeJS.Process['config']['variables']
+  flag: keyof NodeJS.Process["config"]["variables"]
 ): boolean {
   assert(is_node());
 
@@ -62,16 +62,16 @@ export function cfg(
 }
 
 export function column(): usize {
-  unimplemented('column');
+  unimplemented("column");
 }
 
 export function compile_error(msg: unknown): void {
   void msg;
-  unimplemented('compile_error');
+  unimplemented("compile_error");
 }
 
 export function concat(...values: Array<unknown>): string {
-  return values.join('');
+  return values.join("");
 }
 
 export function dbg(value: unknown): void {
@@ -91,8 +91,8 @@ export function debug_assert_eq(
   label_y = String(x)
 ): asserts x is typeof y {
   const wrap_ne =
-    'ne' in (x as PartialEq<unknown>) &&
-    typeof (x as PartialEq<unknown>).ne === 'function';
+    "ne" in (x as PartialEq<unknown>) &&
+    typeof (x as PartialEq<unknown>).ne === "function";
   if (wrap_ne && (x as PartialEq<unknown>).ne(y) && x != y) {
     console.log(x, y);
     panic(`debug assertion failed: ${label_x} == ${label_y}`);
@@ -106,8 +106,8 @@ export function debug_assert_ne(
   label_y = String(y)
 ): void {
   const wrap_eq =
-    'eq' in (x as PartialEq<unknown>) &&
-    typeof (x as PartialEq<unknown>).eq === 'function';
+    "eq" in (x as PartialEq<unknown>) &&
+    typeof (x as PartialEq<unknown>).eq === "function";
   if ((wrap_eq && (x as PartialEq<unknown>).eq(y)) || x == y) {
     console.log(x, y);
     panic(`debug assertion failed: ${label_x} != ${label_y}`);
@@ -133,21 +133,21 @@ export function eprint(msg: string): void {
 export function eprintln(msg: string): void {
   assert(is_node());
 
-  process.stderr.write(msg + '\n');
+  process.stderr.write(msg + "\n");
 }
 
 export function file(): string {
-  unimplemented('file');
+  unimplemented("file");
 }
 
 export function format(literal: string, ...argv: Array<unknown>): string {
   void literal, argv;
-  unimplemented('format');
+  unimplemented("format");
 }
 
 export function format_args(literal: string, ...argv: Array<unknown>): string {
   void literal, argv;
-  unimplemented('format_args');
+  unimplemented("format_args");
 }
 
 export function include<T>(path: string): T {
@@ -157,56 +157,56 @@ export function include<T>(path: string): T {
 }
 
 export type X86Feature =
-  | 'abm'
-  | 'adx'
-  | 'aes'
-  | 'avx'
-  | 'avx2'
-  | 'avx512bf16'
-  | 'avx512bitalg'
-  | 'avx512bw'
-  | 'avx512cd'
-  | 'avx512dq'
-  | 'avx512er'
-  | 'avx512f'
-  | 'avx512gfni'
-  | 'avx512ifma'
-  | 'avx512pf'
-  | 'avx512vaes'
-  | 'avx512vbmi'
-  | 'avx512vbmi2'
-  | 'avx512vl'
-  | 'avx512vnni'
-  | 'avx512vp2intersect'
-  | 'avx512vpclmulqdq'
-  | 'avx512vpopcntdq'
-  | 'bmi1'
-  | 'bmi2'
-  | 'cmpxchg16b'
-  | 'f16c'
-  | 'fma'
-  | 'fxsr'
-  | 'lzcnt'
-  | 'mmx'
-  | 'pclmulqdq'
-  | 'popcnt'
-  | 'rdrand'
-  | 'rdseed'
-  | 'rtm'
-  | 'sha'
-  | 'sse'
-  | 'sse2'
-  | 'sse3'
-  | 'sse4.1'
-  | 'sse4.2'
-  | 'sse4a'
-  | 'ssse3'
-  | 'tbm'
-  | 'tsc'
-  | 'xsave'
-  | 'xsavec'
-  | 'xsaveopt'
-  | 'xsaves';
+  | "abm"
+  | "adx"
+  | "aes"
+  | "avx"
+  | "avx2"
+  | "avx512bf16"
+  | "avx512bitalg"
+  | "avx512bw"
+  | "avx512cd"
+  | "avx512dq"
+  | "avx512er"
+  | "avx512f"
+  | "avx512gfni"
+  | "avx512ifma"
+  | "avx512pf"
+  | "avx512vaes"
+  | "avx512vbmi"
+  | "avx512vbmi2"
+  | "avx512vl"
+  | "avx512vnni"
+  | "avx512vp2intersect"
+  | "avx512vpclmulqdq"
+  | "avx512vpopcntdq"
+  | "bmi1"
+  | "bmi2"
+  | "cmpxchg16b"
+  | "f16c"
+  | "fma"
+  | "fxsr"
+  | "lzcnt"
+  | "mmx"
+  | "pclmulqdq"
+  | "popcnt"
+  | "rdrand"
+  | "rdseed"
+  | "rtm"
+  | "sha"
+  | "sse"
+  | "sse2"
+  | "sse3"
+  | "sse4.1"
+  | "sse4.2"
+  | "sse4a"
+  | "ssse3"
+  | "tbm"
+  | "tsc"
+  | "xsave"
+  | "xsavec"
+  | "xsaveopt"
+  | "xsaves";
 export function is_x86_feature_detected(feature: X86Feature): boolean {
   unimplemented(`is_x86_feature_detected(${feature})`);
 }
@@ -233,7 +233,7 @@ export function option_env(variable: string, message?: string): Option<string> {
   return Some(value);
 }
 
-export { panic } from './panic';
+export { panic } from "./panic";
 
 export function print(msg: string): void {
   assert(is_node());
@@ -244,23 +244,23 @@ export function print(msg: string): void {
 export function println(msg: string): void {
   assert(is_node());
 
-  process.stdout.write(msg + '\n');
+  process.stdout.write(msg + "\n");
 }
 
 export function stringify(x: unknown): string {
   return String(x);
 }
 
-export function todo(message = 'todo'): never {
-  throw new Error('todo: ' + message);
+export function todo(message = "todo"): never {
+  throw new Error("todo: " + message);
 }
 
-export function unimplemented(message = 'unimplemented'): never {
-  throw new Error('unimplemented: ' + message);
+export function unimplemented(message = "unimplemented"): never {
+  throw new Error("unimplemented: " + message);
 }
 
-export function unreachable(message = 'unreachable'): never {
-  throw new Error('unreachable: ' + message);
+export function unreachable(message = "unreachable"): never {
+  throw new Error("unreachable: " + message);
 }
 
 export function vec<T>(...argv: Array<T>): Vec<T> {

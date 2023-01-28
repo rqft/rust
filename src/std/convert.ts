@@ -1,5 +1,5 @@
-import { staticify } from '../tools';
-import type { Deref, DerefMut } from './ops';
+import { staticify } from "../tools";
+import type { Deref, DerefMut } from "./ops";
 
 export type Infallible = never;
 class RefImpl<Self, Output = Self> implements Deref<Output> {

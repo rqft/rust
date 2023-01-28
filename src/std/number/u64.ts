@@ -1,6 +1,6 @@
-import { staticify } from '../../tools';
-import type { _ } from '../custom';
-import { IntSizedImpl } from './int_sized';
+import { staticify } from "../../tools";
+import type { _ } from "../custom";
+import { IntSizedImpl } from "./int_sized";
 
 // @ts-expect-error ts(2714)
 class U64 extends IntSizedImpl<U64> {

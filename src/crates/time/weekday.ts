@@ -1,5 +1,5 @@
-import { u8 } from '../../std';
-import { staticify } from '../../tools';
+import { u8 } from "../../std";
+import { staticify } from "../../tools";
 
 export type WeekdayType = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 

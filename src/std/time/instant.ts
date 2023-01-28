@@ -1,11 +1,11 @@
-import { staticify } from '../../tools';
-import type { Add, AddAssign, Assign, Sub, SubAssign } from '../ops';
-import type { Option } from '../option';
-import { None, Some } from '../option';
-import { Duration } from './duration';
+import { staticify } from "../../tools";
+import type { Add, AddAssign, Assign, Sub, SubAssign } from "../ops";
+import type { Option } from "../option";
+import { None, Some } from "../option";
+import { Duration } from "./duration";
 
 class InstantImpl
-implements
+  implements
     Add<Duration, InstantImpl>,
     Sub<Duration, InstantImpl>,
     AddAssign<Duration, InstantImpl>,
@@ -74,13 +74,13 @@ implements
 
   public add(duration: Duration): InstantImpl {
     return this.checked_add(duration).expect(
-      'overflow when adding duration to instant'
+      "overflow when adding duration to instant"
     );
   }
 
   public sub(duration: Duration): InstantImpl {
     return this.checked_sub(duration).expect(
-      'overflow when adding duration to instant'
+      "overflow when adding duration to instant"
     );
   }
 

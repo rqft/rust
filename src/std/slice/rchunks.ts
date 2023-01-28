@@ -1,7 +1,7 @@
-import { staticify } from '../../tools';
-import { IteratorImpl } from '../iter/iterator';
-import type { int } from '../number/size';
-import type { slice } from './slice';
+import { staticify } from "../../tools";
+import { IteratorImpl } from "../iter/iterator";
+import type { int } from "../number/size";
+import type { slice } from "./slice";
 
 // @ts-expect-error ts(2714)
 class RChunksImpl<T, N extends int> extends IteratorImpl<IteratorImpl<T>> {
