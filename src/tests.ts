@@ -1,9 +1,7 @@
-import { println, Vec } from '.';
 
 export namespace tests {
-  export function usize_eq() {
-    const v = Vec.new().push(1);
-    println(v.alloc);
+  export function a(): number {
+    return 1 + 1;
   }
 }
 

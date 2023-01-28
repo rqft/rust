@@ -359,7 +359,7 @@ class StrImpl {
     this.alloc = str(
       this.chars()
         .map((x) => x.escape_debug())
-        .flatten()
+        .flatten() as never
     ).alloc;
     return this;
   }
@@ -368,7 +368,7 @@ class StrImpl {
     this.alloc = str(
       this.chars()
         .map((x) => x.escape_default())
-        .flatten()
+        .flatten() as never
     ).alloc;
     return this;
   }
@@ -377,7 +377,7 @@ class StrImpl {
     this.alloc = str(
       this.chars()
         .map((x) => x.escape_unicode())
-        .flatten()
+        .flatten() as never
     ).alloc;
     return this;
   }
