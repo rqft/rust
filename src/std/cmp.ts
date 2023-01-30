@@ -1,6 +1,6 @@
-import type { Clone } from "./clone";
-import type { FnOnce } from "./ops";
-import { panic } from "./panic";
+import type { Clone } from './clone';
+import type { FnOnce } from './ops';
+import { panic } from './panic';
 
 export interface PartialEq<Rhs, Output = boolean> {
   eq(other: Rhs): Output;
@@ -159,8 +159,8 @@ export function min_by_key<
 export function has_derivable_partial_eq<T, Rhs = T>(
   value: T
   // @ts-expect-error ts(2677)
-): value is Pick<PartialEq<Rhs>, "eq"> {
-  return typeof value === "object" && "eq" in (value as object);
+): value is Pick<PartialEq<Rhs>, 'eq'> {
+  return typeof value === 'object' && 'eq' in (value as object);
 }
 
 export function default_partial_eq<T, Rhs = T>(value: T): PartialEq<Rhs> {
@@ -174,16 +174,16 @@ export function default_partial_eq<T, Rhs = T>(value: T): PartialEq<Rhs> {
     };
   }
 
-  panic("PartialEq cannot be derived without eq method");
+  panic('PartialEq cannot be derived without eq method');
 }
 
 export function has_derivable_partial_ord<T, Rhs = T>(
   value: T
   // @ts-expect-error ts(2677)
-): value is Pick<PartialOrd<Rhs>, "eq" | "partial_cmp"> {
+): value is Pick<PartialOrd<Rhs>, 'eq' | 'partial_cmp'> {
   return (
     has_derivable_partial_eq<T, Rhs>(value) &&
-    "partial_cmp" in (value as object)
+    'partial_cmp' in (value as object)
   );
 }
 
@@ -215,21 +215,21 @@ export function default_partial_ord<T, Rhs = T>(value: T): PartialOrd<Rhs> {
     };
   }
 
-  panic("PartialOrd cannot be derived without (eq, partial_cmp) methods");
+  panic('PartialOrd cannot be derived without (eq, partial_cmp) methods');
 }
 
 // @ts-expect-error ts(2677)
 export function is_eq<T, O>(x: T): x is PartialEq<T, O> {
   return (
-    typeof x === "object" && "eq" in (x as object) && "ne" in (x as object)
+    typeof x === 'object' && 'eq' in (x as object) && 'ne' in (x as object)
   );
 }
 
 // @ts-expect-error ts(2677)
 export function is_cmp<T, O>(x: T): x is PartialOrd<T, O> {
   return (
-    typeof x === "object" &&
+    typeof x === 'object' &&
     is_eq(x) &&
-    ["partial_cmp", "lt", "le", "gt", "ge"].every((p) => p in x)
+    ['partial_cmp', 'lt', 'le', 'gt', 'ge'].every((p) => p in x)
   );
 }

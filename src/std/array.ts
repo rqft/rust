@@ -1,11 +1,11 @@
-import { staticify } from "../tools";
-import { Iterator } from "./iter";
-import { assert } from "./macros";
-import { usize } from "./number";
-import type { int } from "./number/size";
-import { size } from "./number/size";
-import type { FnMut } from "./ops";
-import { slice } from "./slice";
+import { staticify } from '../tools';
+import { Iterator } from './iter';
+import { assert } from './macros';
+import { usize } from './number';
+import type { int } from './number/size';
+import { size } from './number/size';
+import type { FnMut } from './ops';
+import { slice } from './slice';
 
 type Rw<T> = globalThis.Array<T>;
 

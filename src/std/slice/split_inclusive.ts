@@ -1,7 +1,7 @@
-import { staticify } from "../../tools";
-import { Iterator, IteratorImpl } from "../iter/iterator";
-import type { FnMut } from "../ops";
-import type { slice } from "./slice";
+import { staticify } from '../../tools';
+import { Iterator, IteratorImpl } from '../iter/iterator';
+import type { FnMut } from '../ops';
+import type { slice } from './slice';
 
 // @ts-expect-error ts(2714)
 class SplitInclusiveImpl<T> extends IteratorImpl<IteratorImpl<T>> {

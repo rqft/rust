@@ -276,7 +276,7 @@ export class IteratorImpl<T> implements Iterable<T> {
 
   public sum<U>(): T extends Add<U, T> ? Option<T> : None {
     return this.reduce((t, u) => {
-      if ("add" in (t as Add<_, _>)) {
+      if ('add' in (t as Add<_, _>)) {
         return (t as Add<_, _>).add(u);
       }
     }) as never;
@@ -284,7 +284,7 @@ export class IteratorImpl<T> implements Iterable<T> {
 
   public product<U>(): T extends Mul<U, T> ? Option<T> : None {
     return this.reduce((t, u) => {
-      if ("mul" in (t as Mul<_, _>)) {
+      if ('mul' in (t as Mul<_, _>)) {
         return (t as Mul<_, _>).mul(u);
       }
     }) as never;
@@ -307,7 +307,7 @@ class ArrayChunksImpl<
 > extends IteratorImpl<IteratorImpl<IntoIter<U>>> {
   constructor(iter: U, size: N) {
     if (size <= 0) {
-      panic("ArrayChunks<T, N> failed due to unmet bound: N > 0");
+      panic('ArrayChunks<T, N> failed due to unmet bound: N > 0');
     }
 
     super(
@@ -615,7 +615,7 @@ class FlattenImpl<T extends Iterable<_>> extends IteratorImpl<IntoIter<T>> {
       (function* (): Generator<_, void, unknown> {
         for (const value of iter) {
           if (
-            typeof value === "object" &&
+            typeof value === 'object' &&
             Symbol.iterator in (value as object)
           ) {
             for (const item of value as Iterable<_>) {

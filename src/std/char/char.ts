@@ -1,26 +1,27 @@
-import { radii, staticify } from "../../tools";
-import type { IndexOf, RadiiIdx, StrToArray } from "../../types";
-import type { int } from "../number/size";
-import { size, SizeImpl } from "../number/size";
+import { radii, staticify } from '../../tools';
+import type { IndexOf, RadiiIdx, StrToArray } from '../../types';
+import type { int } from '../number/size';
+import { size, SizeImpl } from '../number/size';
 // import { boolean } from '../bool';
-import type { Ord } from "../cmp";
-import { default_partial_ord, Ordering } from "../cmp";
-import type { _ } from "../custom";
-import { u16, u8 } from "../number";
-import type { io } from "../number/int_sized";
-import type { Option } from "../option";
-import { None, Some } from "../option";
-import { panic } from "../panic";
-import { DecodeUtf16 } from "./decode_utf16";
-import { EscapeDebug } from "./escape_debug";
-import { EscapeDefault } from "./escape_default";
-import { EscapeUnicode } from "./escape_unicode";
-import type { ToAsciiLowercase, ToAsciiUppercase } from "./types";
+import type { Ord } from '../cmp';
+import { default_partial_ord, Ordering } from '../cmp';
+import type { _ } from '../custom';
+import type { Debug, Display } from '../fmt';
+import { u16, u8 } from '../number';
+import type { io } from '../number/int_sized';
+import type { Option } from '../option';
+import { None, Some } from '../option';
+import { panic } from '../panic';
+import { DecodeUtf16 } from './decode_utf16';
+import { EscapeDebug } from './escape_debug';
+import { EscapeDefault } from './escape_default';
+import { EscapeUnicode } from './escape_unicode';
+import type { ToAsciiLowercase, ToAsciiUppercase } from './types';
 
-class CharImpl<T extends string> implements Ord<char<_>> {
+class CharImpl<T extends string> implements Ord<char<_>>, Display, Debug {
   public value: T;
   constructor(value: int | T) {
-    if (typeof value === "number" || typeof value === "bigint") {
+    if (typeof value === 'number' || typeof value === 'bigint') {
       value = size(value);
     }
 
@@ -31,9 +32,17 @@ class CharImpl<T extends string> implements Ord<char<_>> {
     this.value = value;
   }
 
-  public static readonly max: char<"\u{10ffff}"> = new this("\u{10ffff}");
-  public static readonly replacement_char: char<"\u{fffd}"> = new this(
-    "\u{fffd}"
+  public fmt_debug(): string {
+    return `'${this.value}'`;
+  }
+
+  public fmt_display(): string {
+    return this.value;
+  }
+
+  public static readonly max: char<'\u{10ffff}'> = new this('\u{10ffff}');
+  public static readonly replacement_char: char<'\u{fffd}'> = new this(
+    '\u{fffd}'
   );
 
   public static new<T extends string>(value: int | T): CharImpl<T> {
@@ -46,7 +55,7 @@ class CharImpl<T extends string> implements Ord<char<_>> {
 
   public static from_u32(u32: number): Option<CharImpl<_>> {
     if (u32 < 0 || u32 > 2 ** 32) {
-      panic("Invalid u32 value");
+      panic('Invalid u32 value');
     }
 
     try {
@@ -218,7 +227,7 @@ class CharImpl<T extends string> implements Ord<char<_>> {
 
   public encode_utf16(): Array<u16> {
     return this.value
-      .split("")
+      .split('')
       .map((x) =>
         u16(x.codePointAt(0) || CharImpl.replacement_char.codepoint())
       );
@@ -228,22 +237,22 @@ class CharImpl<T extends string> implements Ord<char<_>> {
     let p = false;
 
     for (const value of cats) {
-      p = p || new RegExp(`\\p{${value}}`, "u").test(this.value);
+      p = p || new RegExp(`\\p{${value}}`, 'u').test(this.value);
     }
 
     return p;
   }
 
   public is_alphabetic(): boolean {
-    return this.is_category("Alphabetic");
+    return this.is_category('Alphabetic');
   }
 
   public is_lowercase(): boolean {
-    return this.is_category("Lowercase") as never;
+    return this.is_category('Lowercase') as never;
   }
 
   public is_uppercase(): boolean {
-    return this.is_category("Uppercase") as never;
+    return this.is_category('Uppercase') as never;
   }
 
   public is_whitespace(): boolean {
@@ -255,11 +264,11 @@ class CharImpl<T extends string> implements Ord<char<_>> {
   }
 
   public is_control(): boolean {
-    return this.is_category("Cc");
+    return this.is_category('Cc');
   }
 
   public is_numeric(): boolean {
-    return this.is_category("Nd", "Nl", "No");
+    return this.is_category('Nd', 'Nl', 'No');
   }
 
   public to_lowercase(): CharImpl<Lowercase<T>> {
@@ -330,12 +339,12 @@ class CharImpl<T extends string> implements Ord<char<_>> {
   }
 
   public is_ascii_punctuation(): boolean {
-    return this.is_ascii() && (this.is_category("Punctuation") as never);
+    return this.is_ascii() && (this.is_category('Punctuation') as never);
   }
 
   public is_ascii_graphic(): boolean {
     return (this.is_ascii().valueOf() &&
-      this.clamp(char("!"), char("~")).eq(this)) as never;
+      this.clamp(char('!'), char('~')).eq(this)) as never;
   }
 
   public is_ascii_whitespace(): boolean {

@@ -1,5 +1,5 @@
-import type { PartialEq } from "../../std/cmp";
-import { staticify } from "../../tools";
+import type { PartialEq } from '../../std/cmp';
+import { staticify } from '../../tools';
 
 export type MonthValue = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
 

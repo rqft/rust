@@ -1,2 +1,2 @@
-export * from "./primitives";
-export * from "./structs";
+export * from './primitives';
+export * from './structs';

@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-import { staticify } from "../tools";
-import type { Clone } from "./clone";
-import type { PartialEq, PartialOrd } from "./cmp";
-import { Ordering } from "./cmp";
-import type { Default } from "./default";
+import { staticify } from '../tools';
+import type { Clone } from './clone';
+import type { PartialEq, PartialOrd } from './cmp';
+import { Ordering } from './cmp';
+import type { Default } from './default';
+import type { Debug, Display } from './fmt';
 import type {
   BitAnd,
   BitAndAssign,
@@ -12,13 +13,13 @@ import type {
   BitXor,
   BitXorAssign,
   FnOnce,
-  Not,
-} from "./ops";
-import type { Option } from "./option";
-import { None, Some } from "./option";
+  Not
+} from './ops';
+import type { Option } from './option';
+import { None, Some } from './option';
 
 class BoolImpl
-  implements
+implements
     BitAnd<boolean, BoolImpl>,
     BitAndAssign<boolean, BoolImpl>,
     BitOr<boolean, BoolImpl>,
@@ -29,7 +30,9 @@ class BoolImpl
     Default<BoolImpl>,
     Not<BoolImpl>,
     PartialOrd<boolean, BoolImpl>,
-    PartialEq<boolean, BoolImpl>
+    PartialEq<boolean, BoolImpl>,
+    Display,
+    Debug
 {
   protected value: boolean;
   // ToBool<T>
@@ -43,6 +46,14 @@ class BoolImpl
 
   public static readonly true: BoolImpl = new BoolImpl(true);
   public static readonly false: BoolImpl = new BoolImpl(false);
+
+  public fmt_debug(): string {
+    return String(this.value);
+  }
+
+  public fmt_display(): string {
+    return String(this.value);
+  }
 
   public as_primitive(): boolean {
     return !!this.value;

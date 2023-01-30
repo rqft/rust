@@ -1,10 +1,22 @@
-import { staticify } from "../../tools";
+import { staticify } from '../../tools';
 // import { bool } from '../bool';
-import type { Clone } from "../clone";
-import type { Eq, Ord, PartialEq, PartialOrd } from "../cmp";
-import { default_partial_ord, Ordering } from "../cmp";
-import type { Cast, Into } from "../convert";
-import type { _ } from "../custom";
+import type { Clone } from '../clone';
+import type { Eq, Ord, PartialEq, PartialOrd } from '../cmp';
+import { default_partial_ord, Ordering } from '../cmp';
+import type { Cast, Into } from '../convert';
+import type { _ } from '../custom';
+import type {
+  Binary,
+  Debug,
+  Display,
+  LowerExp,
+  LowerHex,
+  Octal,
+  Precision,
+  Signed,
+  UpperExp,
+  UpperHex,
+} from '../fmt';
 import type {
   Add,
   AddAssign,
@@ -29,17 +41,17 @@ import type {
   ShrAssign,
   Sub,
   SubAssign,
-} from "../ops";
-import type { Option } from "../option";
-import { None, Some } from "../option";
-import { panic } from "../panic";
-import type { Result } from "../result";
-import { Err, Ok } from "../result";
-import { IntErrorKind } from "./int_error_kind";
-import { ParseIntError } from "./parse_int_error";
+} from '../ops';
+import type { Option } from '../option';
+import { None, Some } from '../option';
+import { panic } from '../panic';
+import type { Result } from '../result';
+import { Err, Ok } from '../result';
+import { IntErrorKind } from './int_error_kind';
+import { ParseIntError } from './parse_int_error';
 
 export class SizeImpl
-  implements
+implements
     Add<int, size>,
     AddAssign<int, size>,
     Clone<size>,
@@ -70,7 +82,17 @@ export class SizeImpl
     ShrAssign<int, size>,
     Assign<int>,
     Into<bigint>,
-    Cast
+    Cast,
+    Binary,
+    Debug,
+    Display,
+    LowerExp,
+    LowerHex,
+    Octal,
+    Signed,
+    UpperExp,
+    UpperHex,
+    Precision
 {
   // From
   public value: bigint;
@@ -86,6 +108,46 @@ export class SizeImpl
     other = size(other);
     this.value = other.valueOf();
     return this;
+  }
+
+  public fmt_binary(): string {
+    return this.value.toString(2);
+  }
+
+  public fmt_debug(): string {
+    return this.value.toString();
+  }
+
+  public fmt_display(): string {
+    return this.value.toLocaleString();
+  }
+
+  public fmt_lower_exp(): string {
+    return this.into(Number).toExponential();
+  }
+
+  public fmt_lower_hex(): string {
+    return this.value.toString(16);
+  }
+
+  public fmt_octal(): string {
+    return this.value.toString(8);
+  }
+
+  public fmt_precision(precision: number): string {
+    return this.into(Number).toPrecision(precision);
+  }
+
+  public fmt_signed(): '-' | '+' {
+    return this.value >= 0 ? '+' : '-';
+  }
+
+  public fmt_upper_exp(): string {
+    return this.fmt_lower_exp().toUpperCase();
+  }
+
+  public fmt_upper_hex(): string {
+    return this.fmt_lower_hex().toUpperCase();
   }
 
   public cast<T>(): T {
@@ -598,7 +660,7 @@ export class SizeImpl
     rhs = size(rhs);
 
     if (rhs.value === 0n) {
-      panic("parameter rhs in fn `next_multiple_of` cannot be 0");
+      panic('parameter rhs in fn `next_multiple_of` cannot be 0');
     }
 
     for (let i = this.value; ; i++) {
@@ -629,7 +691,7 @@ export class SizeImpl
       const abs = -this.value;
 
       if (abs > max) {
-        panic("method `abs` overflowed past the maximum");
+        panic('method `abs` overflowed past the maximum');
       }
 
       return size(abs);

@@ -1,20 +1,34 @@
-import { staticify } from "../../../tools";
-import { compare_hash } from "../../hash";
-import { usize } from "../../number";
-import type { io } from "../../number/int_sized";
-import type { FnMut } from "../../ops";
-import type { Option } from "../../option";
-import { None, Some } from "../../option";
-import { Vec } from "../../vec/vec";
-import { IntoIter } from "./into_iter";
-import { IntoKeys } from "./into_keys";
-import { IntoValues } from "./into_values";
-import { Iter } from "./iter";
-import { Keys } from "./keys";
-import { Values } from "./values";
+import { staticify } from '../../../tools';
+import type { Debug } from '../../fmt';
+import { DebugMap } from '../../fmt';
+import { compare_hash } from '../../hash';
+import { usize } from '../../number';
+import type { io } from '../../number/int_sized';
+import type { FnMut } from '../../ops';
+import type { Option } from '../../option';
+import { None, Some } from '../../option';
+import { Vec } from '../../vec/vec';
+import { IntoIter } from './into_iter';
+import { IntoKeys } from './into_keys';
+import { IntoValues } from './into_values';
+import { Iter } from './iter';
+import { Keys } from './keys';
+import { Values } from './values';
 
-class HashMapImpl<K, V> {
+class HashMapImpl<K, V> implements Debug {
   public vec: Vec<[K, V]> = Vec();
+
+  public fmt_debug(
+    this: K extends Debug ? V extends Debug ? HashMapImpl<K, V> : never : never
+  ): string {
+    const map = new DebugMap();
+
+    for (const [k, v] of this.vec.clone()) {
+      map.entry(k, v);
+    }
+
+    return map.finish().unwrap();
+  }
 
   public static new<K, V>(): HashMapImpl<K, V> {
     return new this();

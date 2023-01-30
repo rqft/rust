@@ -1,8 +1,8 @@
-import { staticify } from "../../tools";
-import { char } from "../char";
-import type { _ } from "../custom";
-import { IteratorImpl } from "../iter/iterator";
-import type { str } from "./str";
+import { staticify } from '../../tools';
+import { char } from '../char';
+import type { _ } from '../custom';
+import { IteratorImpl } from '../iter/iterator';
+import type { str } from './str';
 
 // @ts-expect-error ts(2714)
 class CharsImpl extends IteratorImpl<char<_>> {

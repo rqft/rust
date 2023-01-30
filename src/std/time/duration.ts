@@ -1,7 +1,8 @@
-import { staticify } from "../../tools";
-import type { Clone } from "../clone";
-import { f64, u128, u32, u64 } from "../number";
-import type { int } from "../number/size";
+import { staticify } from '../../tools';
+import type { Clone } from '../clone';
+import type { Debug } from '../fmt';
+import { f64, u128, u32, u64 } from '../number';
+import type { int } from '../number/size';
 import type {
   Add,
   AddAssign,
@@ -11,14 +12,14 @@ import type {
   Mul,
   MulAssign,
   Sub,
-  SubAssign,
-} from "../ops";
-import type { Option } from "../option";
-import { None, Some } from "../option";
-import { panic } from "../panic";
+  SubAssign
+} from '../ops';
+import type { Option } from '../option';
+import { None, Some } from '../option';
+import { panic } from '../panic';
 
 class DurationImpl
-  implements
+implements
     Add<Duration>,
     AddAssign<Duration>,
     Sub<Duration>,
@@ -28,7 +29,8 @@ class DurationImpl
     Div<int, Duration>,
     DivAssign<int, Duration>,
     Clone<Duration>,
-    Assign<Duration>
+    Assign<Duration>,
+    Debug
 {
   private readonly secs: u64;
   private readonly nanos: u32;
@@ -57,8 +59,14 @@ class DurationImpl
     }
 
     if (this.secs.gt((1n << 63n) - 1n)) {
-      panic("overflowed past u64 bound");
+      panic('overflowed past u64 bound');
     }
+  }
+
+  public fmt_debug(): string {
+    return (
+      this.as_secs().fmt_debug() + 's' + this.subsec_nanos().fmt_debug() + 'ns'
+    );
   }
 
   public static new(secs: int, nanos: int): DurationImpl {
@@ -256,7 +264,7 @@ class DurationImpl
   }
 
   public add(other: DurationImpl): DurationImpl {
-    return this.checked_add(other).expect("overflow when adding durations");
+    return this.checked_add(other).expect('overflow when adding durations');
   }
 
   public add_assign(other: DurationImpl): DurationImpl {
@@ -265,7 +273,7 @@ class DurationImpl
 
   public sub(other: DurationImpl): DurationImpl {
     return this.checked_sub(other).expect(
-      "overflow when subtracting durations"
+      'overflow when subtracting durations'
     );
   }
 
@@ -279,7 +287,7 @@ class DurationImpl
 
   public div(other: int): DurationImpl {
     return this.checked_div(other).expect(
-      "overflow when dividing duration by scalar"
+      'overflow when dividing duration by scalar'
     );
   }
 
@@ -289,7 +297,7 @@ class DurationImpl
 
   public mul(other: int): DurationImpl {
     return this.checked_mul(other).expect(
-      "overflow when multiplying duration by scalar"
+      'overflow when multiplying duration by scalar'
     );
   }
 

@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export type FnConstructor = (new (...args: Array<any>) => any) & {
-  "new"(...args: Array<any>): any;
+  'new'(...args: Array<any>): any;
 };
 export type Fn = (...args: Array<any>) => any;
 
 export type Get<T, P> = P extends keyof T
   ? T[P]
-  : "prototype" extends keyof T
-  ? P extends keyof T["prototype"]
-    ? T["prototype"][P]
+  : 'prototype' extends keyof T
+  ? P extends keyof T['prototype']
+    ? T['prototype'][P]
     : never
   : never;
 
 export type AnyFunction = Fn | FnConstructor;
-export type Staticify<T extends FnConstructor> = Get<T, "new"> &
+export type Staticify<T extends FnConstructor> = Get<T, 'new'> &
   T & {
     [P in keyof InstanceType<T>]: InstanceType<T>[P] extends (
       ...args: infer U
@@ -30,7 +30,7 @@ export function staticify<T extends FnConstructor>(value: T): Staticify<T> {
   return new Proxy(value, {
     get(target, p): any {
       // literally 'static'
-      if (p === "static") {
+      if (p === 'static') {
         return target;
       }
 
@@ -41,7 +41,7 @@ export function staticify<T extends FnConstructor>(value: T): Staticify<T> {
 
       if (p in value.prototype) {
         // methods, (&self, ...params) -> R
-        if (typeof value.prototype[p] === "function") {
+        if (typeof value.prototype[p] === 'function') {
           return (self: InstanceType<T>, ...args: Array<any>) => {
             return self[p](...args);
           };
@@ -107,7 +107,7 @@ export const UnicodeRegexCategories = {
   space_separator: /\p{Zs}/u,
   separator: /\p{Z}/u,
 } as const;
-export const radii = "0123456789abcdefghijklmnopqrstuvwxyz" as const;
+export const radii = '0123456789abcdefghijklmnopqrstuvwxyz' as const;
 
 export function iter_len<T>(t: Iterable<T>): number {
   let i = 0;
@@ -124,5 +124,5 @@ export function iter_len<T>(t: Iterable<T>): number {
 }
 
 export function is_iter<T>(t: unknown): t is Iterable<T> {
-  return typeof t === "object" && Symbol.iterator in (t as object);
+  return typeof t === 'object' && Symbol.iterator in (t as object);
 }

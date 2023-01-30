@@ -1,9 +1,9 @@
-import { staticify } from "../../tools";
-import { IteratorImpl } from "../iter/iterator";
-import type { int } from "../number/size";
+import { staticify } from '../../tools';
+import { IteratorImpl } from '../iter/iterator';
+import type { int } from '../number/size';
 
-import type { FnMut } from "../ops";
-import type { slice } from "./slice";
+import type { FnMut } from '../ops';
+import type { slice } from './slice';
 
 // @ts-expect-error ts(2714)
 class RSplitNImpl<T> extends IteratorImpl<IteratorImpl<T>> {

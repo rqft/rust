@@ -1,39 +1,39 @@
-import { iter_len, staticify } from "../../tools";
-import type { Eq, PartialEq, PartialOrd } from "../cmp";
+import { iter_len, staticify } from '../../tools';
+import type { Eq, PartialEq, PartialOrd } from '../cmp';
 import {
   default_partial_eq,
   default_partial_ord,
   is_cmp,
   is_eq,
   Ordering,
-} from "../cmp";
+} from '../cmp';
 
 // import { bool } from '../bool';
-import { Iterator } from "../iter";
-import type { u8 } from "../number";
-import { usize } from "../number";
-import type { io } from "../number/int_sized";
-import type { int } from "../number/size";
-import { size } from "../number/size";
-import type { FnMut } from "../ops";
-import type { Option } from "../option";
-import { None, Some } from "../option";
-import { panic } from "../panic";
-import { Chunks } from "./chunks";
-import { ChunksExact } from "./chunks_exact";
-import { RChunks } from "./rchunks";
-import { RChunksExact } from "./rchunks_exact";
-import { RSplit } from "./rsplit";
-import { RSplitN } from "./rsplitn";
-import { RSplitInclusive } from "./rsplit_inclusive";
-import { Split } from "./split";
-import { SplitN } from "./splitn";
-import { SplitInclusive } from "./split_inclusive";
-import { Windows } from "./windows";
+import { Iterator } from '../iter';
+import type { u8 } from '../number';
+import { usize } from '../number';
+import type { io } from '../number/int_sized';
+import type { int } from '../number/size';
+import { size } from '../number/size';
+import type { FnMut } from '../ops';
+import type { Option } from '../option';
+import { None, Some } from '../option';
+import { panic } from '../panic';
+import { Chunks } from './chunks';
+import { ChunksExact } from './chunks_exact';
+import { RChunks } from './rchunks';
+import { RChunksExact } from './rchunks_exact';
+import { RSplit } from './rsplit';
+import { RSplitN } from './rsplitn';
+import { RSplitInclusive } from './rsplit_inclusive';
+import { Split } from './split';
+import { SplitN } from './splitn';
+import { SplitInclusive } from './split_inclusive';
+import { Windows } from './windows';
 
 class SliceImpl<T>
-  // Default<SliceImpl<T>>
-  implements PartialEq<Iterable<T>>, Eq<Iterable<T>>, PartialOrd<Iterable<T>>
+// Default<SliceImpl<T>>
+implements PartialEq<Iterable<T>>, Eq<Iterable<T>>, PartialOrd<Iterable<T>>
 {
   public ptr: Array<T>;
   constructor(slice: Iterable<T>) {
@@ -126,7 +126,7 @@ class SliceImpl<T>
     [a, b] = [Number(size(a)), Number(size(b))];
 
     if (a < 0 || a > this.ptr.length || b < 0 || b > this.ptr.length) {
-      panic("tried to swap with out-of-bounds indices");
+      panic('tried to swap with out-of-bounds indices');
     }
 
     return this.swap_unchecked(a, b);
@@ -177,7 +177,7 @@ class SliceImpl<T>
 
   public split_at(n: int): [SliceImpl<T>, SliceImpl<T>] {
     if (size(n).gt(this.len())) {
-      panic("cannot split outside of slice");
+      panic('cannot split outside of slice');
     }
 
     return [
@@ -222,7 +222,7 @@ class SliceImpl<T>
       return false;
     }
 
-    if (typeof x === "object" && "eq" in (x as PartialEq<T>)) {
+    if (typeof x === 'object' && 'eq' in (x as PartialEq<T>)) {
       try {
         return (
           this.ptr.findIndex((value) => (value as PartialEq<T>).eq(x)) !== -1
@@ -333,7 +333,7 @@ class SliceImpl<T>
 
   public rotate_left(mid: io<u8>): this {
     if (this.len().lt(mid)) {
-      panic("Cannot rotate outside of pointer bounds");
+      panic('Cannot rotate outside of pointer bounds');
     }
 
     if (this.len().eq(mid)) {
@@ -349,7 +349,7 @@ class SliceImpl<T>
 
   public rotate_right(mid: io<u8>): this {
     if (this.len().lt(mid)) {
-      panic("Cannot rotate outside of pointer bounds");
+      panic('Cannot rotate outside of pointer bounds');
     }
 
     if (this.len().eq(mid)) {

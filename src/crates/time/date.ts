@@ -1,27 +1,27 @@
-import { assert_eq, debug_assert } from "../../std/macros";
-import { i16, i32, i8, u16, u8 } from "../../std/number";
-import type { int } from "../../std/number/size";
-import { size } from "../../std/number/size";
-import { Range } from "../../std/ops/range";
-import type { Option } from "../../std/option";
-import { None, Some } from "../../std/option";
-import type { Result } from "../../std/result";
-import { Err, Ok } from "../../std/result";
-import { tuple } from "../../std/tuple";
-import { staticify } from "../../tools";
-import { ComponentRangeError } from "./error/component_range";
-import type { MonthValue } from "./month";
-import { Month } from "./month";
-import { PrimitiveDateTime } from "./primitive_date_time";
-import { Time } from "./time";
+import { assert_eq, debug_assert } from '../../std/macros';
+import { i16, i32, i8, u16, u8 } from '../../std/number';
+import type { int } from '../../std/number/size';
+import { size } from '../../std/number/size';
+import { Range } from '../../std/ops/range';
+import type { Option } from '../../std/option';
+import { None, Some } from '../../std/option';
+import type { Result } from '../../std/result';
+import { Err, Ok } from '../../std/result';
+import { tuple } from '../../std/tuple';
+import { staticify } from '../../tools';
+import { ComponentRangeError } from './error/component_range';
+import type { MonthValue } from './month';
+import { Month } from './month';
+import { PrimitiveDateTime } from './primitive_date_time';
+import { Time } from './time';
 import {
   days_in_year,
   days_in_year_month,
   is_leap_year,
   weeks_in_year,
-} from "./util";
-import type { WeekdayType } from "./weekday";
-import { Weekday } from "./weekday";
+} from './util';
+import type { WeekdayType } from './weekday';
+import { Weekday } from './weekday';
 
 export const min_year = -9999;
 export const max_year = 9999;
@@ -67,13 +67,13 @@ class DateImpl {
     ];
 
     if (!Range(size(min_year), size(max_year + 1)).contains(year)) {
-      return Err(new ComponentRangeError("year", false));
+      return Err(new ComponentRangeError('year', false));
     }
 
     if (
       !Range(size(1), days_in_year_month(year.into(i32), month)).contains(day)
     ) {
-      return Err(new ComponentRangeError("day", true));
+      return Err(new ComponentRangeError('day', true));
     }
 
     return Ok(
@@ -98,11 +98,11 @@ class DateImpl {
     day = u8(day);
 
     if (!Range(size(min_year), size(max_year + 1)).contains(year)) {
-      return Err(new ComponentRangeError("year", false));
+      return Err(new ComponentRangeError('year', false));
     }
 
     if (!Range(size(1), days_in_year(year.into(i32))).contains(day)) {
-      return Err(new ComponentRangeError("day", true));
+      return Err(new ComponentRangeError('day', true));
     }
 
     return Ok(
@@ -120,11 +120,11 @@ class DateImpl {
     weekday = Weekday(weekday);
 
     if (!Range(size(min_year), size(max_year + 1)).contains(year)) {
-      return Err(new ComponentRangeError("year", false));
+      return Err(new ComponentRangeError('year', false));
     }
 
     if (!Range(size(1), weeks_in_year(year.into(i32))).contains(week)) {
-      return Err(new ComponentRangeError("week", true));
+      return Err(new ComponentRangeError('week', true));
     }
 
     const adj_year = year.sub(1) as i32;

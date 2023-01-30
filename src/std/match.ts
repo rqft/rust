@@ -1,2 +1,2 @@
 export class Match {}
-export const _ = Symbol("_");
+export const _ = Symbol('_');

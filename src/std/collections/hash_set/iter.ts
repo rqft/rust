@@ -1,6 +1,6 @@
-import { staticify } from "../../../tools";
-import { IteratorImpl } from "../../iter";
-import type { HashSet } from "./hash_set";
+import { staticify } from '../../../tools';
+import { IteratorImpl } from '../../iter';
+import type { HashSet } from './hash_set';
 
 // @ts-expect-error ts(2714)
 class IterImpl<T> extends IteratorImpl<T> {

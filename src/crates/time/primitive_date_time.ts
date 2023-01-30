@@ -1,10 +1,10 @@
-import type { i32, u16, u32, u8 } from "../../std/number";
-import type { tuple } from "../../std/tuple";
-import { staticify } from "../../tools";
-import { Date } from "./date";
-import type { Month } from "./month";
-import { Time } from "./time";
-import type { Weekday } from "./weekday";
+import type { i32, u16, u32, u8 } from '../../std/number';
+import type { tuple } from '../../std/tuple';
+import { staticify } from '../../tools';
+import { Date } from './date';
+import type { Month } from './month';
+import { Time } from './time';
+import type { Weekday } from './weekday';
 
 class PrimitiveDateTimeImpl {
   constructor(private readonly d: Date, private readonly t: Time) {}

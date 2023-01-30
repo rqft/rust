@@ -1,10 +1,10 @@
-import { is_iter, staticify } from "../../tools";
-import { char } from "../char";
-import type { _ } from "../custom";
-import { usize } from "../number";
-import type { Option } from "../option";
-import { None, Some } from "../option";
-import { str } from "./str";
+import { is_iter, staticify } from '../../tools';
+import { char } from '../char';
+import type { _ } from '../custom';
+import { usize } from '../number';
+import type { Option } from '../option';
+import { None, Some } from '../option';
+import { str } from './str';
 
 export type Matcher =
   | char<_>
@@ -29,7 +29,7 @@ class PatternImpl {
       return haystack.includes(this.matcher.alloc);
     }
 
-    if (typeof this.matcher === "string") {
+    if (typeof this.matcher === 'string') {
       return haystack.includes(this.matcher);
     }
 
@@ -67,7 +67,7 @@ class PatternImpl {
       return haystack.startsWith(this.matcher.alloc);
     }
 
-    if (typeof this.matcher === "string") {
+    if (typeof this.matcher === 'string') {
       return haystack.startsWith(this.matcher);
     }
 
@@ -107,7 +107,7 @@ class PatternImpl {
       return haystack.endsWith(this.matcher.alloc);
     }
 
-    if (typeof this.matcher === "string") {
+    if (typeof this.matcher === 'string') {
       return haystack.endsWith(this.matcher);
     }
 
@@ -153,7 +153,7 @@ class PatternImpl {
       return Some(haystack.slice(this.matcher.alloc.length));
     }
 
-    if (typeof this.matcher === "string") {
+    if (typeof this.matcher === 'string') {
       return Some(haystack.slice(this.matcher.length));
     }
 
@@ -199,7 +199,7 @@ class PatternImpl {
       return Some(haystack.slice(0, this.matcher.alloc.length));
     }
 
-    if (typeof this.matcher === "string") {
+    if (typeof this.matcher === 'string') {
       return Some(haystack.slice(0, this.matcher.length));
     }
 
@@ -238,14 +238,14 @@ class PatternImpl {
     if (this.matcher instanceof RegExp) {
       const [main] = haystack.match(haystack) || [];
 
-      return Some(usize(haystack.indexOf(main || "")));
+      return Some(usize(haystack.indexOf(main || '')));
     }
 
     if (this.matcher instanceof str.static) {
       return Some(usize(haystack.indexOf(this.matcher.alloc)));
     }
 
-    if (typeof this.matcher === "string") {
+    if (typeof this.matcher === 'string') {
       return Some(usize(haystack.indexOf(this.matcher)));
     }
 
@@ -284,14 +284,14 @@ class PatternImpl {
     if (this.matcher instanceof RegExp) {
       const [main] = haystack.match(haystack) || [];
 
-      return Some(usize(haystack.lastIndexOf(main || "")));
+      return Some(usize(haystack.lastIndexOf(main || '')));
     }
 
     if (this.matcher instanceof str.static) {
       return Some(usize(haystack.lastIndexOf(this.matcher.alloc)));
     }
 
-    if (typeof this.matcher === "string") {
+    if (typeof this.matcher === 'string') {
       return Some(usize(haystack.lastIndexOf(this.matcher)));
     }
 

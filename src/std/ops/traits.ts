@@ -1,4 +1,4 @@
-import type { ArrayOf } from "../custom";
+import type { ArrayOf } from '../custom';
 
 export interface Add<Rhs, Output = Rhs> {
   add(other: Rhs): Output;

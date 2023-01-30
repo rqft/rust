@@ -1,4 +1,4 @@
-import { Panic } from "../../../std/panic";
+import { Panic } from '../../../std/panic';
 
 export class ComponentRangeError extends Panic {
   constructor(private uname: string, private condition: boolean) {

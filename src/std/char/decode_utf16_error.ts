@@ -1,5 +1,5 @@
-import { staticify } from "../../tools";
-import type { u16 } from "../number";
+import { staticify } from '../../tools';
+import type { u16 } from '../number';
 
 class DecodeUtf16ErrorImpl<T extends u16> extends Error {
   constructor(private surrogate: T) {

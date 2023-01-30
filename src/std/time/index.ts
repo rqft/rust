@@ -1,3 +1,3 @@
-export * from "./consts";
-export * from "./duration";
-export * from "./instant";
+export * from './consts';
+export * from './duration';
+export * from './instant';

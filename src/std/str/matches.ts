@@ -1,7 +1,7 @@
-import { staticify } from "../../tools";
-import { IteratorImpl } from "../iter/iterator";
-import type { Io } from "./str";
-import { str } from "./str";
+import { staticify } from '../../tools';
+import { IteratorImpl } from '../iter/iterator';
+import type { Io } from './str';
+import { str } from './str';
 
 // @ts-expect-error ts(2714)
 class MatchesImpl extends IteratorImpl<str> {

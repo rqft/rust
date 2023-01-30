@@ -1,6 +1,6 @@
-import { staticify } from "../../tools";
-import { IteratorImpl } from "../iter";
-import type { Vec } from "./vec";
+import { staticify } from '../../tools';
+import { IteratorImpl } from '../iter';
+import type { Vec } from './vec';
 
 class IntoIterImpl<T> extends IteratorImpl<T> {
   constructor(value: Vec<T>) {

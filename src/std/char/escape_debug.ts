@@ -1,7 +1,7 @@
-import { staticify } from "../../tools";
-import type { _ } from "../custom";
-import { IteratorImpl } from "../iter/iterator";
-import { char } from "./char";
+import { staticify } from '../../tools';
+import type { _ } from '../custom';
+import { IteratorImpl } from '../iter/iterator';
+import { char } from './char';
 
 // @ts-expect-error ts(2714)
 class EscapeDebugImpl<T extends string> extends IteratorImpl<char<_>> {
@@ -10,39 +10,39 @@ class EscapeDebugImpl<T extends string> extends IteratorImpl<char<_>> {
     super(
       (function* (): Generator<char<_>, void, unknown> {
         switch (val) {
-          case "\t":
-            yield char("\\");
-            yield char("t");
-            break;
+        case '\t':
+          yield char('\\');
+          yield char('t');
+          break;
 
-          case "\r":
-            yield char("\\");
-            yield char("r");
-            break;
+        case '\r':
+          yield char('\\');
+          yield char('r');
+          break;
 
-          case "\n":
-            yield char("\\");
-            yield char("n");
-            break;
+        case '\n':
+          yield char('\\');
+          yield char('n');
+          break;
 
-          case "'":
-            yield char("\\");
-            yield char("'");
-            break;
+        case '\'':
+          yield char('\\');
+          yield char('\'');
+          break;
 
-          case '"':
-            yield char("\\");
-            yield char('"');
-            break;
+        case '"':
+          yield char('\\');
+          yield char('"');
+          break;
 
-          case "\\":
-            yield char("\\");
-            yield char("\\");
-            break;
+        case '\\':
+          yield char('\\');
+          yield char('\\');
+          break;
 
-          default:
-            yield value;
-            break;
+        default:
+          yield value;
+          break;
         }
       })()
     );

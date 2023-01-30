@@ -1,9 +1,16 @@
-import { staticify } from "../../tools";
+import { staticify } from '../../tools';
 // import { bool } from '../bool';
-import type { Clone } from "../clone";
-import type { Ord } from "../cmp";
-import { default_partial_eq, default_partial_ord, Ordering } from "../cmp";
-import type { _ } from "../custom";
+import type { Clone } from '../clone';
+import type { Ord } from '../cmp';
+import { default_partial_eq, default_partial_ord, Ordering } from '../cmp';
+import type { _ } from '../custom';
+import type {
+  Debug,
+  Display,
+  LowerExp,
+  Precision, Signed,
+  UpperExp
+} from '../fmt';
 // import type { Default } from '../default';
 import type {
   Add,
@@ -16,11 +23,11 @@ import type {
   Rem,
   RemAssign,
   Sub,
-  SubAssign,
-} from "../ops";
+  SubAssign
+} from '../ops';
 
 class F64Impl
-  implements
+implements
     Ord<Num>,
     Add<Num, f64>,
     AddAssign<Num, f64>,
@@ -34,7 +41,13 @@ class F64Impl
     Rem<Num, f64>,
     RemAssign<Num, f64>,
     Sub<Num, f64>,
-    SubAssign<Num, f64>
+    SubAssign<Num, f64>,
+    Display,
+    Debug,
+    LowerExp,
+    UpperExp,
+    Precision,
+    Signed
 {
   private value: number;
   constructor(value: _) {
@@ -48,6 +61,34 @@ class F64Impl
 
   public static new(value: _): F64Impl {
     return new this(value);
+  }
+
+  public fmt_debug(): string {
+    if (this.value % 1 === this.value) {
+      return this.fmt_display() + '.0';
+    }
+
+    return String(this.value);
+  }
+
+  public fmt_display(): string {
+    return String(this.value);
+  }
+
+  public fmt_lower_exp(): string {
+    return this.value.toExponential();
+  }
+
+  public fmt_upper_exp(): string {
+    return this.value.toExponential().toUpperCase();
+  }
+
+  public fmt_signed(): '-' | '+' {
+    return this.value >= 0 ? '+' : '-';
+  }
+
+  public fmt_precision(precision: number): string {
+    return this.value.toPrecision(precision);
   }
 
   private map(f: (t: number) => number): this {

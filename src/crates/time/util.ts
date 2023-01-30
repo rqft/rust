@@ -1,6 +1,6 @@
-import type { i32 } from "../../std";
-import { u16, u8 } from "../../std";
-import { Month } from "./month";
+import type { i32 } from '../../std';
+import { u16, u8 } from '../../std';
+import { Month } from './month';
 
 export function is_leap_year(year: i32): boolean {
   return year.rem(4).eq(0) && (year.rem(25).ne(0) || year.rem(16).eq(0));

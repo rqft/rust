@@ -1,14 +1,14 @@
-import { staticify } from "../../tools";
-import { Iterator } from "../iter";
-import { usize } from "../number";
-import type { io } from "../number/int_sized";
-import type { FnOnce } from "../ops";
-import type { Option } from "../option";
-import { None, Some } from "../option";
-import type { Result } from "../result";
-import { Err, Ok } from "../result";
-import { slice } from "../slice";
-import { IntoIter } from "./into_iter";
+import { staticify } from '../../tools';
+import { Iterator } from '../iter';
+import { usize } from '../number';
+import type { io } from '../number/int_sized';
+import type { FnOnce } from '../ops';
+import type { Option } from '../option';
+import { None, Some } from '../option';
+import type { Result } from '../result';
+import { Err, Ok } from '../result';
+import { slice } from '../slice';
+import { IntoIter } from './into_iter';
 
 export class VecImpl<T> {
   public readonly alloc: Array<Option<T>> = [];
@@ -213,11 +213,11 @@ export class VecImpl<T> {
 
   public drain([range_min, range_max]: [io<usize>, io<usize>]): Vec<T> {
     if (usize(range_min).gt(range_max)) {
-      throw "starting point cannot be larger than the ending point";
+      throw 'starting point cannot be larger than the ending point';
     }
 
     if (range_min > this.len()) {
-      throw "ending point cannot be larger than this vec's length";
+      throw 'ending point cannot be larger than this vec\'s length';
     }
 
     const n = Vec.with_capacity<T>(usize(range_max).sub(range_min));
