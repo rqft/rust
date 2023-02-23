@@ -1,7 +1,7 @@
 import { is_iter, staticify } from '../../tools';
-import { char } from '../char';
+import { char } from '../char/index';
 import type { _ } from '../custom';
-import { usize } from '../number';
+import { usize } from '../number/index';
 import type { Option } from '../option';
 import { None, Some } from '../option';
 import { str } from './str';

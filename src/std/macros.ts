@@ -1,9 +1,9 @@
 import type { PartialEq } from './cmp';
-import type { usize } from './number';
+import type { usize } from './number/index';
 import type { Option } from './option';
 import { None, Some } from './option';
 import { panic } from './panic';
-import { Vec } from './vec';
+import { Vec } from './vec/index';
 
 export function assert(x: unknown, label = String(x)): asserts x {
   if (!x) {

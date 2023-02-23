@@ -2,9 +2,9 @@ import { staticify } from '../../../tools';
 import type { Debug } from '../../fmt';
 import { DebugMap } from '../../fmt';
 import { compare_hash } from '../../hash';
-import { usize } from '../../number';
+import { usize } from '../../number/index';
 import type { io } from '../../number/int_sized';
-import type { FnMut } from '../../ops';
+import type { FnMut } from '../../ops/index';
 import type { Option } from '../../option';
 import { None, Some } from '../../option';
 import { Vec } from '../../vec/vec';
@@ -19,7 +19,11 @@ class HashMapImpl<K, V> implements Debug {
   public vec: Vec<[K, V]> = Vec();
 
   public fmt_debug(
-    this: K extends Debug ? V extends Debug ? HashMapImpl<K, V> : never : never
+    this: K extends Debug
+      ? V extends Debug
+        ? HashMapImpl<K, V>
+        : never
+      : never
   ): string {
     const map = new DebugMap();
 

@@ -7,7 +7,7 @@ import type { Ord } from '../cmp';
 import { default_partial_ord, Ordering } from '../cmp';
 import type { _ } from '../custom';
 import type { Debug, Display } from '../fmt';
-import { u16, u8 } from '../number';
+import { u16, u8 } from '../number/index';
 import type { io } from '../number/int_sized';
 import type { Option } from '../option';
 import { None, Some } from '../option';
@@ -78,7 +78,7 @@ class CharImpl<T extends string> implements Ord<char<_>>, Display, Debug {
       return None;
     }
 
-    return Some(char(radii[u32] as (typeof radii)[U])) as never;
+    return Some(char(radii[u32] as typeof radii[U])) as never;
   }
 
   // ord

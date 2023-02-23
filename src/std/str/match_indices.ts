@@ -1,6 +1,6 @@
 import { staticify } from '../../tools';
 import { IteratorImpl } from '../iter/iterator';
-import { usize } from '../number';
+import { usize } from '../number/index';
 import type { Io, str } from './str';
 // @ts-expect-error ts(2714)
 class MatchIndicesImpl extends IteratorImpl<[usize, str]> {

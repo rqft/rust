@@ -1,6 +1,6 @@
 import { staticify } from '../../tools';
 import { IteratorImpl } from '../iter/iterator';
-import { u16 } from '../number';
+import { u16 } from '../number/index';
 import type { Option } from '../option';
 import { Some } from '../option';
 import type { Chars } from './chars';

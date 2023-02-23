@@ -1,5 +1,5 @@
 import type { Clone } from './clone';
-import type { FnOnce } from './ops';
+import type { FnOnce } from './ops/index';
 import { panic } from './panic';
 
 export interface PartialEq<Rhs, Output = boolean> {

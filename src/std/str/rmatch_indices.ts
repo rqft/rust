@@ -1,7 +1,7 @@
 import { staticify } from '../../tools';
-import { DoubleEndedIterator } from '../iter';
+import { DoubleEndedIterator } from '../iter/index';
 import { IteratorImpl } from '../iter/iterator';
-import type { usize } from '../number';
+import type { usize } from '../number/index';
 import type { Io, str } from './str';
 
 // @ts-expect-error ts(2714)

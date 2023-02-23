@@ -1,13 +1,13 @@
 import { staticify } from '../../tools';
-import { Iterator } from '../iter';
-import { usize } from '../number';
+import { Iterator } from '../iter/index';
+import { usize } from '../number/index';
 import type { io } from '../number/int_sized';
-import type { FnOnce } from '../ops';
+import type { FnOnce } from '../ops/index';
 import type { Option } from '../option';
 import { None, Some } from '../option';
 import type { Result } from '../result';
 import { Err, Ok } from '../result';
-import { slice } from '../slice';
+import { slice } from '../slice/index';
 import { IntoIter } from './into_iter';
 
 export class VecImpl<T> {

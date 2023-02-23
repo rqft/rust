@@ -3,27 +3,24 @@
   "version": "1.0.16",
   "description": "hi",
   "main": "dist/index.js",
-  "engines": {
-    "node": "14.15.1",
-    "npm": "*"
-  },
   "scripts": {
     "pub": "tsc && git commit -a -m ok && git push && npm version patch && npm publish --access public"
   },
   "keywords": [],
   "author": "mina",
   "license": "ISC",
+  "dependencies": {},
+  "type": "module",
   "devDependencies": {
     "@types/eslint": "^8.4.7",
     "@types/node": "^14.18.13",
     "@typescript-eslint/eslint-plugin": "^5.26.0",
     "@typescript-eslint/parser": "^5.26.0",
-    "eslint": "^8.16.0",
+    "eslint": "^8.34.0",
     "nodemon": "^2.0.16",
     "prettier": "^2.5.1",
-    "typescript": "^4.4.2"
+    "typescript": "^5.0.0-beta"
   },
-  "dependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rqft/rust"

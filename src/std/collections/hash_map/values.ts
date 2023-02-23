@@ -1,5 +1,5 @@
 import { staticify } from '../../../tools';
-import { IteratorImpl } from '../../iter';
+import { IteratorImpl } from '../../iter/index';
 import type { HashMap } from './hash_map';
 
 // @ts-expect-error ts(2714)

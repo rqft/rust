@@ -1,6 +1,6 @@
 import { staticify } from '../../tools';
 import type { _ } from '../custom';
-import type { Add, FnMut, Mul } from '../ops';
+import type { Add, FnMut, Mul } from '../ops/index';
 import type { Option } from '../option';
 import { None, Some } from '../option';
 import { panic } from '../panic';
@@ -670,7 +670,10 @@ export function successors<T>(
   return Successors(first, F);
 }
 
-export function zip<A extends Iterable<_>, B extends Iterable<_>>(A: A, B: B): Zip<A, B> {
+export function zip<A extends Iterable<_>, B extends Iterable<_>>(
+  A: A,
+  B: B
+): Zip<A, B> {
   return Zip(A, B);
 }
 
@@ -714,7 +717,9 @@ class FuseImpl<T extends Iterable<_>> extends IteratorImpl<IntoIter<T>> {
 
     const raw = super.next();
 
-    if (raw.is_none()) { this.hit_none = true; }
+    if (raw.is_none()) {
+      this.hit_none = true;
+    }
     return raw;
   }
 
@@ -739,7 +744,10 @@ class InspectImpl<T extends Iterable<_>> extends IteratorImpl<IntoIter<T>> {
     );
   }
 
-  public static new<T extends Iterable<_>>(iter: T, f: FnMut<[IntoIter<T>]>): InspectImpl<T> {
+  public static new<T extends Iterable<_>>(
+    iter: T,
+    f: FnMut<[IntoIter<T>]>
+  ): InspectImpl<T> {
     return new this(iter, f);
   }
 }
@@ -748,7 +756,10 @@ export type Inspect<T extends Iterable<_>> = InspectImpl<T>;
 export const Inspect = staticify(InspectImpl);
 
 // @ts-expect-error ts(2714)
-class IntersperseWithImpl<T extends Iterable<_>, G extends FnMut<[], IntoIter<T>>> extends IteratorImpl<IntoIter<T>> {
+class IntersperseWithImpl<
+  T extends Iterable<_>,
+  G extends FnMut<[], IntoIter<T>>
+> extends IteratorImpl<IntoIter<T>> {
   constructor(iter: T, separator: G) {
     const p = iter[Symbol.iterator]();
     super(
@@ -771,10 +782,10 @@ class IntersperseWithImpl<T extends Iterable<_>, G extends FnMut<[], IntoIter<T>
   }
 }
 
-export type IntersperseWith<T extends Iterable<_>, G extends FnMut<[], IntoIter<T>>> = IntersperseWithImpl<
-  T,
-  G
->;
+export type IntersperseWith<
+  T extends Iterable<_>,
+  G extends FnMut<[], IntoIter<T>>
+> = IntersperseWithImpl<T, G>;
 export const IntersperseWith = staticify(IntersperseWithImpl);
 
 // @ts-expect-error ts(2714)
@@ -793,7 +804,10 @@ class IntersperseImpl<T extends Iterable<_>> extends IteratorImpl<IntoIter<T>> {
     );
   }
 
-  public static new<T extends Iterable<_>>(iter: T, separator: IntoIter<T>): IntersperseImpl<T> {
+  public static new<T extends Iterable<_>>(
+    iter: T,
+    separator: IntoIter<T>
+  ): IntersperseImpl<T> {
     return new this(iter, separator);
   }
 }
@@ -840,7 +854,10 @@ class MapImpl<T extends Iterable<_>, B> extends IteratorImpl<B> {
     );
   }
 
-  public static new<T extends Iterable<_>, B>(iter: T, f: FnMut<[IntoIter<T>], B>): MapImpl<T, B> {
+  public static new<T extends Iterable<_>, B>(
+    iter: T,
+    f: FnMut<[IntoIter<T>], B>
+  ): MapImpl<T, B> {
     return new this(iter, f);
   }
 }
@@ -978,7 +995,10 @@ export type Scan<T extends Iterable<_>, St, B> = ScanImpl<T, St, B>;
 export const Scan = staticify(ScanImpl);
 
 // @ts-expect-error ts(2714)
-class SkipWhileImpl<T extends Iterable<_>, P extends FnMut<[IntoIter<T>], boolean>> extends IteratorImpl<IntoIter<T>> {
+class SkipWhileImpl<
+  T extends Iterable<_>,
+  P extends FnMut<[IntoIter<T>], boolean>
+> extends IteratorImpl<IntoIter<T>> {
   constructor(iter: T, private predicate: P) {
     super(iter);
   }
@@ -1001,19 +1021,24 @@ class SkipWhileImpl<T extends Iterable<_>, P extends FnMut<[IntoIter<T>], boolea
     return value;
   }
 
-  public static new<T extends Iterable<_>, P extends FnMut<[IntoIter<T>], boolean>>(
-    iter: T,
-    predicate: P
-  ): SkipWhileImpl<T, P> {
+  public static new<
+    T extends Iterable<_>,
+    P extends FnMut<[IntoIter<T>], boolean>
+  >(iter: T, predicate: P): SkipWhileImpl<T, P> {
     return new this(iter, predicate);
   }
 }
 
-export type SkipWhile<T extends Iterable<_>, P extends FnMut<[IntoIter<T>], boolean>> = SkipWhileImpl<T, P>;
+export type SkipWhile<
+  T extends Iterable<_>,
+  P extends FnMut<[IntoIter<T>], boolean>
+> = SkipWhileImpl<T, P>;
 export const SkipWhile = staticify(SkipWhileImpl);
 
 // @ts-expect-error ts(2714)
-class SkipImpl<T extends Iterable<_>, N extends number> extends IteratorImpl<IntoIter<T>> {
+class SkipImpl<T extends Iterable<_>, N extends number> extends IteratorImpl<
+  IntoIter<T>
+> {
   constructor(iter: T, n: N) {
     let i = 0;
     super(
@@ -1039,7 +1064,9 @@ export type Skip<T extends Iterable<_>, N extends number> = SkipImpl<T, N>;
 export const Skip = staticify(SkipImpl);
 
 // @ts-expect-error ts(2417)
-class StepByImpl<T extends Iterable<_>, N extends number> extends IteratorImpl<IntoIter<T>> {
+class StepByImpl<T extends Iterable<_>, N extends number> extends IteratorImpl<
+  IntoIter<T>
+> {
   constructor(private readonly step: N, iter: T) {
     super(iter);
   }
@@ -1090,7 +1117,10 @@ export type Successors<T> = SuccessorsImpl<T>;
 export const Successors = staticify(SuccessorsImpl);
 
 // @ts-expect-error ts(2714)
-class TakeWhileImpl<T extends Iterable<_>, P extends FnMut<[IntoIter<T>], boolean>> extends IteratorImpl<IntoIter<T>> {
+class TakeWhileImpl<
+  T extends Iterable<_>,
+  P extends FnMut<[IntoIter<T>], boolean>
+> extends IteratorImpl<IntoIter<T>> {
   constructor(iter: T, private predicate: P) {
     super(iter);
   }
@@ -1111,19 +1141,24 @@ class TakeWhileImpl<T extends Iterable<_>, P extends FnMut<[IntoIter<T>], boolea
     return None;
   }
 
-  public static new<T extends Iterable<_>, P extends FnMut<[IntoIter<T>], boolean>>(
-    iter: T,
-    predicate: P
-  ): TakeWhileImpl<T, P> {
+  public static new<
+    T extends Iterable<_>,
+    P extends FnMut<[IntoIter<T>], boolean>
+  >(iter: T, predicate: P): TakeWhileImpl<T, P> {
     return new this(iter, predicate);
   }
 }
 
-export type TakeWhile<T extends Iterable<_>, P extends FnMut<[IntoIter<T>], boolean>> = TakeWhileImpl<T, P>;
+export type TakeWhile<
+  T extends Iterable<_>,
+  P extends FnMut<[IntoIter<T>], boolean>
+> = TakeWhileImpl<T, P>;
 export const TakeWhile = staticify(TakeWhileImpl);
 
 // @ts-expect-error ts(2714)
-class TakeImpl<T extends Iterable<_>, N extends number> extends IteratorImpl<IntoIter<T>> {
+class TakeImpl<T extends Iterable<_>, N extends number> extends IteratorImpl<
+  IntoIter<T>
+> {
   constructor(iter: T, n: N) {
     let i = 0;
     super(
@@ -1151,7 +1186,10 @@ export type Take<T extends Iterable<_>, N extends number> = TakeImpl<T, N>;
 export const Take = staticify(TakeImpl);
 
 // @ts-expect-error ts(2417)
-class ZipImpl<T extends Iterable<_>, U extends Iterable<_>> extends IteratorImpl<[IntoIter<T>, IntoIter<U>]> {
+class ZipImpl<
+  T extends Iterable<_>,
+  U extends Iterable<_>
+> extends IteratorImpl<[IntoIter<T>, IntoIter<U>]> {
   private t: Iterator<IntoIter<T>>;
   private u: Iterator<IntoIter<U>>;
   constructor(T: T, U: U) {
@@ -1175,7 +1213,10 @@ class ZipImpl<T extends Iterable<_>, U extends Iterable<_>> extends IteratorImpl
     return [this.t, this.u];
   }
 
-  public static new<T extends Iterable<_>, U extends Iterable<_>>(start: T, end: U): ZipImpl<T, U> {
+  public static new<T extends Iterable<_>, U extends Iterable<_>>(
+    start: T,
+    end: U
+  ): ZipImpl<T, U> {
     return new this(start, end);
   }
 }

@@ -2,18 +2,18 @@ import { staticify } from '../tools';
 import type { Clone } from './clone';
 import type { PartialEq, PartialOrd } from './cmp';
 import {
+  Ordering,
   default_partial_eq,
   default_partial_ord,
   has_derivable_partial_eq,
   has_derivable_partial_ord,
-  Ordering
 } from './cmp';
 import type { AsMutRef, AsRef } from './convert';
 import { Ref, RefMut } from './convert';
 import type { LogicalAnd, LogicalOr, LogicalXor, _ } from './custom';
 import type { Debug } from './fmt';
 import { compare_hash } from './hash';
-import type { FnOnce } from './ops';
+import type { FnOnce } from './ops/index';
 
 import { panic } from './panic';
 

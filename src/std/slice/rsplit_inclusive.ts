@@ -1,7 +1,7 @@
 import { staticify } from '../../tools';
 import { IteratorImpl } from '../iter/iterator';
 
-import type { FnMut } from '../ops';
+import type { FnMut } from '../ops/index';
 import type { slice } from './slice';
 
 // @ts-expect-error ts(2714)

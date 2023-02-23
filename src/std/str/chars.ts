@@ -1,5 +1,5 @@
 import { staticify } from '../../tools';
-import { char } from '../char';
+import { char } from '../char/index';
 import type { _ } from '../custom';
 import { IteratorImpl } from '../iter/iterator';
 import type { str } from './str';

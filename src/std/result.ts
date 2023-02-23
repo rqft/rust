@@ -1,17 +1,17 @@
 import { staticify } from '../tools';
 import type { PartialEq, PartialOrd } from './cmp';
 import {
+  Ordering,
   default_partial_eq,
   default_partial_ord,
   has_derivable_partial_eq,
   has_derivable_partial_ord,
-  Ordering
 } from './cmp';
 import type { AsMutRef, AsRef } from './convert';
 import { Ref, RefMut } from './convert';
 import type { _ } from './custom';
 import type { Debug } from './fmt';
-import type { Fn, FnOnce } from './ops';
+import type { Fn, FnOnce } from './ops/index';
 import type { Option } from './option';
 import { None, Some } from './option';
 import { panic } from './panic';

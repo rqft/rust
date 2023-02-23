@@ -1,21 +1,21 @@
 import { iter_len, staticify } from '../../tools';
 import type { Eq, PartialEq, PartialOrd } from '../cmp';
 import {
+  Ordering,
   default_partial_eq,
   default_partial_ord,
   is_cmp,
   is_eq,
-  Ordering,
 } from '../cmp';
 
 // import { bool } from '../bool';
-import { Iterator } from '../iter';
-import type { u8 } from '../number';
-import { usize } from '../number';
+import { Iterator } from '../iter/index';
+import type { u8 } from '../number/index';
+import { usize } from '../number/index';
 import type { io } from '../number/int_sized';
 import type { int } from '../number/size';
 import { size } from '../number/size';
-import type { FnMut } from '../ops';
+import type { FnMut } from '../ops/index';
 import type { Option } from '../option';
 import { None, Some } from '../option';
 import { panic } from '../panic';
@@ -24,11 +24,11 @@ import { ChunksExact } from './chunks_exact';
 import { RChunks } from './rchunks';
 import { RChunksExact } from './rchunks_exact';
 import { RSplit } from './rsplit';
-import { RSplitN } from './rsplitn';
 import { RSplitInclusive } from './rsplit_inclusive';
+import { RSplitN } from './rsplitn';
 import { Split } from './split';
-import { SplitN } from './splitn';
 import { SplitInclusive } from './split_inclusive';
+import { SplitN } from './splitn';
 import { Windows } from './windows';
 
 class SliceImpl<T>

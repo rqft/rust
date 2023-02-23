@@ -1,5 +1,5 @@
 import { staticify } from '../../../tools';
-import { IteratorImpl } from '../../iter';
+import { IteratorImpl } from '../../iter/index';
 import type { HashSet } from './hash_set';
 
 // @ts-expect-error ts(2714)

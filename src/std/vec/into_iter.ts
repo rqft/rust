@@ -1,5 +1,5 @@
 import { staticify } from '../../tools';
-import { IteratorImpl } from '../iter';
+import { IteratorImpl } from '../iter/index';
 import type { Vec } from './vec';
 
 class IntoIterImpl<T> extends IteratorImpl<T> {

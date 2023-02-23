@@ -1,7 +1,7 @@
 import { staticify } from '../../tools';
 import type { Clone } from '../clone';
 import type { Debug } from '../fmt';
-import { f64, u128, u32, u64 } from '../number';
+import { f64, u128, u32, u64 } from '../number/index';
 import type { int } from '../number/size';
 import type {
   Add,
@@ -12,8 +12,8 @@ import type {
   Mul,
   MulAssign,
   Sub,
-  SubAssign
-} from '../ops';
+  SubAssign,
+} from '../ops/index';
 import type { Option } from '../option';
 import { None, Some } from '../option';
 import { panic } from '../panic';

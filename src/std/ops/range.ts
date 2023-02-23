@@ -1,5 +1,5 @@
 import { staticify } from '../../tools';
-import { Iterator } from '../iter';
+import { Iterator } from '../iter/index';
 import type { int, SizeImpl } from '../number/size';
 
 class RangeImpl<T extends SizeImpl> {

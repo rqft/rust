@@ -1,8 +1,8 @@
 import { staticify } from '../../tools';
-import { char } from '../char';
+import { char } from '../char/index';
 import type { _ } from '../custom';
 import { IteratorImpl } from '../iter/iterator';
-import { usize } from '../number';
+import { usize } from '../number/index';
 import type { str } from './str';
 
 // @ts-expect-error ts(2714)

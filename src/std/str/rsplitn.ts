@@ -1,5 +1,5 @@
 import { staticify } from '../../tools';
-import { DoubleEndedIterator } from '../iter';
+import { DoubleEndedIterator } from '../iter/index';
 import { IteratorImpl } from '../iter/iterator';
 import type { int } from '../number/size';
 import type { Io, str } from './str';

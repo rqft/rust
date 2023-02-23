@@ -1,7 +1,7 @@
 import { staticify } from '../../../tools';
 import type { _ } from '../../custom';
 import { compare_hash } from '../../hash';
-import { IteratorImpl } from '../../iter';
+import { IteratorImpl } from '../../iter/index';
 import type { HashSet } from './hash_set';
 
 // @ts-expect-error ts(2714)

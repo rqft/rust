@@ -1,6 +1,6 @@
 import { staticify } from '../../tools';
 import { Iterator, IteratorImpl } from '../iter/iterator';
-import { usize } from '../number';
+import { usize } from '../number/index';
 import type { int } from '../number/size';
 import { size } from '../number/size';
 import type { slice } from './slice';

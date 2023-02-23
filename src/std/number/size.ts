@@ -2,7 +2,7 @@ import { staticify } from '../../tools';
 // import { bool } from '../bool';
 import type { Clone } from '../clone';
 import type { Eq, Ord, PartialEq, PartialOrd } from '../cmp';
-import { default_partial_ord, Ordering } from '../cmp';
+import { Ordering, default_partial_ord } from '../cmp';
 import type { Cast, Into } from '../convert';
 import type { _ } from '../custom';
 import type {
@@ -41,7 +41,7 @@ import type {
   ShrAssign,
   Sub,
   SubAssign,
-} from '../ops';
+} from '../ops/index';
 import type { Option } from '../option';
 import { None, Some } from '../option';
 import { panic } from '../panic';
@@ -533,11 +533,11 @@ implements
   ): size {
     let p = value.value;
 
-    while (p > max) {
+    while (p > size(max).value) {
       p = size(min).value + (size(max).value - p);
     }
 
-    while (p < min) {
+    while (p < size(min).value) {
       p = size(max).value - (size(min).value + p);
     }
 
@@ -690,7 +690,7 @@ implements
     if (this.value < 0n) {
       const abs = -this.value;
 
-      if (abs > max) {
+      if (abs > size(max).value) {
         panic('method `abs` overflowed past the maximum');
       }
 

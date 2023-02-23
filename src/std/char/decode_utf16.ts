@@ -1,7 +1,7 @@
 import { staticify } from '../../tools';
 import type { _ } from '../custom';
 import { IteratorImpl } from '../iter/iterator';
-import { u16 } from '../number';
+import { u16 } from '../number/index';
 import type { io } from '../number/int_sized';
 import type { Result } from '../result';
 import { Err, Ok } from '../result';

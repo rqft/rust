@@ -1,12 +1,12 @@
 import { staticify } from '../../../tools';
 import { compare_hash } from '../../hash';
-import type { IntoIterator } from '../../iter';
-import type { usize } from '../../number';
+import type { IntoIterator } from '../../iter/index';
+import type { usize } from '../../number/index';
 import type { io } from '../../number/int_sized';
-import type { FnOnce } from '../../ops';
+import type { FnOnce } from '../../ops/index';
 import type { Option } from '../../option';
 import { None, Some } from '../../option';
-import { Vec } from '../../vec';
+import { Vec } from '../../vec/index';
 import { Difference } from './difference';
 import { Intersection } from './intersection';
 import { IntoIter } from './into_iter';

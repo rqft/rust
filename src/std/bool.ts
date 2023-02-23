@@ -13,8 +13,8 @@ import type {
   BitXor,
   BitXorAssign,
   FnOnce,
-  Not
-} from './ops';
+  Not,
+} from './ops/index';
 import type { Option } from './option';
 import { None, Some } from './option';
 

@@ -8,8 +8,9 @@ import type {
   Debug,
   Display,
   LowerExp,
-  Precision, Signed,
-  UpperExp
+  Precision,
+  Signed,
+  UpperExp,
 } from '../fmt';
 // import type { Default } from '../default';
 import type {
@@ -23,8 +24,8 @@ import type {
   Rem,
   RemAssign,
   Sub,
-  SubAssign
-} from '../ops';
+  SubAssign,
+} from '../ops/index';
 
 class F64Impl
 implements

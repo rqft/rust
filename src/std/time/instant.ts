@@ -1,5 +1,5 @@
 import { staticify } from '../../tools';
-import type { Add, AddAssign, Assign, Sub, SubAssign } from '../ops';
+import type { Add, AddAssign, Assign, Sub, SubAssign } from '../ops/index';
 import type { Option } from '../option';
 import { None, Some } from '../option';
 import { Duration } from './duration';
