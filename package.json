@@ -8,6 +8,10 @@
     "pub": "tsup && git commit -a -m ok && git push && npm version patch && npm publish --access public",
     "dev": "tsup --watch"
   },
+  "module": "dist/index.mjs",
+  "exports": {
+    "types": "./dist/index.d.ts"
+  },
   "keywords": [],
   "author": "mina",
   "type": "module",
