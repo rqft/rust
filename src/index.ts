@@ -1,2 +1,2 @@
-export * from './std/index';
+export * from './std';
 

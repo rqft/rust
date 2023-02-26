@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
     "esModuleInterop": true,
-    "incremental": true,
-    "target": "esnext",
-    "module": "CommonJS",
+    "incremental": false,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
     "outDir": "./dist",
     "rootDir": "./src",
-    "composite": true,
+    // "composite": true,
     "removeComments": true,
     "strict": true,
     "noUnusedLocals": true,
@@ -18,5 +19,6 @@
     "forceConsistentCasingInFileNames": true,
     "lib": ["ES2022"]
   },
-  "exclude": ["dist", "node_modules", "kv/*.json", ".eslintrc.js"]
+  "exclude": ["dist", "node_modules", "kv/*.json", ".eslintrc.js"],
+  "include": ["src/**/*"]
 }
