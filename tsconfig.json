@@ -3,7 +3,7 @@
     "esModuleInterop": true,
     "incremental": true,
     "target": "esnext",
-    "module": "esnext",
+    "module": "CommonJS",
     "outDir": "./dist",
     "rootDir": "./src",
     "composite": true,
