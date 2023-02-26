@@ -1,6 +1,6 @@
 {
   "name": "@rqft/rust",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "hi",
   "types": "dist/index.d.ts",
   "main": "dist/index.mjs",
