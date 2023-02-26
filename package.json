@@ -2,6 +2,7 @@
   "name": "@rqft/rust",
   "version": "1.0.21",
   "description": "hi",
+  "types": "dist/index.d.ts",
   "main": "dist/index.mjs",
   "scripts": {
     "pub": "tsup && git commit -a -m ok && git push && npm version patch && npm publish --access public",
